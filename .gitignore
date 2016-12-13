@@ -1,2 +1,4 @@
 /pd-feature-tests/.nb-gradle/
 /.nb-gradle/
+/pd-feature-tests/build/
+/.gradle/
