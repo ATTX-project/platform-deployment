@@ -1,1 +1,1 @@
-include "dc-elasticsearch-siren:attx-api-plugin",  "dc-elasticsearch-siren:attx-api-plugin-feature-tests" 
+include "pd-feature-tests"
