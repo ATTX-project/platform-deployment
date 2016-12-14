@@ -10,7 +10,7 @@ frontend:
     - virtuoso:virtuoso
 
 dpus:
-  image: tenforce/unified-views-add-dpus
+  image: tenforce/uv-attx-dpus
   links: 
     - frontend:frontend
 
