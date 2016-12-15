@@ -1,6 +1,6 @@
 FROM debian:jessie
 
-MAINTAINER Niels Vandekeybus <niels.vandekeybus@tenforce.com>
+MAINTAINER João M. da Silva <joao.silva@helsinki.fi> 
 ADD dpus /dpus
 VOLUME /dpus
 ENV MASTER_USER=master MASTER_PASSWORD=commander

@@ -1,3 +1,15 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.hierynomus.gradle.plugins:jython-gradle-plugin:0.3.1"
+  }
+}
+
+apply plugin: "com.github.hierynomus.jython"
 apply plugin: 'java'
 
 sourceCompatibility = '1.8'
@@ -29,7 +41,10 @@ dependencies {
         'junit:junit:4.10',
         'info.cukes:cucumber-java8:1.2.5',
         'info.cukes:cucumber-junit:1.2.5',
-        'com.mashape.unirest:unirest-java:1.4.9'
+        'com.mashape.unirest:unirest-java:1.4.9',
+        'info.cukes:cucumber-jython:1.2.5',
+        'org.python:jython-standalone:2.7.1b3'        
+    
     
 }
 
