@@ -43,7 +43,8 @@ dependencies {
         'info.cukes:cucumber-junit:1.2.5',
         'com.mashape.unirest:unirest-java:1.4.9',
         'info.cukes:cucumber-jython:1.2.5',
-        'org.python:jython-standalone:2.7.1b3'        
+        'org.python:jython-standalone:2.7.1b3',
+        'org.skyscreamer:jsonassert:1.4.0'
     
     
 }
