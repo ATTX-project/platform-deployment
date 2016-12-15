@@ -10,7 +10,7 @@ frontend:
     - virtuoso:virtuoso
 
 uv-dpus:
-  image: attxproject/uv-add-dpus
+  image: tenforce/uv-add-dpus
   links: 
     - frontend:frontend
 
