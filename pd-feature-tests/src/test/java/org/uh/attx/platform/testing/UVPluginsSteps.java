@@ -41,7 +41,7 @@ public class UVPluginsSteps  implements En {
                         .header("accept", "application/json")
                         .queryString("name", "attx-t-metadata-plugin")
                         .queryString("force", "false")
-                        .field("file", new File("DummyJar.jar"))
+                        .field("file", new File("TransformerATTXMetadata-1.0-SNAPSHOT.jar"))
                         .basicAuth(API_USERNAME, API_PASSWORD)
                         .asJson();
                 
