@@ -1,6 +1,5 @@
 /pd-feature-tests/.nb-gradle/
 /.nb-gradle/
-<<<<<<< HEAD
 
 ### Gradle ###
 .gradle
@@ -20,4 +19,3 @@ gradle-app.setting
 =======
 /pd-feature-tests/build/
 /.gradle/
->>>>>>> 1f714abc31711058e2fd51920c795ffab00e9678
