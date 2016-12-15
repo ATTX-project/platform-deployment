@@ -9,9 +9,14 @@ frontend:
     - backend:backend
     - virtuoso:virtuoso
 
-dpus:
-  image: tenforce/uv-attx-dpus
+uv-dpus:
+  image: attxproject/uv-add-dpus
   links: 
+    - frontend:frontend
+
+attx-dpus:
+  image: attxproject/uv-attx-dpus
+  links:
     - frontend:frontend
 
 shared:
@@ -28,7 +33,7 @@ backend:
 mysql:
   image: tenforce/unified-views-mariadb
   volumes:
-    - /data/unifiedviews:/var/lib/mysql
+    - /data/unifiedviews/db:/var/lib/mysql
   environment:
     - MYSQL_ROOT_PASSWORD=iamroot!
 
