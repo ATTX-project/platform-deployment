@@ -7,7 +7,7 @@ plugins {
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
-    src 'http://localhost:8080/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar'
+    src 'http://${artifactRepoUrl}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar'
     dest "$buildDir/docker/dpus/TransformerATTXMetadata-1.0-SNAPSHOT.jar"
     
 }
@@ -19,7 +19,8 @@ dockerPrepare.doLast {
 
 
 docker {
-    name "attx-dev.hulib.helsinki.fi:5000/uv-attx-dpus:${GIT_PREVIOUS_SUCCESSFUL_COMMIT}"    
+    name "${registryUrl}/uv-attx-dpus"
+    tags 'latest'
     dockerfile 'Dockerfile'
     files 'Dockerfile', 'add-dpu.sh', 'startup.sh'    
 }
