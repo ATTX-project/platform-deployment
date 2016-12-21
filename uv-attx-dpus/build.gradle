@@ -19,11 +19,9 @@ dockerPrepare.doLast {
 
 
 docker {
-    name "attx-project/uv-attx-dpus"
-    tags 'latest'
+    name "attx-dev.hulib.helsinki.fi:5000/uv-attx-dpus:${GIT_PREVIOUS_SUCCESSFUL_COMMIT}"    
     dockerfile 'Dockerfile'
-    files 'Dockerfile', 'add-dpu.sh', 'startup.sh'
-    
+    files 'Dockerfile', 'add-dpu.sh', 'startup.sh'    
 }
 
 
