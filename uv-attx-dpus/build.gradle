@@ -7,7 +7,7 @@ plugins {
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
-    src 'http://attx-dev.hulib.helsinki.fi:49001/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar'
+    src 'http://localhost:8080/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar'
     dest "$buildDir/docker/dpus/TransformerATTXMetadata-1.0-SNAPSHOT.jar"
     
 }
