@@ -24,6 +24,8 @@ services:
 
   mysql:
     image: tenforce/unified-views-mariadb
+    volumes:
+      - /data/unifiedviews:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=iamroot!
 
@@ -53,11 +55,15 @@ services:
 
   elasticsearch:
     image: attxproject/elasticsearch
+    volumes:
+      - /data/elasticsearch:/data
     ports:
       - "9200:9200"
       - "9300:9300"
 
   fuseki:
     image: stain/jena-fuseki
+    volumes:
+       - /data/fuseki:/fuseki
     ports:
       - "3030:3030"
