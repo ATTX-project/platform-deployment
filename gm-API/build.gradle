@@ -14,7 +14,7 @@ repositories {
 task dockerPrepare () {
   download {
       // TODO: Change this to use artifact repository
-      src "${artifactRepoUrl}/job/wf-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
+      src "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
       dest "$buildDir/docker/build/distributions/gm-API-${version}.tar.gz"
   }
   doLast {
