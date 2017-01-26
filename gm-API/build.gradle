@@ -19,7 +19,6 @@ task downloadJars(type:Download) {
 
 }
 
-
 dcompose {
   doFirst {
       mkdir "$buildDir/docker/build/distributions"
@@ -34,6 +33,3 @@ dcompose {
     portBindings = ['4302:4302']
   }
 }
-
-buildGmapiImage.dependsOn dockerPrepare
-pushGmapiImage.dependsOn dockerPrepare
