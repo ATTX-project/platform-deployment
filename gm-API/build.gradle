@@ -19,12 +19,12 @@ task downloadJars(type:Download) {
 
 }
 
-dockerPrepare.doLast {
-    mkdir "$buildDir/docker/build/distributions"
-    tasks.downloadJars.execute()
-}
 
 dcompose {
+  doFirst {
+      mkdir "$buildDir/docker/build/distributions"
+      tasks.downloadJars.execute()
+  }
   registry ('http://attx-dev:5000') {
      	 // Needs no user/pass
  	 }
