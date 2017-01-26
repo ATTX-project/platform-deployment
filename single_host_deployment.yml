@@ -1,0 +1,39 @@
+---
+- hosts: <your_RHEL_or_CENTOS_hostname>
+  remote_user: <yout_sudo_username>
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Maximum Map count check
+    shell: sysctl -w vm.max_map_count=262144
+
+  - name: upgrade allpackages
+    yum: name=* state=latest
+
+  - name: install yum-utils
+    yum: name=yum-utils
+
+  - name: add Docker repo
+    command: yum-config-manager --add-repo https://docs.docker.com/engine/installation/linux/repo_files/centos/docker.repo
+
+  - name: update yum cache
+    command: yum makecache fast
+
+  - name: deploy docker
+    yum: name=docker-engine
+
+  - name: enable and start Docker service
+    service: name=docker enabled=yes state=started
+
+  - name: Ensure docker-compose is installed and available
+    shell: curl -L "https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+  - name: Execute permissions for docker-compose
+    shell: chmod a+x /usr/local/bin/docker-compose
+
+  - name: Download the latest ATTX stack Docker-Compose from Github
+    shell:  curl https://raw.githubusercontent.com/ATTX-project/platform-deployment/dev/docker-compose.yml > /tmp/docker-compose.yml
+
+  - name: Run docker-compose up
+    command: /usr/local/bin/docker-compose -f /tmp/docker-compose.yml up -d
