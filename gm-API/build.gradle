@@ -11,13 +11,17 @@ repositories {
     mavenCentral()
 }
 
-task dockerPrepare () {
-  mkdir "$buildDir/docker/build/distributions"
-  download {
-      // TODO: Change this to use artifact repository
-      src "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
-      dest "$buildDir/docker/build/distributions/gm-API-${version}.tar.gz"
-  }
+import de.undercouch.gradle.tasks.download.Download
+task downloadJars(type:Download) {
+    // TODO: Change this to use artifact repository
+    src "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-0.1.tar.gz"
+    dest "$buildDir/docker/build/distributions/gm-API-0.1.tar.gz"
+
+}
+
+dockerPrepare.doLast {
+    mkdir "$buildDir/docker/build/distributions"
+    tasks.downloadJars.execute()
 }
 
 dcompose {
