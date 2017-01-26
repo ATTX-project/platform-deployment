@@ -4,7 +4,7 @@ Configuration and tools for deploying the PAAS Solution based on ATTX components
 The ATTX PAAS stack is deployed as a Docker Compose app, and thus is requires that Docker Engine and Docker Compose are available beforehand in your environment (cf. https://docs.docker.com/engine/getstarted/step_one/ and https://docs.docker.com/compose/install/).
 
 # How to deploy and start the ATTX platform stack manually
-1. Download docker-compose.yml or docker-compose.prod.yml
+1. Download docker-compose.yml (no data persistency) or docker-compose.prod.yml (local data volume for persistency)
 2. Default scenario (no data persistency):
     `$ docker-compose up`
 3. Alternate scenario (data persistency):
