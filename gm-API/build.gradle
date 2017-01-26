@@ -1,0 +1,37 @@
+plugins {
+    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
+    id 'base'
+    id "de.undercouch.download" version "3.1.2"
+}
+
+version=0.1
+
+repositories {
+    mavenCentral()
+}
+import de.undercouch.gradle.tasks.download.Download
+task downloadJars(type:Download) {
+    // TODO: Change this to use artifact repository
+    src "${artifactRepoUrl}/job/wf-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
+    dest "$buildDir/docker/build/distributions/gm-API-${version}.tar.gz"
+}
+
+task dockerPrepare () {
+  doLast {
+    mkdir "$buildDir/docker/build/distributions"
+    tasks.downloadJars.execute()
+  }
+}
+
+dcompose {
+  registry ('http://attx-dev:5000') {
+     	 // Needs no user/pass
+ 	 }
+  gmapi {
+    baseDir = file('.')
+    repository = 'attx-dev:5000/gm-api:latest'
+    portBindings = ['4302:4302']
+  }
+}
+buildGmapiImage.dependsOn dockerPrepare
+pushGmapiImage.dependsOn dockerPrepare
