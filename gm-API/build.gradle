@@ -3,6 +3,8 @@ plugins {
     id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
 
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+
 version=0.1
 
 repositories {
