@@ -1,6 +1,6 @@
 plugins {
-    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
     id "de.undercouch.download" version "3.1.2"
+    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
 
 version=0.1
@@ -9,14 +9,12 @@ repositories {
     mavenCentral()
 }
 
-import de.undercouch.gradle.tasks.download.Download
-task downloadJars(type:Download) {
-    // TODO: Change this to use artifact repository
-    src "${artifactRepoUrl}/job/wf-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
-    dest "$buildDir/docker/build/distributions/gm-API-${version}.tar.gz"
-}
-
 task dockerPrepare () {
+  download {
+      // TODO: Change this to use artifact repository
+      src "${artifactRepoUrl}/job/wf-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
+      dest "$buildDir/docker/build/distributions/gm-API-${version}.tar.gz"
+  }
   doLast {
     mkdir "$buildDir/docker/build/distributions"
     tasks.downloadJars.execute()
