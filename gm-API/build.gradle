@@ -1,6 +1,5 @@
 plugins {
     id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
-    id 'base'
     id "de.undercouch.download" version "3.1.2"
 }
 
@@ -9,6 +8,7 @@ version=0.1
 repositories {
     mavenCentral()
 }
+
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
@@ -33,5 +33,6 @@ dcompose {
     portBindings = ['4302:4302']
   }
 }
+
 buildGmapiImage.dependsOn dockerPrepare
 pushGmapiImage.dependsOn dockerPrepare
