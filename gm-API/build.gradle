@@ -12,14 +12,11 @@ repositories {
 }
 
 task dockerPrepare () {
+  mkdir "$buildDir/docker/build/distributions"
   download {
       // TODO: Change this to use artifact repository
       src "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
       dest "$buildDir/docker/build/distributions/gm-API-${version}.tar.gz"
-  }
-  doLast {
-    mkdir "$buildDir/docker/build/distributions"
-    tasks.downloadJars.execute()
   }
 }
 
