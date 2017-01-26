@@ -15,13 +15,13 @@ import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
     src "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-0.1.tar.gz"
-    dest "$baseDir/docker/build/distributions/gm-API-0.1.tar.gz"
+    dest "$projectDir/docker/build/distributions/gm-API-0.1.tar.gz"
 http://attx-dev:49001/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-0.1.tar.gz
 }
 
 task dockerPrepare () {
   doLast {
-    mkdir "$baseDir/docker/build/distributions"
+    mkdir "$projectDir/docker/build/distributions"
     tasks.downloadJars.execute()
   }
 }
