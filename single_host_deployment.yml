@@ -1,6 +1,6 @@
 ---
 - hosts: <your_RHEL_or_CENTOS_hostname>
-  remote_user: <yout_sudo_username>
+  remote_user: <your_sudo_username>
   become: yes
   become_method: sudo
 
