@@ -19,7 +19,7 @@ task downloadJars(type:Download) {
 
 }
 
-dockerPrepare () {
+task dockerPrepare () {
   doLast {
     mkdir "$buildDir/docker/build/distributions"
     tasks.downloadJars.execute()
