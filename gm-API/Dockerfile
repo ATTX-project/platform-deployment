@@ -18,4 +18,4 @@ RUN tar -xf gm-API-${version}.tar.gz
 
 RUN mkdir logs
 
-CMD ./bin/gmapi --host 0.0.0.0 --port 4302 &
+CMD ./bin/gmapi --host 0.0.0.0 --port 4302
