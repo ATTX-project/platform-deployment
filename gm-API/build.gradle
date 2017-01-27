@@ -14,8 +14,8 @@ repositories {
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
-    src "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-0.1.tar.gz"
-    dest "$projectDir/build/distributions/gm-API-0.1.tar.gz"
+    src "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
+    dest "$projectDir/build/distributions/gm-API-${version}.tar.gz"
 }
 
 task dockerPrepare () {
