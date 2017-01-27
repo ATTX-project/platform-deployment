@@ -4,11 +4,13 @@ plugins {
     id "de.undercouch.download" version "3.1.2"
 }
 
+version=0.1
+
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
-    src "${artifactRepoUrl}/job/wf-api/lastSuccessfulBuild/artifact/wf-API/build/distributions/wf-API-0.1.tar.gz"
-    dest "$buildDir/docker/build/distributions/wf-API-0.1.tar.gz"
+    src "${artifactRepoUrl}/job/wf-api/lastSuccessfulBuild/artifact/wf-API/build/distributions/wf-API-${version}.tar.gz"
+    dest "$buildDir/docker/build/distributions/wf-API-${version}.tar.gz"
 
 }
 
