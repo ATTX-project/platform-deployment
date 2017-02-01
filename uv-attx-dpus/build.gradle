@@ -9,7 +9,11 @@ task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
     src "${artifactRepoUrl}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar"
     dest "$buildDir/docker/dpus/TransformerATTXMetadata-1.0-SNAPSHOT.jar"
-    
+    src "${artifactRepoUrl}/job/uv-dpu-t-attx-uc1-infras2internal/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-uc1-infras2internal/build/libs/uv-dpu-t-attx-uc1-infras2internal-1.0-SNAPSHOT-sources.jar"
+    dest "$buildDir/docker/dpus/uv-dpu-t-attx-uc1-infras2internal-1.0-SNAPSHOT-sources.jar"
+    src "${artifactRepoUrl}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
+    dest "$buildDir/docker/dpus/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
+
 }
 
 dockerPrepare.doLast {
