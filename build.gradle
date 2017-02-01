@@ -1,5 +1,5 @@
 plugins {
-    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.1"
+    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
 apply plugin: 'java'
 
@@ -21,7 +21,7 @@ dcompose {
  	 }	
 	
 	shared {
-                image = 'tenforce/unified-views-shared'
+                image = 'attx-dev:5000/uv-attx-shared:latest'
 	}
 
 	frontend {
@@ -31,7 +31,7 @@ dcompose {
 	}
 	
 	mysql {
-		image = 'tenforce/unified-views-mariadb'
+		image = 'tenforce/unified-views-mariadb:latest'
 		env = ['MYSQL_ROOT_PASSWORD=iamroot!']
 	}
 	
@@ -52,21 +52,27 @@ dcompose {
 	} 
 
 	'attx-dpus' {
-		image = 'attxproject/uv-attx-dpus'
+		image = 'attx-dev.hulib.helsinki.fi:5000/uv-attx-dpus:latest'
 		links = [frontend.link()]
 		dependsOn = [mysql]
 	}	
 	
 	'wf-api' {
-		image = 'attx-dev:5000/wf-api'
+		image = 'attx-dev.hulib.helsinki.fi:5000/wf-api:latest'
 		portBindings = ['4301:4301']
 		
 	}
 
-	elasticsearch {
+	'elasticsearch-siren' {
 		image = 'attxproject/elasticsearch:latest'
 		portBindings = ['9200:9200', '9300:9300']
 	}
+	
+
+	'elasticsearch-5.1.2' {
+                image = 'attxproject/elasticsearch:5.1.2"
+                portBindings = ['9210:9210, '9310:9310']
+        }
 	
 	fuseki {
 		image = 'stain/jena-fuseki'
