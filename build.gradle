@@ -15,13 +15,15 @@ repositories {
 dcompose {
 
 	createComposeFile.useAWSCompat = true
+	createComposeFile.useTags = true
 
 	registry ('http://attx-dev:5000') {
+	registry ('http://attx-dev.hulib.helsinki.fi:5000')
      	 // Needs no user/pass
  	 }	
 	
 	shared {
-                image = 'attx-dev:5000/uv-attx-shared:latest'
+                image = 'attx-dev:5000/uv-attx-shared'
 	}
 
 	frontend {
@@ -57,7 +59,7 @@ dcompose {
 		dependsOn = [mysql]
 	}	
 	
-	'wf-api' {
+	wfapi {
 		image = 'attx-dev.hulib.helsinki.fi:5000/wf-api:latest'
 		portBindings = ['4301:4301']
 		
@@ -69,14 +71,20 @@ dcompose {
 	}
 	
 
-	'elasticsearch-5.1.2' {
-                image = 'attxproject/elasticsearch:5.1.2'
-                portBindings = ['9210:9210', '9310:9310']
+	elasticsearch5 {
+                image = 'elasticsearch:5.1.2'
+                portBindings = ['9201:9010', '9010:9301']
         }
 	
 	fuseki {
 		image = 'stain/jena-fuseki'
 		portBindings = ['3030:3030']
+	}
+
+	'gm-api' {
+		image = 'attx-dev:5000/gm-api'
+		portBindings = ['4302:4302']
+		links = [fuseki.link(), elasticsearch5.link(), wfapi.link()]
 	}
 	
 }
