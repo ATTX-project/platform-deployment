@@ -18,4 +18,4 @@ RUN tar -xf wf-API-${version}.tar.gz
 
 RUN mkdir logs
 
-CMD ./bin/wfapi --host 0.0.0.0 --port 4301 &
+CMD ./bin/wfapi --host 0.0.0.0 --port 4301
