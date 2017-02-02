@@ -18,7 +18,8 @@ RUN  dpkg -i /tmp/elasticsearch.deb
 RUN sed -i 's/^\(\#cluster.name: elasticsearch\)$/\1\ncluster.name: elasticsearch/' /etc/elasticsearch/elasticsearch.yml && \
     sed -i 's/^\(\#path.data: \/path\/to\/data\)$/\1\npath.data: \/data/' /etc/elasticsearch/elasticsearch.yml && \
     sed -i -e '$a\script.disable_dynamic: true' /etc/elasticsearch/elasticsearch.yml && \
-    sed -i 's/^\(\#MAX_OPEN_FILES=.\+\)$/\1\nMAX_OPEN_FILES=65535/' /etc/default/elasticsearch
+    sed -i 's/^\(\#MAX_OPEN_FILES=.\+\)$/\1\nMAX_OPEN_FILES=65535/' /etc/default/elasticsearch \
+    ln -s /etc/elasticsearch /usr/share/elasticsearch/config
 
 # Clean Up packages
 RUN apt-get clean && \
