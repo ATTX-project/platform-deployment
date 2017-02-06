@@ -18,4 +18,6 @@ RUN tar -xf gm-API-${version}.tar.gz
 
 RUN mkdir logs
 
+RUN touch data.db
+
 CMD ./bin/gmapi --host 0.0.0.0 --port 4302
