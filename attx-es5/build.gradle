@@ -1,0 +1,27 @@
+plugins {
+  id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
+}
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.6
+
+repositories {
+    // need to have maven central or a mirror in order for the plugin to be functional
+    mavenCentral()
+}
+
+dcompose {
+
+	registry ('http://attx-dev:5000') {
+	// Needs no user/pass
+
+	}
+
+	'attx-es5'{
+		baseDir = file('.')
+		dockerFilename = 'Dockerfile'
+		repository = 'attx-dev:5000/attx-es5:latest'
+		attachStdout = true
+	}
+}
