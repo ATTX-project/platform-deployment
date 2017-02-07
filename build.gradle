@@ -1,0 +1,76 @@
+plugins {
+    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.1"
+}
+apply plugin: 'java'
+
+sourceCompatibility = 1.6
+
+repositories {
+    // need to have maven central or a mirror in order for the plugin to be functional
+    mavenCentral()
+}
+
+
+
+dcompose {
+
+	createComposeFile.useAWSCompat = true
+
+	registry ('http://attx-dev:5000') {
+     	 // Needs no user/pass
+ 	 }
+
+	shared {
+                image = 'tenforce/unified-views-shared'
+	}
+
+	frontend {
+		image = 'tenforce/unified-views-frontend:latest'
+		portBindings = ['8080:8080']
+		volumesFrom = [shared]
+	}
+
+	mysql {
+		image = 'tenforce/unified-views-mariadb'
+		env = ['MYSQL_ROOT_PASSWORD=iamroot!']
+	}
+
+	virtuoso {
+		image = 'tenforce/virtuoso:virtuoso-v7.2.0-latest'
+	}
+
+	backend {
+		image = 'tenforce/unified-views-backend:latest'
+		volumesFrom =  [shared]
+		links = [mysql.link(), virtuoso.link()]
+	}
+
+	'uv-dpus' {
+		image = 'tenforce/unified-views-add-dpus'
+		links = [frontend.link()]
+		dependsOn = [mysql]
+	}
+
+	'attx-dpus' {
+		image = 'attxproject/uv-attx-dpus'
+		links = [frontend.link()]
+		dependsOn = [mysql]
+	}
+
+	'wf-api' {
+		image = 'attx-dev:5000/wf-api'
+		portBindings = ['4301:4301']
+
+	}
+
+	elasticsearch {
+		image = 'attxproject/elasticsearch:latest'
+		portBindings = ['9200:9200', '9300:9300']
+	}
+
+	fuseki {
+		image = 'stain/jena-fuseki'
+		portBindings = ['3030:3030']
+	}
+
+}

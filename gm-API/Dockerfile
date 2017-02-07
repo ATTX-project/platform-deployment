@@ -8,14 +8,16 @@ RUN apk add --update --repository http://dl-cdn.alpinelinux.org/alpine/edge/comm
     && apk add --no-cache bash \
     && apk add --no-cache py-setuptools
 
-EXPOSE 4301
+EXPOSE 4302
 ENV version="0.1"
 
 WORKDIR /app
 
-COPY build/distributions/wf-API-${version}.tar.gz /app
-RUN tar -xf wf-API-${version}.tar.gz
+COPY build/distributions/gm-API-${version}.tar.gz /app
+RUN tar -xf gm-API-${version}.tar.gz
 
 RUN mkdir logs
 
-CMD ./bin/wfapi --host 0.0.0.0 --port 4301
+RUN touch data.db
+
+CMD ./bin/gmapi --host 0.0.0.0 --port 4302

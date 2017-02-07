@@ -26,9 +26,5 @@ docker {
     name "${registryUrl}/uv-attx-dpus"
     tags 'latest'
     dockerfile 'Dockerfile'
-    files 'Dockerfile', 'add-dpu.sh', 'startup.sh'    
+    files 'Dockerfile', 'add-dpu.sh', 'startup.sh'
 }
-
-
-
-
