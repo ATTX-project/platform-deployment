@@ -34,7 +34,7 @@ dcompose {
 
 	'wf-api' {
 	baseDir = file('.')
-	dockerFile = "Dockerfile"
+	dockerFilename = 'Dockerfile'
     	repository = 'attx-dev:5000/wf-api:latest'
 	}
 }
