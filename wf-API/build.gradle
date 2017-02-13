@@ -3,6 +3,7 @@ plugins {
     id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
 
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'java'
 sourceCompatibility = 1.6
 
