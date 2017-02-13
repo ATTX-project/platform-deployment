@@ -1,15 +1,23 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.chrisgahlert:gradle-dcompose-plugin:0.8.2"
+  }
+}
+
 plugins {
     id "de.undercouch.download" version "3.1.2"
-    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
+//    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
 
-apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
-apply plugin: 'java'
-sourceCompatibility = 1.6
 
-repositories {
-    mavenCentral()
-}
+apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
+
+
 
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
