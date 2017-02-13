@@ -1,15 +1,14 @@
 plugins {
     id "de.undercouch.download" version "3.1.2"
-    // id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
+    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
 
-apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
-
+apply plugin: 'java'
+sourceCompatibility = 1.6
 
 repositories {
     mavenCentral()
 }
-
 
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
@@ -18,14 +17,14 @@ task downloadJars(type:Download) {
 
 }
 
-
 dcompose {
-  registry ('http://attx-dev:5000') {
+
+	registry ('http://attx-dev:5000') {
      	 // Needs no user/pass
  	 }
-  wf-api {
-    baseDir = file('.')
-    repository = 'attx-dev:5000/wf-api:latest'
-  }
-}
 
+	'wf-api' {
+	baseDir = file('.')
+    	repository = 'attx-dev:5000/wf-api:latest'
+	}
+}
