@@ -40,5 +40,5 @@ dcompose {
 	}
 }
 
-buildWfApiImage.dependsOn dockerPrepare
-pushWfApiImage.dependsOn dockerPrepare
+buildWfapiImage.dependsOn dockerPrepare
+pushWfapiImage.dependsOn dockerPrepare
