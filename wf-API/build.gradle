@@ -18,6 +18,7 @@ plugins {
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 import de.undercouch.gradle.tasks.download.Download
+version=0.1
 
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
@@ -25,6 +26,14 @@ task downloadJars(type:Download) {
     dest "$buildDir/docker/build/distributions/wf-API-${version}.tar.gz"
 
 }
+
+task dockerPrepare () {
+  doLast {
+    mkdir "$projectDir/build/distributions"
+    tasks.downloadJars.execute()
+  }
+}
+
 
 dcompose {
 
@@ -38,3 +47,6 @@ dcompose {
     		repository = 'attx-dev:5000/wf-api:latest'
 	}
 }
+
+buildWfApiImage.dependsOn dockerPrepare
+pushWfApiImage.dependsOn dockerPrepare
