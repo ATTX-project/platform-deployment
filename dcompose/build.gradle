@@ -73,7 +73,7 @@ dcompose {
 
 	elasticsearch5 {
                 image = 'elasticsearch:5.1.2'
-                portBindings = ['9210:9010', '9310:9310']
+                portBindings = ['9210:9210', '9310:9310']
         }
 	
 	fuseki {
