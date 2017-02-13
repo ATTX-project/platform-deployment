@@ -17,7 +17,7 @@ plugins {
 
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
-
+import de.undercouch.gradle.tasks.download.Download
 
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
