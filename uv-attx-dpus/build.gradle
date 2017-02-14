@@ -5,16 +5,16 @@ plugins {
 apply plugin: 'de.undercouch.download'
 
 if (!project.hasProperty("artifactRepoUrl")) {
-    ext.artifactRepoUrl = "http://attx-dev.hulib.helsinki.fi:8081/repository/attx-releases"
+    ext.artifactRepoUrl = "http://attx-dev:8081/repository/attx-releases"
 }
 if (!project.hasProperty("artifactRepoUser")) {
-    ext.artifactRepoUser = "jenkins"
+    ext.artifactRepoUser = ""
 }
 if (!project.hasProperty("artifactRepoPassword")) {
-    ext.artifactRepoPassword = "jeppaa1"
+    ext.artifactRepoPassword = ""
 }
 if (!project.hasProperty("registryUrl")) {
-    ext.registryUrl = "http://attx-dev.hulib.helsinki.fi:5000"
+    ext.registryUrl = "http://attx-dev:5000"
 }
 
 
