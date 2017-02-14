@@ -40,13 +40,6 @@ task downloadJars(type:Download) {
 
 }
 
-
-dockerPrepare.doLast {
-    mkdir "$buildDir/dpus"
-    tasks.downloadJars.execute()
-}
-
-
 dcompose {
 
 	registry ('http://attx-dev:5000') {
