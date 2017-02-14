@@ -2,6 +2,21 @@ plugins {
     id "de.undercouch.download" version "3.1.2"
     // id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
+apply plugin: 'de.undercouch.download'
+
+if (!project.hasProperty("artifactRepoUrl")) {
+    ext.artifactRepoUrl = "http://attx-dev.hulib.helsinki.fi:8081/repository/attx-releases"
+}
+if (!project.hasProperty("artifactRepoUser")) {
+    ext.artifactRepoUser = "jenkins"
+}
+if (!project.hasProperty("artifactRepoPassword")) {
+    ext.artifactRepoPassword = "jeppaa1"
+}
+if (!project.hasProperty("registryUrl")) {
+    ext.registryUrl = "http://attx-dev.hulib.helsinki.fi:5000"
+}
+
 
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 

@@ -1,1 +1,1 @@
-include "pd-feature-tests", "uv-attx-dpus", "wf-API", "gm-API"
+include "pd-feature-tests", "uv-attx-dpus", "wf-API", "gm-API", "dc-elasticsearch-siren"
