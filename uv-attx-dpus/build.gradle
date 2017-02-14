@@ -1,7 +1,10 @@
+/*
 plugins {
     id "de.undercouch.download" version "3.1.2"
     // id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
+*/
+
 
 if (!project.hasProperty("artifactRepoUrl")) {
     ext.artifactRepoUrl = "http://attx-dev:8081/repository/attx-releases"
@@ -16,7 +19,7 @@ if (!project.hasProperty("registryUrl")) {
     ext.registryUrl = "http://attx-dev:5000"
 }
 
-//apply plugin: 'de.undercouch.download'
+apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 version=0.1
