@@ -1,9 +1,7 @@
-/*
-plugins {
-    id "de.undercouch.download" version "3.1.2"
-    // id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
-}
-*/
+apply plugin: 'de.undercouch.download'
+apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
+
+version=0.1
 
 
 if (!project.hasProperty("artifactRepoUrl")) {
@@ -19,11 +17,6 @@ if (!project.hasProperty("registryUrl")) {
     ext.registryUrl = "http://attx-dev:5000"
 }
 
-apply plugin: 'de.undercouch.download'
-apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
-
-version=0.1
-
 repositories {
     mavenCentral()
 }
@@ -37,11 +30,9 @@ task downloadJars(type:Download) {
     dest "$buildDir/dpus/uv-dpu-t-attx-uc1-infras2internal-1.0-SNAPSHOT-sources.jar"
     src "${artifactRepoUrl}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
     dest "$buildDir/dpus/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
-
 }
 
 dcompose {
-
 	registry ('http://attx-dev:5000') {
      	 // Needs no user/pass
  	 }	
@@ -51,7 +42,4 @@ dcompose {
 		dockerFilename = 'Dockerfile'
     		repository = 'attx-dev:5000/uv-attx-dpus:latest'
 	}
-
 }
-
-
