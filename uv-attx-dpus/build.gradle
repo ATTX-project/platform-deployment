@@ -24,7 +24,7 @@ task downloadJars(type:Download) {
 }
 
 
-task dockerPrepare {
+dockerPrepare.doLast {
     mkdir "$buildDir/dpus"
     tasks.downloadJars.execute()
 }
