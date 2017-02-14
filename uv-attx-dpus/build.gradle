@@ -36,7 +36,7 @@ dcompose {
      	 // Needs no user/pass
  	 }	
 
-	wfapi {
+	'uv-attx-dpus' {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
     		repository = 'attx-dev:5000/uv-attx-dpus:latest'
