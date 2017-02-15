@@ -4,6 +4,7 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
