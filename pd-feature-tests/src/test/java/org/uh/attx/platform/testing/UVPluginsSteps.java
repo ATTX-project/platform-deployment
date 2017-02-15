@@ -21,6 +21,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
  * @author jkesanie
  */
 public class UVPluginsSteps  implements En {
+    private PlatformServices s = new PlatformServices(false);
     
     private final String API_USERNAME = "master";
     private final String API_PASSWORD = "commander";
@@ -37,7 +38,7 @@ public class UVPluginsSteps  implements En {
             try {
                 
                 // using the UV rest API and trying to add the plugin again. Should response with an error.
-                HttpResponse<JsonNode> response = Unirest.post("http://localhost:8080/master/api/1/import/dpu/jar")
+                HttpResponse<JsonNode> response = Unirest.post(s.getUV() + "/master/api/1/import/dpu/jar")
                         .header("accept", "application/json")
                         .queryString("name", "attx-t-metadata-plugin")
                         .queryString("force", "false")
