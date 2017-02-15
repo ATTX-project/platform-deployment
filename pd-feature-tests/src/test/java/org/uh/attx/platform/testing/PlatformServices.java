@@ -23,6 +23,10 @@ public class PlatformServices {
     private final String GMAPI = "http://gmapi";
     private final int GMAPI_PORT = 4302;
 
+    
+    private final String UV = "http://frontend";
+    private final int UV_PORT = 8080;
+
     private boolean isLocalhost = false;
 
     public PlatformServices() {
@@ -55,6 +59,14 @@ public class PlatformServices {
             return FUSEKI + ":" + FUSEKI_PORT;
         }
     }
+    
+    public String getUV() {
+        if (isLocalhost) {
+            return "http://localhost:" + UV_PORT;
+        } else {
+            return UV + ":" + UV_PORT;
+        }
+    }    
 
     public String getGmapi() {
         if (isLocalhost) {
