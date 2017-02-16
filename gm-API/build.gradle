@@ -23,6 +23,9 @@ task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
     src "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz"
     dest "$projectDir/build/distributions/gm-API-${version}.tar.gz"
+    
+    src "http://archiva:8080/repository/attx-releases/org/uh/attx/gc/gc-rdf2json-indexer-all/99/gc-rdf2json-indexer-all-99-all.jar"
+    dest "$projectDir/build/gc-rdf2json-indexer.jar"    
 }
 
 task dockerPrepare () {
