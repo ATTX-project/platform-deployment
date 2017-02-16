@@ -7,6 +7,7 @@ RUN apk add --update\
     && apk add --no-cache linux-headers \
     && apk add --no-cache bash \
     && apk add --no-cache db-dev \
+    && apk add --no-cache wget \
     && apk add --no-cache py-setuptools
 
 # reused from https://github.com/docker-library/openjdk/blob/master/8-jdk/alpine/Dockerfile
