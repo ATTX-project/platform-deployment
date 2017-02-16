@@ -45,7 +45,7 @@ RUN tar -xf gm-API-${version}.tar.gz
 
 # TBC when moving to Jenkins to donwload from artifact repo
 RUN wget -P /app/java "http://localhost:8081/repository/attx-releases/org/uh/attx/gc/gc-rdf2json-indexer-all/99/gc-rdf2json-indexer-all-99-all.jar"\
-    && mv /app/java/gc-rdf2json-indexer-all-99-all.jar /app/java/gc-rdf2jon-indexer.jar
+    && mv /app/java/gc-rdf2json-indexer-all-99-all.jar /app/java/gc-rdf2json-indexer.jar
 
 RUN mkdir logs
 RUN touch data.db
