@@ -2,7 +2,7 @@ apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'de.undercouch.download'
 
 if (!project.hasProperty("registryUrl")) {
-    ext.registryUrl = "http://attx-dev.hulib.helsinki.fi:5000"
+    ext.registryUrl = "http://attx-dev:5000"
 }
 
 repositories {
