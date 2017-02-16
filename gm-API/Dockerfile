@@ -43,7 +43,7 @@ COPY build/distributions/gm-API-${version}.tar.gz /app
 RUN tar -xf gm-API-${version}.tar.gz
 
 # TBC when moving to Jenkins to donwload from artifact repo
-RUN wget  -P /app/java -O gc-rdf2json-indexer.jar http://archiva:8081/repository/attx-snapshots/org/uh/attx/gc/gc-rdf2json-indexer/1.0-SNAPSHOT/gc-rdf2json-indexer-1.0-20170216.112513-21.jar gc-rdf2json-indexer.jar
+RUN wget  -P /app/java -O gc-rdf2json-indexer.jar http://archiva:8080/repository/attx-snapshots/org/uh/attx/gc/gc-rdf2json-indexer/1.0-SNAPSHOT/gc-rdf2json-indexer-1.0-20170216.112513-21.jar gc-rdf2json-indexer.jar
 
 RUN mkdir logs
 RUN touch data.db
