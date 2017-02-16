@@ -23,7 +23,7 @@ dcompose {
   essiren {
     baseDir = file('.')
     dockerFilename = 'Dockerfile'
-    repository = 'attx-dev.hulib.helsinki.fi:5000/essiren:latest'
+    repository = 'attx-dev:5000/essiren:latest'
     exposedPorts = ['9200', '9300']
     portBindings = ['9200:9200', '9300:9300']
   }
