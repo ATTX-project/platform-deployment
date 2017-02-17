@@ -43,7 +43,7 @@ WORKDIR /app
 COPY build/distributions/gm-API-${version}.tar.gz /app
 RUN tar -xf gm-API-${version}.tar.gz
 
-COPY build/gc-rdf2json-indexer.jar /app/java/gc-rdf2json-indexer.jar
+COPY build/distributions/gc-rdf2json-indexer-all-99-all.jar /app/java/gc-rdf2json-indexer.jar
 
 RUN mkdir logs
 RUN touch data.db
