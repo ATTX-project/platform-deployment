@@ -33,8 +33,8 @@ ENV FUSEKI_MIRROR http://www.eu.apache.org/dist/
 ENV FUSEKI_ARCHIVE http://archive.apache.org/dist/
 
 # Config and data volume
-VOLUME /fuseki
-ENV FUSEKI_BASE /fuseki
+VOLUME /data/fuseki/fuseki_DB
+ENV FUSEKI_BASE /data/fuseki
 
 # Installation folder
 RUN mkdir /jena-fuseki
@@ -56,21 +56,21 @@ RUN wget $FUSEKI_MIRROR/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz 
 # we'll enable basic-auth with a preset admin password
 # (which we'll generate on start-up)
 COPY shiro.ini /jena-fuseki/shiro.ini
-COPY shiro.ini /fuseki/shiro.ini
+COPY docker-entrypoint.sh /
 
 # Adding configuration to the Graph Store and associated data
 # at the same time modifing start script
-ADD data /fuseki/config/data/
-COPY config.ttl /fuseki/config/config.ttl
+ADD data /data/fuseki/config/data/
+COPY config.ttl /data/fuseki/config/config.ttl
 COPY start-fuseki.sh /jena-fuseki/start-fuseki.sh
 # Create volume for data store
-VOLUME /data/fuseki_DB
 
 COPY load.sh /jena-fuseki/
 COPY tdbloader /jena-fuseki/
-RUN chmod 755 /jena-fuseki/load.sh /jena-fuseki/tdbloader /jena-fuseki/start-fuseki.sh
+RUN chmod 755 /jena-fuseki/load.sh /jena-fuseki/tdbloader /jena-fuseki/start-fuseki.sh /docker-entrypoint.sh
 
 # Where we start our server from
 WORKDIR /jena-fuseki
 EXPOSE 3030
-ENTRYPOINT ["/jena-fuseki/start-fuseki.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["/jena-fuseki/start-fuseki.sh"]

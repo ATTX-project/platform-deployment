@@ -23,5 +23,8 @@ dcompose {
 		dockerFilename = 'Dockerfile'
 		repository = 'attx-dev:5000/attx-fuseki:latest'
 		attachStdout = true
+    exposedPorts = ['3030']
+    portBindings = ['3030:3030']
+    env = ['ADMIN_PASSWORD=pw123']
 	}
 }
