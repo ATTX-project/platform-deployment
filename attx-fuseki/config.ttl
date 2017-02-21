@@ -4,7 +4,7 @@
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix tdb:     <http://jena.hpl.hp.com/2008/tdb#> .
 @prefix ja:      <http://jena.hpl.hp.com/2005/11/Assembler#> .
-@prefix dc:         <http://purl.org/dc/elements/1.1/> .
+@prefix dc:      <http://purl.org/dc/elements/1.1/> .
 
 <>  rdfs:comment     "ATTX Graph Store specification for FUseki" ;
     dc:creator       "ATTX Project" ;
@@ -27,83 +27,96 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model .
 
 # In-memory test service for BDD tests on Fuseki.
 <#service_test> rdf:type fuseki:Service ;
-    rdfs:label                        "TDB(test) Service" ;
-    fuseki:name                       "test" ;     # http://host:port/test
-    fuseki:serviceQuery               "sparql" ;   # SPARQL query service
-    fuseki:serviceQuery               "query" ;    # SPARQL query service (alt name)
-    fuseki:serviceUpdate              "update" ;   # SPARQL update service
-    fuseki:serviceUpload              "upload" ;   # Non-SPARQL upload service
-    fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
-    # A separate read-only graph store endpoint:
-    fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
-    fuseki:dataset           <#dataset> ;
-    .
+  rdfs:label                        "TDB(test) Service" ;
+  fuseki:name                       "test" ;     # http://host:port/test
+  fuseki:serviceQuery               "sparql" ;   # SPARQL query service
+  fuseki:serviceQuery               "query" ;    # SPARQL query service (alt name)
+  fuseki:serviceUpdate              "update" ;   # SPARQL update service
+  fuseki:serviceUpload              "upload" ;   # Non-SPARQL upload service
+  fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
+  # A separate read-only graph store endpoint:
+  fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
+  fuseki:dataset                    <#dataset> ;
+  .
 
 <#tdb_test_dataset> rdf:type tdb:DatasetTDB ;
-    tdb:location "--mem--" ;
-    ## Query timeout on this dataset (milliseconds)
-    ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "1000" ] ;
-    ## Default graph for query is the (read-only) union of all named graphs.
-    tdb:unionDefaultGraph true ;
-   .
+  tdb:location "--mem--" ;
+  ## Query timeout on this dataset (milliseconds)
+  ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "1000" ] ;
+  ## Default graph for query is the (read-only) union of all named graphs.
+  tdb:unionDefaultGraph true ;
+  .
 
 # Development service endpoint for Use-case Data.
+# Recommended would be to split this into 2 services one for query with the inferenced dataset and one for update.
 <#service_prod> rdf:type fuseki:Service ;
-   rdfs:label                        "TDB Service" ;
-   fuseki:name                       "ds" ;       # http://host:port/ds
-   fuseki:serviceQuery               "sparql" ;   # SPARQL query service
-   fuseki:serviceQuery               "query" ;    # SPARQL query service (alt name)
-   fuseki:serviceUpdate              "update" ;   # SPARQL update service
-   fuseki:serviceUpload              "upload" ;   # Non-SPARQL upload service
-   fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
-   # A separate read-only graph store endpoint:
-   fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
-   fuseki:dataset           <#dataset> ;
-   .
+  rdfs:label                        "TDB Service" ;
+  fuseki:name                       "ds" ;       # http://host:port/ds
+  fuseki:serviceQuery               "sparql" ;   # SPARQL query service
+  fuseki:serviceQuery               "query" ;    # SPARQL query service (alt name)
+  fuseki:serviceUpdate              "update" ;   # SPARQL update service
+  fuseki:serviceUpload              "upload" ;   # Non-SPARQL upload service
+  fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
+  # A separate read-only graph store endpoint:
+  fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
+  fuseki:dataset                    <#dataset> ;
+  .
 
-#  http://data.hulib.helsinki.fi/attx - to be used as a base for data
-#  http://data.hulib.helsinki.fi/attx/prov - for provenance data
-#  http://data.hulib.helsinki.fi/attx/ids - for clusted data ids
+  #  http://data.hulib.helsinki.fi/attx - to be used as a base for data
+  #  http://data.hulib.helsinki.fi/attx/prov - for provenance data
+  #  http://data.hulib.helsinki.fi/attx/ids - for clusted data ids
 
 <#dataset> rdf:type ja:RDFDataset ;
   ja:defaultGraph <#default> ;
-  # ja:namedGraph
-  #      [ ja:graphName      <http://data.hulib.helsinki.fi/attx/ids> ;
-  #        ja:graph          <#attx-ids> ] ;
+  # The graphs below will not be persistent in terms of namespacing.
+  # problem pointed http://mail-archives.apache.org/mod_mbox/jena-users/201603.mbox/%3CCA%2BRbaMCSPHOO6%3DHTBETY-C1e2VfDEhHRfJ0GMSBfwQ70KEsm3Q%40mail.gmail.com%3E
   ja:namedGraph
       [ ja:graphName      <http://data.hulib.helsinki.fi/attx/onto> ;
         ja:graph          <#attx-ontodb> ] ;
+  ja:namedGraph
+      [ ja:graphName      <http://data.hulib.helsinki.fi/attx/ids> ;
+        ja:graph          <#attx-ids> ] ;
+  ja:namedGraph
+      [ ja:graphName      <http://data.hulib.helsinki.fi/attx/prov> ;
+        ja:graph          <#attx-prov> ] ;
   .
-# ja:UnionModel
+
 <#default> rdf:type tdb:GraphTDB ;
   tdb:dataset <#tdb_prod_dataset> ;
-  tdb:graphName <http://data.hulib.helsinki.fi/attx/> ;
+  .
+
+<#attx-ontodb> rdf:type ja:OntModel ;
+  ja:initialContent <#attx-onto> ;
+  .
+
+<#attx-ids> rdf:type tdb:GraphTDB ;
+  tdb:dataset <#tdb_prod_dataset> ;
+  tdb:graphName <http://data.hulib.helsinki.fi/attx/ids> ;
+  .
+
+<#attx-prov> rdf:type tdb:GraphTDB ;
+  tdb:dataset <#tdb_prod_dataset> ;
+  tdb:graphName <http://data.hulib.helsinki.fi/attx/prov> ;
   .
 
 <#tdb_prod_dataset> rdf:type tdb:DatasetTDB ;
-   tdb:location "/data/fuseki_DB" ;
-   ## Query timeout on this dataset (milliseconds)
-   ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "3000" ] ;
-   ## Default graph for query is the (read-only) union of all named graphs.
-   tdb:unionDefaultGraph true ;
-   .
+  tdb:location "DB" ;
+  ## Query timeout on this dataset (milliseconds)
+  ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "3000" ] ;
+  ## Default graph for query is the (read-only) union of all named graphs.
+  tdb:unionDefaultGraph true ;
+  .
 
- <#attx-ontodb> rdf:type ja:OntModel ;
-  #  ja:baseModel <#default> ;
-   ja:initialContent <#attx-onto> ;
-  #  ja:reasoner [
-  #      ja:reasonerURL <http://jena.hpl.hp.com/2003/OWLFBRuleReasoner>] ;
-   .
-
- <#tdbOntoGraph> rdf:type tdb:GraphTDB ;
-   tdb:dataset <#tdb_prod_dataset> ;
-   tdb:graphName <http://data.hulib.helsinki.fi/attx/onto> ;
-   .
-
-
+# Data
 <#attx-onto> ja:externalContent <file:data/attx-onto.ttl> .
 
-# <#attx-ids> rdf:type tdb:GraphTDB ;
+# # Something more complex where the UnionGraph would be materialized in the default graph
+# <#attx> rdf:type ja:UnionModel ;
+#   ja:rootModel <#default>;
+#   ja:subModel <#attx-ids>;
+#   ja:initialContent <#attx-onto> ;
+#   .
+# <#attx-ids> rdf:type ja:MemoryModel ;
 #   tdb:dataset <#tdb_prod_dataset> ;
 #   tdb:graphName <http://data.hulib.helsinki.fi/attx/ids> ;
 #   .

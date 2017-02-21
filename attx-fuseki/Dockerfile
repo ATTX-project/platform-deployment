@@ -13,9 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# This Dockerfile was extended from https://hub.docker.com/r/stain/jena-fuseki/
 
-#FROM alpine:3.4
-#RUN apk add --update openjdk8-jre pwgen bash wget ca-certificates && rm -rf /var/cache/apk/*
 FROM java:8-jre-alpine
 
 MAINTAINER João M. da Silva <joao.silva@helsinki.fi>
@@ -33,7 +32,7 @@ ENV FUSEKI_VERSION 2.5.0
 ENV FUSEKI_MIRROR http://www.eu.apache.org/dist/
 ENV FUSEKI_ARCHIVE http://archive.apache.org/dist/
 
-# Config and data
+# Config and data volume
 VOLUME /fuseki
 ENV FUSEKI_BASE /fuseki
 
@@ -53,26 +52,25 @@ RUN wget $FUSEKI_MIRROR/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz 
     && rm apache-jena-fuseki-$FUSEKI_VERSION.tar.gz \
     && cd $FUSEKI_HOME && rm -rf fuseki.war
 
-
 # As "localhost" is often inaccessible within Docker container,
-# we'll enable basic-auth with a random admin password
+# we'll enable basic-auth with a preset admin password
 # (which we'll generate on start-up)
 COPY shiro.ini /jena-fuseki/shiro.ini
 COPY shiro.ini /fuseki/shiro.ini
+
+# Adding configuration to the Graph Store and associated data
+# at the same time modifing start script
 ADD data /fuseki/config/data/
 COPY config.ttl /fuseki/config/config.ttl
 COPY start-fuseki.sh /jena-fuseki/start-fuseki.sh
-
 # Create volume for data store
 VOLUME /data/fuseki_DB
 
 COPY load.sh /jena-fuseki/
 COPY tdbloader /jena-fuseki/
 RUN chmod 755 /jena-fuseki/load.sh /jena-fuseki/tdbloader /jena-fuseki/start-fuseki.sh
-#VOLUME /staging
 
 # Where we start our server from
 WORKDIR /jena-fuseki
 EXPOSE 3030
-# ENTRYPOINT ["/bin/ash"]
-CMD ["/jena-fuseki/start-fuseki.sh"]
+ENTRYPOINT ["/jena-fuseki/start-fuseki.sh"]
