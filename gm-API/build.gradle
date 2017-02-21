@@ -3,27 +3,12 @@ apply plugin: 'de.undercouch.download'
 
 version=0.1
 
-repositories {
-    mavenCentral()
-}
-
-
-if (!project.hasProperty("artifactRepoUrl")) {
-    ext.artifactRepoUrl = "http://attx-dev.hulib.helsinki.fi:8081/repository/attx-releases"
-}
-if (!project.hasProperty("artifactRepoUser")) {
-    ext.artifactRepoUser = ""
-}
-if (!project.hasProperty("artifactRepoPassword")) {
-    ext.artifactRepoPassword = ""
-}
-
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
     src([
-      "${artifactRepoUrl}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz",
-      "http://archiva:8080/repository/attx-releases/org/uh/attx/gc/gc-rdf2json-indexer-all/99/gc-rdf2json-indexer-all-99-all.jar"
+      "http://${imageRepo}:${jenkinsPort}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${version}.tar.gz",
+      "${artifactRepoURL}/org/uh/attx/gc/gc-rdf2json-indexer-all/99/gc-rdf2json-indexer-all-99-all.jar"
     ])
     dest "$projectDir/build/distributions/"
 }
@@ -36,12 +21,12 @@ task dockerPrepare () {
 }
 
 dcompose {
-  registry ('http://attx-dev:5000') {
+  registry ("$registryURL") {
      	 // Needs no user/pass
  	 }
   gmapi {
     baseDir = file('.')
-    repository = 'attx-dev:5000/gm-api:latest'
+    repository = "${imageRepo}:${imageRepoPort}/gm-api:latest"
     portBindings = ['4302:4302']
   }
 }

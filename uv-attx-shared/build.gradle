@@ -1,35 +1,13 @@
-plugins {
-  id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
-}
-
-apply plugin: 'java'
-
-sourceCompatibility = 1.6
-
-repositories {
-    // need to have maven central or a mirror in order for the plugin to be functional
-    mavenCentral()
-}
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 
 dcompose {
-
-	registry ('http://attx-dev:5000') {
+	registry ("$registryURL") {
 	// Needs no user/pass
-
 	}
-
-	'uv-attx-shared'{
+	uvattxshared{
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-		repository = 'attx-dev:5000/uv-attx-shared:latest'
+		repository = "${imageRepo}:${imageRepoPort}/uv-attx-shared:latest"
 		attachStdout = true
 	}
 }
-
-/*
-task test {
-	dependsOn startContainers
-	pushUvAttxSharedImage.dependsOn dockerPrepare
-
-}
-*/

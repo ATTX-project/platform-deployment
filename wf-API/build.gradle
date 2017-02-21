@@ -3,23 +3,6 @@ apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 version=0.1
 
-if (!project.hasProperty("artifactRepoUrl")) {
-    ext.artifactRepoUrl = "http://attx-dev:8081/repository/attx-releases"
-}
-if (!project.hasProperty("artifactRepoUser")) {
-    ext.artifactRepoUser = ""
-}
-if (!project.hasProperty("artifactRepoPassword")) {
-    ext.artifactRepoPassword = ""
-}
-if (!project.hasProperty("registryUrl")) {
-    ext.registryUrl = "http://attx-dev:5000"
-}
-
-repositories {
-    mavenCentral()
-}
-
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
@@ -35,13 +18,13 @@ task dockerPrepare () {
 }
 
 dcompose {
-	registry ('http://attx-dev:5000') {
+	registry ("$registryURL") {
      	 // Needs no user/pass
  	 }
 	wfapi {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-    		repository = 'attx-dev:5000/wf-api:latest'
+    		repository = "${imageRepo}:${imageRepoPort}/wf-api:latest"
 	}
 }
 
