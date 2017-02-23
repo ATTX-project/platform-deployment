@@ -1,4 +1,4 @@
-apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 dcompose {
 	registry ("$registryURL") {
