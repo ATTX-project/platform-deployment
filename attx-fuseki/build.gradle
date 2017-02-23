@@ -1,30 +1,17 @@
-plugins {
-  id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
-}
-
-apply plugin: 'java'
-
-sourceCompatibility = 1.6
-
-repositories {
-    // need to have maven central or a mirror in order for the plugin to be functional
-    mavenCentral()
-}
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 
 dcompose {
+    registry ("$registryURL") {
+        // Needs no user/pass
+    }
 
-	registry ('http://attx-dev:5000') {
-	// Needs no user/pass
-
-	}
-
-	'attx-fuseki'{
-		baseDir = file('.')
-		dockerFilename = 'Dockerfile'
-		repository = 'attx-dev:5000/attx-fuseki:latest'
-		attachStdout = true
-    exposedPorts = ['3030']
-    portBindings = ['3030:3030']
-    env = ['ADMIN_PASSWORD=pw123']
-	}
+    'attx-fuseki'{
+        baseDir = file('.')
+	dockerFilename = 'Dockerfile'
+	repository = '${imageRepo}:${imageRepoPort}/attx-fuseki:latest'
+	attachStdout = true
+        exposedPorts = ['3030']
+        portBindings = ['3030:3030']
+        env = ['ADMIN_PASSWORD=pw123']
+    }
 }

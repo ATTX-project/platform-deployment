@@ -1,51 +1,36 @@
-/*
 apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 version=0.1
-*/
-
-apply plugin: 'de.undercouch.download'
-apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
-
-version=0.1
-
-if (!project.hasProperty("artifactRepoUrl")) {
-    ext.artifactRepoUrl = "http://attx-dev:8081/repository/attx-releases"
-}
-if (!project.hasProperty("artifactRepoUser")) {
-    ext.artifactRepoUser = ""
-}
-if (!project.hasProperty("artifactRepoPassword")) {
-    ext.artifactRepoPassword = ""
-}
-if (!project.hasProperty("registryUrl")) {
-    ext.registryUrl = "http://attx-dev:5000"
-}
-
-repositories {
-    mavenCentral()
-}
 
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
-    src "${artifactRepoUrl}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar"
-    dest "$buildDir/dpus/TransformerATTXMetadata-1.0-SNAPSHOT.jar"
-    src "${artifactRepoUrl}/job/uv-dpu-t-attx-uc1-infras2internal/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-uc1-infras2internal/build/libs/uv-dpu-t-attx-uc1-infras2internal-1.0-SNAPSHOT-sources.jar"
-    dest "$buildDir/dpus/uv-dpu-t-attx-uc1-infras2internal-1.0-SNAPSHOT-sources.jar"
-    src "${artifactRepoUrl}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
-    dest "$buildDir/dpus/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
+    src([
+        "${artifactRepoURL}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar",
+        "${artifactRepoURL}/job/uv-dpu-t-attx-uc1-infras2internal/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-uc1-infras2internal/build/libs/Infras2Internal-1.0-SNAPSHOT.jar",
+        "${artifactRepoURL}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
+    ])
+    dest "$projectDir/dpus/"
+}
+
+task dockerPrepare () {
+    doLast {
+        mkdir "$projectDir/dpus"
+        tasks.downloadJars.execute()
+    }
 }
 
 dcompose {
-	registry ('http://attx-dev:5000') {
+	registry ("$registryURL") {
      	 // Needs no user/pass
- 	 }	
-
-	'uv-attx-dpus' {
+ 	}
+	uvattxdpus {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-    		repository = 'attx-dev:5000/uv-attx-dpus:latest'
+    repository = "${imageRepo}:${imageRepoPort}/uv-attx-dpus:latest"
 	}
 }
+
+buildUvattxdpusImage.dependsOn dockerPrepare
+pushUvattxdpusImage.dependsOn dockerPrepare
