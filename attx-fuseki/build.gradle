@@ -5,7 +5,7 @@ dcompose {
         // Needs no user/pass
     }
 
-    'attx-fuseki'{
+    attxfuseki {
         baseDir = file('.')
 	dockerFilename = 'Dockerfile'
 	repository = '${imageRepo}:${imageRepoPort}/attx-fuseki:latest'
