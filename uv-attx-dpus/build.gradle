@@ -7,9 +7,9 @@ import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
     src([
-        "${artifactRepoURL}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar",
-        "${artifactRepoURL}/job/uv-dpu-t-attx-uc1-infras2internal/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-uc1-infras2internal/build/libs/Infras2Internal-1.0-SNAPSHOT.jar",
-        "${artifactRepoURL}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
+        "${jenkinsArtifactRepoURL}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/build/libs/TransformerATTXMetadata-1.0-SNAPSHOT.jar",
+        "${jenkinsArtifactRepoURL}/job/uv-dpu-t-attx-uc1-infras2internal/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-uc1-infras2internal/build/libs/Infras2Internal-1.0-SNAPSHOT.jar",
+        "${jenkinsArtifactRepoURL}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-1.0-SNAPSHOT.jar"
     ])
     dest "$projectDir/dpus/"
 }
