@@ -14,7 +14,7 @@ ext.jenkinsPort = "49001"
 
 
 if(!project.hasProperty("jenkinsArtifactRepoURL")) {
-    ext.jenkinsArtifactRepoURL = http://${imageRepo}:${jenkinsPort}
+    ext.jenkinsArtifactRepoURL = "http://${imageRepo}:${jenkinsPort}"
 }
 
 if (!project.hasProperty("registryURL")) {
