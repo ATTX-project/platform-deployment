@@ -6,85 +6,85 @@ sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 dependencies {
-  testCompile \
-    'junit:junit:4.10',
-    'info.cukes:cucumber-java8:1.2.5',
-    'info.cukes:cucumber-junit:1.2.5',
-    'com.mashape.unirest:unirest-java:1.4.9',
-    'org.skyscreamer:jsonassert:1.4.0'
+    testCompile \
+        'junit:junit:4.10',
+        'info.cukes:cucumber-java8:1.2.5',
+        'info.cukes:cucumber-junit:1.2.5',
+        'com.mashape.unirest:unirest-java:1.4.9',
+        'org.skyscreamer:jsonassert:1.4.0'
 }
 
 dcompose {
-  createComposeFile.useTags = true
-  registry ("$registryURL") {}
+    createComposeFile.useTags = true
+    registry ("$registryURL") {}
 
-  shared {
-    image = "${imageRepo}:${imageRepoPort}/uv-attx-shared"
-  }
+    shared {
+        image = "${imageRepo}:${imageRepoPort}/uv-attx-shared"
+    }
 
-  frontend {
-    image = 'tenforce/unified-views-frontend:latest'
-    volumesFrom = [shared]
-    exposedPorts = ['8080']
-    portBindings = ['8080:8080']
-  }
+    frontend {
+        image = 'tenforce/unified-views-frontend:latest'
+        volumesFrom = [shared]
+        exposedPorts = ['8080']
+        portBindings = ['8080:8080']
+    }
 
-  mysql {
-    image = 'tenforce/unified-views-mariadb:latest'
-    env = ['MYSQL_ROOT_PASSWORD=iamroot!']
-  }
+    mysql {
+        image = 'tenforce/unified-views-mariadb:latest'
+        env = ['MYSQL_ROOT_PASSWORD=iamroot!']
+    }
 
-  backend {
-    image = 'tenforce/unified-views-backend:latest'
-    volumesFrom = [shared]
-  }
+    backend {
+        image = 'tenforce/unified-views-backend:latest'
+        volumesFrom = [shared]
+    }
 
-  uvdpus {
-    image = 'tenforce/unified-views-add-dpus'
-    dependsOn = [mysql]
-  }
+    uvdpus {
+        image = 'tenforce/unified-views-add-dpus'
+        dependsOn = [mysql]
+    }
 
-  wfapi {
-    image = "${imageRepo}:${imageRepoPort}/wf-api:latest"
-    exposedPorts = ['4301']
-    portBindings = ['4301:4301']
-  }
+    wfapi {
+        image = "${imageRepo}:${imageRepoPort}/wf-api:latest"
+        exposedPorts = ['4301']
+        portBindings = ['4301:4301']
+    }
 
-  fuseki {
-    image = "${imageRepo}:${imageRepoPort}/attx-fuseki:latest"
-    exposedPorts = ['3030']
-    portBindings = ['3030:3030']
-    env = ['ADMIN_PASSWORD=pw123']
-  }
+    fuseki {
+        image = "${imageRepo}:${imageRepoPort}/attx-fuseki:latest"
+        exposedPorts = ['3030']
+        portBindings = ['3030:3030']
+        env = ['ADMIN_PASSWORD=pw123']
+    }
 
-  essiren {
-    image = "${imageRepo}:${imageRepoPort}/essiren:latest"
-    exposedPorts = ['9200', '9300']
-    portBindings = ['9200:9200', '9300:9300']
-  }
+    essiren {
+        image = "${imageRepo}:${imageRepoPort}/essiren:latest"
+        exposedPorts = ['9200', '9300']
+        portBindings = ['9200:9200', '9300:9300']
+    }
 
-  gmapi {
-    image = "${imageRepo}:${imageRepoPort}/gm-api:latest"
-    exposedPorts = ['4302']
-    portBindings = ['4302:4302']
-  }
+    gmapi {
+        image = "${imageRepo}:${imageRepoPort}/gm-api:latest"
+        exposedPorts = ['4302']
+        portBindings = ['4302:4302']
+    }
 
-  test {
-    ignoreExitCode = true
-    baseDir = file('.')
-    dockerFilename = 'Dockerfile'
-    binds = ["/var/run/docker.sock:/run/docker.sock"]
-    command = ['sh', '-c', '/tmp/runTests.sh']
-    dependsOn = [gmapi, essiren, fuseki, wfapi, frontend, backend, shared]
-    waitForCommand = true
-  }
+    test {
+        ignoreExitCode = true
+        baseDir = file('.')
+        dockerFilename = 'Dockerfile'
+        binds = ["/var/run/docker.sock:/run/docker.sock"]
+        command = ['sh', '-c', '/tmp/runTests.sh']
+        dependsOn = [gmapi, essiren, fuseki, wfapi, frontend, backend, shared]
+        waitForCommand = true
+    }
 }
 
 task copyReportFiles(type: DcomposeCopyFileFromContainerTask) {
-  service = dcompose.test
-  containerPath = '/tmp/build/reports'
-  destinationDir = file("build/from-container/")
-  cleanDestinationDir = false
+      service = dcompose.test
+      containerPath = '/tmp/build/reports'
+      destinationDir = file("build/from-container/")
+      cleanDestinationDir = false
 }
 
 startTestContainer.finalizedBy('copyReportFiles')
@@ -95,7 +95,7 @@ buildTestImage.dependsOn('testClasses')
 
 
 shadowJar {
-  classifier = 'tests'
-  from sourceSets.test.output
-  configurations = [project.configurations.testRuntime]
+      classifier = 'tests'
+      from sourceSets.test.output
+      configurations = [project.configurations.testRuntime]
 }

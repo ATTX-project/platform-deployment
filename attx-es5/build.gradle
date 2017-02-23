@@ -2,7 +2,7 @@ apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 
 dcompose {
 	registry ("$registryURL") {
-	// Needs no user/pass
+		// Needs no user/pass
 	}
 
 	attxes5 {

@@ -1,14 +1,14 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 
 dcompose {
-  registry ("$registryURL") {
-	// Needs no user/pass
-	}
+    registry ("$registryURL") {
+	       // Needs no user/pass
+    }
 
-	'attx-fuseki'{
-		baseDir = file('.')
-		dockerFilename = 'Dockerfile'
-		repository = "${imageRepo}:${imageRepoPort}/attx-fuseki:latest"
-		attachStdout = true
-	}
+    'attx-fuseki'{
+           baseDir = file('.')
+           dockerFilename = 'Dockerfile'
+           repository = "${imageRepo}:${imageRepoPort}/attx-fuseki:latest"
+           attachStdout = true
+    }
 }

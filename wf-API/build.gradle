@@ -5,26 +5,26 @@ version=0.1
 
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
-  // TODO: Change this to use artifact repository
-  src "${artifactRepoURL}/job/wf-api/lastSuccessfulBuild/artifact/wf-API/build/distributions/wf-API-${version}.tar.gz"
-  dest "$projectDir/build/distributions/wf-API-${version}.tar.gz"
+    // TODO: Change this to use artifact repository
+    src "${artifactRepoURL}/job/wf-api/lastSuccessfulBuild/artifact/wf-API/build/distributions/wf-API-${version}.tar.gz"
+    dest "$projectDir/build/distributions/wf-API-${version}.tar.gz"
 }
 
 task dockerPrepare () {
-  doLast {
-    mkdir "$projectDir/build/distributions"
-    tasks.downloadJars.execute()
-  }
+    doLast {
+        mkdir "$projectDir/build/distributions"
+        tasks.downloadJars.execute()
+    }
 }
 
 dcompose {
 	registry ("$registryURL") {
      	 // Needs no user/pass
- 	 }
+ 	}
 	wfapi {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-    repository = "${imageRepo}:${imageRepoPort}/wf-api:latest"
+        repository = "${imageRepo}:${imageRepoPort}/wf-api:latest"
 	}
 }
 

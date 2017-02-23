@@ -1,10 +1,10 @@
 plugins {
-  id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
+    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.8.2"
 }
 
 repositories {
-  // need to have maven central or a mirror in order for the plugin to be functional
-  mavenCentral()
+    // need to have maven central or a mirror in order for the plugin to be functional
+    mavenCentral()
 }
 
 dcompose {

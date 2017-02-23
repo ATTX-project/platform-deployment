@@ -1,10 +1,10 @@
 apply plugin: 'base'
 
 repositories {
-  mavenCentral();
-  // You may define additional repositories, or even remove "mavenCentral()".
-  // Read more about repositories here:
-  //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
+      mavenCentral();
+      // You may define additional repositories, or even remove "mavenCentral()".
+      // Read more about repositories here:
+      //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
 }
 
 ext.imageRepo = "attx-dev"
@@ -13,15 +13,15 @@ ext.artifactRepoPort = "8081"
 ext.jenkinsPort = "49001"
 
 if (!project.hasProperty("registryURL")) {
-  ext.registryURL = "http://${imageRepo}:${imageRepoPort}"
+    ext.registryURL = "http://${imageRepo}:${imageRepoPort}"
 }
 
 if (!project.hasProperty("artifactRepoURL")) {
-  ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"
+    ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"
 }
 if (!project.hasProperty("artifactRepoUser")) {
-  ext.artifactRepoUser = ""
+    ext.artifactRepoUser = ""
 }
 if (!project.hasProperty("artifactRepoPassword")) {
-  ext.artifactRepoPassword = ""
+    ext.artifactRepoPassword = ""
 }
