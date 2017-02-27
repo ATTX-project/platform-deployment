@@ -19,3 +19,5 @@ gradle-app.setting
 
 /pd-feature-tests/build/
 /.gradle/
+
+/pd-feature-tests/.idea
