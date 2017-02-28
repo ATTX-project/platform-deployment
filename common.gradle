@@ -14,40 +14,30 @@ ext {
 // TO BE REMOVED when moving to archiva
 if(!project.hasProperty("jenkinsArtifactRepoURL")) {
     ext.jenkinsArtifactRepoURL = "http://${imageRepo}:${jenkinsPort}"
-} else {
-    throw new GradleException("Jenkins CI URL has not been set.")
 }
 
 if (!project.hasProperty("registryURL")) {
     ext.registryURL = "http://${imageRepo}:${imageRepoPort}"
-} else {
-    throw new GradleException("Docker Registry URL has not been set.")
 }
 
 if (!project.hasProperty("artifactRepoURL")) {
     ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"
-} else {
-    throw new GradleException("Artifact Repo URL has not been set")
 }
 
 if (!project.hasProperty("artifactRepoUser")) {
     ext.artifactRepoUser = ""
-}  else {
-    throw new GradleException("Artifact Repo user has not been set.")
 }
 
 if (!project.hasProperty("artifactRepoPassword")) {
     ext.artifactRepoPassword = ""
-} else {
-    throw new GradleException("Artifact Repo password has not been set.")
 }
 
-def setPropertyDefaultValueIfNotCustomized(propertyName, defaultValue) {
-    if (!project.hasProperty(propertyName)) {
-        ext[propertyName] = defaultValue
-    }
-}
-
-ext {
-    setPropertyDefaultValueIfNotCustomized('MY_NAME', 'John Doe')
-}
+// def setPropertyDefaultValueIfNotCustomized(propertyName, defaultValue) {
+//     if (!project.hasProperty(propertyName)) {
+//         ext[propertyName] = defaultValue
+//     }
+// }
+//
+// ext {
+//     setPropertyDefaultValueIfNotCustomized('MY_NAME', 'John Doe')
+// }
