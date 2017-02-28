@@ -7,11 +7,12 @@ wait_for() {
   while ! nc -z $1 $2; do echo sleeping >> /tmp/log ; sleep $SLEEP_LENGTH; done
 }
 
+wait_for "mysql" "3306"
+wait_for "frontend" "8080"
 wait_for "fuseki" "3030"
-wait_for "essiren" "9200"
-wait_for "essiren" "9300"
 wait_for "gmapi" "4302"
 wait_for "wfapi" "4301"
-wait_for "frontend" "8080"
+wait_for "essiren" "9200"
+wait_for "essiren" "9300"
 
 gradle -b build.gradle --offline test
