@@ -2,31 +2,52 @@ apply plugin: 'base'
 
 repositories {
       mavenCentral();
-      // You may define additional repositories, or even remove "mavenCentral()".
-      // Read more about repositories here:
-      //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
 }
 
-ext.imageRepo = "attx-dev"
-ext.imageRepoPort = "5000"
-ext.artifactRepoPort = "8081"
-ext.jenkinsPort = "49001"
+ext {
+    imageRepo = "attx-dev"
+    imageRepoPort = "5000"
+    artifactRepoPort = "8081"
+    jenkinsPort = "49001"
+}
 
-
+// TO BE REMOVED when moving to archiva
 if(!project.hasProperty("jenkinsArtifactRepoURL")) {
     ext.jenkinsArtifactRepoURL = "http://${imageRepo}:${jenkinsPort}"
+} else {
+    throw new GradleException("Jenkins CI URL has not been set.")
 }
 
 if (!project.hasProperty("registryURL")) {
     ext.registryURL = "http://${imageRepo}:${imageRepoPort}"
+} else {
+    throw new GradleException("Docker Registry URL has not been set.")
 }
 
 if (!project.hasProperty("artifactRepoURL")) {
     ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"
+} else {
+    throw new GradleException("Artifact Repo URL has not been set")
 }
+
 if (!project.hasProperty("artifactRepoUser")) {
     ext.artifactRepoUser = ""
+}  else {
+    throw new GradleException("Artifact Repo user has not been set.")
 }
+
 if (!project.hasProperty("artifactRepoPassword")) {
     ext.artifactRepoPassword = ""
+} else {
+    throw new GradleException("Artifact Repo password has not been set.")
+}
+
+def setPropertyDefaultValueIfNotCustomized(propertyName, defaultValue) {
+    if (!project.hasProperty(propertyName)) {
+        ext[propertyName] = defaultValue
+    }
+}
+
+ext {
+    setPropertyDefaultValueIfNotCustomized('MY_NAME', 'John Doe')
 }

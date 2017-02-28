@@ -18,10 +18,10 @@ ENV LANG C.UTF-8
 # add a simple script that can auto-detect the appropriate JAVA_HOME value
 # based on whether the JDK or only the JRE is installed
 RUN { \
-                echo '#!/bin/sh'; \
-                echo 'set -e'; \
-                echo; \
-                echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
+        echo '#!/bin/sh'; \
+        echo 'set -e'; \
+        echo; \
+        echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
         } > /usr/local/bin/docker-java-home \
         && chmod +x /usr/local/bin/docker-java-home
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
@@ -41,8 +41,8 @@ ENV RDFINDEXER 99
 
 WORKDIR /app
 
-COPY build/distributions/gm-API-${GMAPI}.tar.gz /app
-RUN tar -xf gm-API-${GMAPI}.tar.gz
+COPY build/distributions/gm-API-${GMAPI}.tar.gz /app/gm-API.tar.gz
+RUN tar -xf gm-API.tar.gz
 
 COPY build/distributions/gc-rdf2json-indexer-all-${RDFINDEXER}-all.jar /app/java/gc-rdf2json-indexer.jar
 

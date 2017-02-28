@@ -1,5 +1,7 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 
+ext.Image_version = "latest"
+
 dcompose {
 	registry ("$registryURL") {
 		// Needs no user/pass
@@ -8,7 +10,7 @@ dcompose {
 	attxes5 {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-		repository = "${imageRepo}:${imageRepoPort}/attx-es5:latest"
+		repository = "${imageRepo}:${imageRepoPort}/attx-es5:${Image_version}"
 		attachStdout = true
 	}
 }

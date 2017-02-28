@@ -1,10 +1,15 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'de.undercouch.download'
 
+ext {
+    Image_version = "latest"
+    APIPlugin_version = "1.0-SNAPSHOT"
+}
+
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
-    src "http://${imageRepo}:${jenkinsPort}/job/dc-elasticsearch-siren-pipeline/lastSuccessfulBuild/artifact/dc-elasticsearch-siren/attx-api-plugin/build/libs/attx-api-plugin-1.0-SNAPSHOT.jar"
+    src "http://${imageRepo}:${jenkinsPort}/job/dc-elasticsearch-siren-pipeline/lastSuccessfulBuild/artifact/dc-elasticsearch-siren/attx-api-plugin/build/libs/attx-api-plugin-${APIPlugin_version}.jar"
     dest "$buildDir"
 }
 
@@ -13,8 +18,9 @@ dcompose {
     essiren {
         baseDir = file('.')
         dockerFilename = 'Dockerfile'
-        repository = "${imageRepo}:${imageRepoPort}/essiren:latest"
+        repository = "${imageRepo}:${imageRepoPort}/essiren:${Image_version}"
         exposedPorts = ['9200', '9300']
         portBindings = ['9200:9200', '9300:9300']
+        env = ["APIPlugin_version=${APIPlugin_version}"]
     }
 }

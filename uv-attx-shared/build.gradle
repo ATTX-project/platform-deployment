@@ -1,5 +1,7 @@
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
+ext.Image_version = "latest"
+
 dcompose {
 	registry ("$registryURL") {
 		// Needs no user/pass
@@ -7,7 +9,7 @@ dcompose {
 	uvattxshared{
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-		repository = "${imageRepo}:${imageRepoPort}/uv-attx-shared:latest"
+		repository = "${imageRepo}:${imageRepoPort}/uv-attx-shared:${Image_version}"
 		attachStdout = true
 	}
 }

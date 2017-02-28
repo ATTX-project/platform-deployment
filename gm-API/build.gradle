@@ -4,7 +4,7 @@ apply plugin: 'de.undercouch.download'
 ext {
     GMAPI_version = "0.1"
     RDFINDEXER_version = "99"
-    Image_version = "0.1"
+    Image_version = "latest"
 }
 
 import de.undercouch.gradle.tasks.download.Download
