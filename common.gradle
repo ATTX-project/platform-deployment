@@ -34,7 +34,7 @@ if (!project.hasProperty("artifactRepoPassword")) {
 
 // Figure out a smarter way to do the switch of environments
 
-if (!project.hasProperty("env") || project.hasProperty("env") == "dev") {
+if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.wfAPI               = "0.1"
     ext.gmAPI               = "0.1"
@@ -51,7 +51,7 @@ if (!project.hasProperty("env") || project.hasProperty("env") == "dev") {
     ext.imageATTXShared     = "latest"
     ext.imageFuseki         = "latest"
 
-} else if (project.hasProperty("env") == "release"){
+} else if (project.env == "release"){
 
     ext.wfAPI               = "0.1"
     ext.gmAPI               = "0.1"
@@ -67,5 +67,5 @@ if (!project.hasProperty("env") || project.hasProperty("env") == "dev") {
     ext.imageATTXDPUs       = "latest"
     ext.imageATTXShared     = "latest"
     ext.imageFuseki         = "latest"
-    
+
 }
