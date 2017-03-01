@@ -68,4 +68,6 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageATTXShared     = "latest"
     ext.imageFuseki         = "latest"
 
+} else {
+    throw new GradleException("Build project environment option not recognised.")
 }
