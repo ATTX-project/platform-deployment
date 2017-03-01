@@ -32,12 +32,25 @@ if (!project.hasProperty("artifactRepoPassword")) {
     ext.artifactRepoPassword = ""
 }
 
-// def setPropertyDefaultValueIfNotCustomized(propertyName, defaultValue) {
-//     if (!project.hasProperty(propertyName)) {
-//         ext[propertyName] = defaultValue
-//     }
-// }
-//
-// ext {
-//     setPropertyDefaultValueIfNotCustomized('MY_NAME', 'John Doe')
-// }
+// Figure out a smarter way to do the switch of environments
+
+if (!project.hasProperty("env") || project.hasProperty("env") == "dev") {
+
+    ext.wfAPI               = "0.1"
+    ext.gmAPI               = "0.1"
+    ext.rdfINDEXER          = "99"
+    ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
+    ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
+    ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
+    ext.attxAPIPlugin       = "1.0-SNAPSHOT"
+    ext.imageES5            = "latest"
+    ext.imageWF             = "latest"
+    ext.imageGM             = "latest"
+    ext.imageATTXAPIPlugin  = "latest"
+    ext.imageATTXDPUs       = "latest"
+    ext.imageATTXShared     = "latest"
+    ext.imageFuseki         = "latest"
+
+} else  if (project.hasProperty("env") == "release"){
+
+}

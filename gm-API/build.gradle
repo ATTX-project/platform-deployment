@@ -1,18 +1,12 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'de.undercouch.download'
 
-ext {
-    GMAPI_version = "0.1"
-    RDFINDEXER_version = "99"
-    Image_version = "latest"
-}
-
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
     src([
-        "${jenkinsArtifactRepoURL}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${GMAPI_version}.tar.gz",
-        "${artifactRepoURL}/org/uh/attx/gc/gc-rdf2json-indexer-all/${RDFINDEXER_version}/gc-rdf2json-indexer-all-${RDFINDEXER_version}-all.jar"
+        "${jenkinsArtifactRepoURL}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${gmAPI}.tar.gz",
+        "${artifactRepoURL}/org/uh/attx/gc/gc-rdf2json-indexer-all/${rdfINDEXER}/gc-rdf2json-indexer-all-${rdfINDEXER}-all.jar"
     ])
     dest "$projectDir/build/distributions/"
 }
@@ -30,9 +24,9 @@ dcompose {
  	 }
   gmapi {
     baseDir = file('.')
-    repository = "${imageRepo}:${imageRepoPort}/gm-api:${Image_version}"
+    repository = "${imageRepo}:${imageRepoPort}/gm-api:${imageGM}"
     portBindings = ['4302:4302']
-    env = ["GMAPI=$GMAPI_version", "RDFINDEXER=$RDFINDEXER_version"]
+    env = ["GMAPI=$gmAPI", "RDFINDEXER=$rdfINDEXER"]
   }
 }
 

@@ -1,16 +1,11 @@
 apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
-ext {
-    WFAPI_version = "0.1"
-    Image_version = "latest"
-}
-
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
-    src "${jenkinsArtifactRepoURL}/job/wf-api/lastSuccessfulBuild/artifact/wf-API/build/distributions/wf-API-${WFAPI_version}.tar.gz"
-    dest "$projectDir/build/distributions/wf-API-${WFAPI_version}.tar.gz"
+    src "${jenkinsArtifactRepoURL}/job/wf-api/lastSuccessfulBuild/artifact/wf-API/build/distributions/wf-API-${wfAPI}.tar.gz"
+    dest "$projectDir/build/distributions/wf-API-${wfAPI}.tar.gz"
 }
 
 task dockerPrepare () {
@@ -27,7 +22,8 @@ dcompose {
 	wfapi {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-        repository = "${imageRepo}:${imageRepoPort}/wf-api:${Image_version}"
+        repository = "${imageRepo}:${imageRepoPort}/wf-api:${imageWF}"
+        env = ["WFAPI=${wfAPI}"]
 	}
 }
 

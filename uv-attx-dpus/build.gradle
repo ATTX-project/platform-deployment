@@ -1,20 +1,13 @@
 apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
-ext {
-    Image_version = "latest"
-    MetadataPlugin_version = "1.0-SNAPSHOT"
-    Infras2IPlugin_version = "1.0-SNAPSHOT"
-    UploaderPlugin_version = "1.0-SNAPSHOT"
-}
-
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
     src([
-        "${jenkinsArtifactRepoURL}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/target/uv-dpu-t-attx-metadata-${MetadataPlugin_version}.jar",
-        "${jenkinsArtifactRepoURL}/job/uv-dpu-t-attx-uc1-infras2internal/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-uc1-infras2internal/build/libs/Infras2Internal-${Infras2IPlugin_version}.jar",
-        "${jenkinsArtifactRepoURL}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-${UploaderPlugin_version}.jar"
+        "${jenkinsArtifactRepoURL}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/target/uv-dpu-t-attx-metadata-${attxMetadataPlugin}.jar",
+        "${jenkinsArtifactRepoURL}/job/uv-dpu-t-attx-uc1-infras2internal/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-uc1-infras2internal/build/libs/Infras2Internal-${attxInfras2IPlugin}.jar",
+        "${jenkinsArtifactRepoURL}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-${attxUploaderPlugin}.jar"
     ])
     dest "$projectDir/dpus/"
 }
@@ -33,7 +26,7 @@ dcompose {
 	uvattxdpus {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-    repository = "${imageRepo}:${imageRepoPort}/uv-attx-dpus:${Image_version}"
+        repository = "${imageRepo}:${imageRepoPort}/uv-attx-dpus:${imageATTXDPUs}"
 	}
 }
 
