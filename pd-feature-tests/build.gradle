@@ -5,12 +5,16 @@ apply plugin: 'com.github.johnrengelman.shadow'
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+
+// These parameters should be set before the tests are run,
+// if there different combinations need to be tested
+
 ext {
-    test_WFImage_version = "latest"
-    test_GMImage_version = "latest"
-    test_FusekiImage_version = "latest"
-    test_ESSirenImage_version = "latest"
-    test_UVSharedImage_version = "latest"
+    testImageWF = "latest"
+    testImageGM = "latest"
+    testImageFuseki = "latest"
+    testImageESSiren = "latest"
+    testImageUVShared = "latest"
 }
 
 dependencies {
@@ -29,7 +33,7 @@ dcompose {
     shared {
         forcePull = true
         forceRemoveImage = true
-        image = "${imageRepo}:${imageRepoPort}/uv-attx-shared:${test_UVSharedImage_version}"
+        image = "${imageRepo}:${imageRepoPort}/uv-attx-shared:${testImageUVShared}"
     }
 
     mysql {
@@ -68,7 +72,7 @@ dcompose {
     wfapi {
         forcePull = true
         forceRemoveImage = true
-        image = "${imageRepo}:${imageRepoPort}/wf-api:${test_WFImage_version}"
+        image = "${imageRepo}:${imageRepoPort}/wf-api:${testImageWF}"
         exposedPorts = ['4301']
         portBindings = ['4301:4301']
         dependsOn = [mysql]
@@ -77,7 +81,7 @@ dcompose {
     fuseki {
         forcePull = true
         forceRemoveImage = true
-        image = "${imageRepo}:${imageRepoPort}/attx-fuseki:${test_FusekiImage_version}"
+        image = "${imageRepo}:${imageRepoPort}/attx-fuseki:${testImageFuseki}"
         exposedPorts = ['3030']
         portBindings = ['3030:3030']
         env = ['ADMIN_PASSWORD=pw123']
@@ -86,7 +90,7 @@ dcompose {
     essiren {
         forcePull = true
         forceRemoveImage = true
-        image = "${imageRepo}:${imageRepoPort}/essiren:${test_ESSirenImage_version}"
+        image = "${imageRepo}:${imageRepoPort}/essiren:${testImageESSiren}"
         exposedPorts = ['9200', '9300']
         portBindings = ['9200:9200', '9300:9300']
     }
@@ -94,7 +98,7 @@ dcompose {
     gmapi {
         forcePull = true
         forceRemoveImage = true
-        image = "${imageRepo}:${imageRepoPort}/gm-api:${test_GMImage_version}"
+        image = "${imageRepo}:${imageRepoPort}/gm-api:${testImageGM}"
         exposedPorts = ['4302']
         portBindings = ['4302:4302']
     }
