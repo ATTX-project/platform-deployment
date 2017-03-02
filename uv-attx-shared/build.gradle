@@ -7,7 +7,7 @@ dcompose {
 	uvattxshared{
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-		repository = "${imageRepo}:${imageRepoPort}/uv-attx-shared:latest"
+		repository = "${imageRepo}:${imageRepoPort}/uv-attx-shared:${imageATTXShared}"
 		attachStdout = true
 	}
 }

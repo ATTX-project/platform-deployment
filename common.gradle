@@ -2,17 +2,16 @@ apply plugin: 'base'
 
 repositories {
       mavenCentral();
-      // You may define additional repositories, or even remove "mavenCentral()".
-      // Read more about repositories here:
-      //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
 }
 
-ext.imageRepo = "attx-dev"
-ext.imageRepoPort = "5000"
-ext.artifactRepoPort = "8081"
-ext.jenkinsPort = "49001"
+ext {
+    imageRepo = "attx-dev"
+    imageRepoPort = "5000"
+    artifactRepoPort = "8081"
+    jenkinsPort = "49001"
+}
 
-
+// TO BE REMOVED when moving to archiva
 if(!project.hasProperty("jenkinsArtifactRepoURL")) {
     ext.jenkinsArtifactRepoURL = "http://${imageRepo}:${jenkinsPort}"
 }
@@ -24,9 +23,51 @@ if (!project.hasProperty("registryURL")) {
 if (!project.hasProperty("artifactRepoURL")) {
     ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"
 }
+
 if (!project.hasProperty("artifactRepoUser")) {
     ext.artifactRepoUser = ""
 }
+
 if (!project.hasProperty("artifactRepoPassword")) {
     ext.artifactRepoPassword = ""
+}
+
+// TO DO: Figure out a smarter way to do the switch of environments
+
+if (!project.hasProperty("env") || project.env == "dev") {
+
+    ext.wfAPI               = "0.1"
+    ext.gmAPI               = "0.1"
+    ext.rdfINDEXER          = "99"
+    ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
+    ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
+    ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
+    ext.attxAPIPlugin       = "1.0-SNAPSHOT"
+    ext.imageES5            = "latest"
+    ext.imageWF             = "latest"
+    ext.imageGM             = "latest"
+    ext.imageATTXAPIPlugin  = "latest"
+    ext.imageATTXDPUs       = "latest"
+    ext.imageATTXShared     = "latest"
+    ext.imageFuseki         = "latest"
+
+} else if (project.env == "release"){
+
+    ext.wfAPI               = "0.1"
+    ext.gmAPI               = "0.1"
+    ext.rdfINDEXER          = "99"
+    ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
+    ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
+    ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
+    ext.attxAPIPlugin       = "1.0-SNAPSHOT"
+    ext.imageES5            = "latest"
+    ext.imageWF             = "latest"
+    ext.imageGM             = "latest"
+    ext.imageATTXAPIPlugin  = "latest"
+    ext.imageATTXDPUs       = "latest"
+    ext.imageATTXShared     = "latest"
+    ext.imageFuseki         = "latest"
+
+} else {
+    throw new GradleException("Build project environment option not recognised.")
 }

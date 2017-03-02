@@ -8,7 +8,7 @@ dcompose {
 	attxes5 {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
-		repository = "${imageRepo}:${imageRepoPort}/attx-es5:latest"
+		repository = "${imageRepo}:${imageRepoPort}/attx-es5:${imageES5}"
 		attachStdout = true
 	}
 }

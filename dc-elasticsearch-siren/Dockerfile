@@ -30,8 +30,10 @@ RUN apt-get clean && \
 COPY elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 COPY logging.yml /usr/share/elasticsearch/config/logging.yml
 
+ENV APIPlugin_version 1.0-SNAPSHOT
+
 # Copy custom plugins
-COPY build/attx-api-plugin-1.0-SNAPSHOT.jar /tmp/attx-api-plugin.jar
+COPY build/attx-api-plugin-${APIPlugin_version}.jar /tmp/attx-api-plugin.jar
 
 
 # Exposed Volumes

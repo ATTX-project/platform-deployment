@@ -7,9 +7,9 @@ dcompose {
 
     attxfuseki {
         baseDir = file('.')
-	dockerFilename = 'Dockerfile'
-	repository = "${imageRepo}:${imageRepoPort}/attx-fuseki:latest"
-	attachStdout = true
+	    dockerFilename = 'Dockerfile'
+	    repository = "${imageRepo}:${imageRepoPort}/attx-fuseki:${imageFuseki}"
+        attachStdout = true
         exposedPorts = ['3030']
         portBindings = ['3030:3030']
         env = ['ADMIN_PASSWORD=pw123']
