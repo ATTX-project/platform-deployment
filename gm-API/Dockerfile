@@ -36,8 +36,8 @@ RUN set -x \
         && [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
 EXPOSE 4302
-# ENV GMAPI 0.1
-# ENV RDFINDEXER 99
+ENV GMAPI
+ENV RDFINDEXER
 
 WORKDIR /app
 
