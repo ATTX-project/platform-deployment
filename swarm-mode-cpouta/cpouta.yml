@@ -1,0 +1,18 @@
+---
+
+instances:
+
+  - hostname: attx-swarm-1
+    private_ip: 192.168.1.18
+
+  - hostname: attx-swarm-2
+    private_ip: 192.168.1.19
+
+  - hostname: attx-swarm-3
+    private_ip: 192.168.1.20
+
+  - hostname: attx-swarm-4
+    private_ip: 192.168.1.21
+
+  - hostname: attx-swarm-5
+    private_ip: 192.168.1.22
