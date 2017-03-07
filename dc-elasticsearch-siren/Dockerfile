@@ -30,7 +30,7 @@ RUN apt-get clean && \
 COPY elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 COPY logging.yml /usr/share/elasticsearch/config/logging.yml
 
-ENV APIPlugin_version 1.0-SNAPSHOT
+ARG APIPlugin_version
 
 # Copy custom plugins
 COPY build/attx-api-plugin-${APIPlugin_version}.jar /tmp/attx-api-plugin.jar

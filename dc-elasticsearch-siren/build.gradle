@@ -16,6 +16,6 @@ dcompose {
         repository = "${imageRepo}:${imageRepoPort}/essiren:${imageATTXAPIPlugin}"
         exposedPorts = ['9200', '9300']
         portBindings = ['9200:9200', '9300:9300']
-        env = ["APIPlugin_version=${attxAPIPlugin}"]
+        buildArgs = ["APIPlugin_version": "${attxAPIPlugin}"]
     }
 }

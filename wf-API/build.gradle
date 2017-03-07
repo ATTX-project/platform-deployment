@@ -23,7 +23,7 @@ dcompose {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
         repository = "${imageRepo}:${imageRepoPort}/wf-api:${imageWF}"
-        env = ["WFAPI=${wfAPI}"]
+        buildArgs = ['WFAPI': "$WFAPI"]
 	}
 }
 
