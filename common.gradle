@@ -38,7 +38,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.wfAPI               = "0.1"
     ext.gmAPI               = "0.1"
-    ext.rdfINDEXER          = "99"
+    ext.rdfINDEXER          = "0.1"
     ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
     ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
     ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
@@ -55,7 +55,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.wfAPI               = "0.1"
     ext.gmAPI               = "0.1"
-    ext.rdfINDEXER          = "99"
+    ext.rdfINDEXER          = "0.1"
     ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
     ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
     ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
