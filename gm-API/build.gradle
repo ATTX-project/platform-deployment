@@ -5,8 +5,8 @@ import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
     // TODO: Change this to use artifact repository
     src([
-        "${jenkinsArtifactRepoURL}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${gmAPI}.tar.gz",
-        "${artifactRepoURL}/org/uh/attx/gc/gc-rdf2json-indexer-all/${rdfINDEXER}/gc-rdf2json-indexer-all-${rdfINDEXER}-all.jar"
+        "${artifactRepoURL}/org/uh/hulib/attx/gc/gm-API/${gmAPI}/gm-API-${gmAPI}.tar.gz"
+        "${artifactRepoURL}/org/uh/hulib/attx/gc/gc-rdf2json-indexer-all/${rdfINDEXER}/gc-rdf2json-indexer-all-${rdfINDEXER}-all.jar"
     ])
     dest "$projectDir/build/distributions/"
 }
