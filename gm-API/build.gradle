@@ -3,10 +3,9 @@ apply plugin: 'de.undercouch.download'
 
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
-    // TODO: Change this to use artifact repository
     src([
-        "${artifactRepoURL}/org/uh/hulib/attx/gc/gm-API/${gmAPI}/gm-API-${gmAPI}.tar.gz",
-        "${artifactRepoURL}/org/uh/hulib/attx/gc/gc-rdf2json-indexer-all/${rdfINDEXER}/gc-rdf2json-indexer-all-${rdfINDEXER}-all.jar"
+        "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gm-API&v=${gmAPI}&p=tar.gz",
+        "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gc-rdf2json-indexer-all&v=${rdfINDEXER}&p=jar&c=all"
     ])
     dest "$projectDir/build/distributions/"
 }

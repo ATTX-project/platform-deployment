@@ -3,9 +3,8 @@ apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
-    // TODO: Change this to use artifact repository
-    src "${artifactRepoURL}/org/uh/hulib/attx/wc/wf-API/${wfAPI}/wf-API-${wfAPI}.tar.gz"
-    dest "$projectDir/build/distributions/wf-API-${wfAPI}.tar.gz"
+    src "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${$wfAPI}&p=tar.gz"
+    dest "$projectDir/build/distributions/"
 }
 
 task dockerPrepare () {

@@ -3,8 +3,8 @@ apply plugin: 'de.undercouch.download'
 
 import de.undercouch.gradle.tasks.download.Download
 task downloadJars(type:Download) {
-    // TODO: Change this to use artifact repository
-    src "http://${imageRepo}:${jenkinsPort}/job/dc-elasticsearch-siren-pipeline/lastSuccessfulBuild/artifact/dc-elasticsearch-siren/attx-api-plugin/build/libs/attx-api-plugin-${attxAPIPlugin}.jar"
+    src
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.dc&a=attx-api-plugin&v=${attxAPIPlugin}&p=jar"
     dest "$buildDir"
 }
 
