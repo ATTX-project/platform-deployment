@@ -1,22 +1,22 @@
 apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
-import de.undercouch.gradle.tasks.download.Download
-task downloadJars(type:Download) {
-    // TODO: Change this to use artifact repository
-    src([
-        "${jenkinsArtifactRepoURL}/job/uv-dpu-t-attx-metadata/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-metadata/target/uv-dpu-t-attx-metadata-${attxMetadataPlugin}.jar",
-        "${jenkinsArtifactRepoURL}/job/uv-dpu-t-attx-uc1-infras2internal/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-t-attx-uc1-infras2internal/build/libs/Infras2Internal-${attxInfras2IPlugin}.jar",
-        "${jenkinsArtifactRepoURL}/job/uv-dpu-l-attx-uploader/lastSuccessfulBuild/artifact/unifiedViews/uv-dpu-l-attx-uploader/target/uv-dpu-l-attx-uploader-${attxUploaderPlugin}.jar"
-    ])
-    dest "$projectDir/dpus/"
-}
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-metadata&v=${attxMetadataPlugin}&p=jar":"uv-dpu-t-attx-metadata-${attxMetadataPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-uc1-infras2internal&v=${attxInfras2IPlugin}&p=jar":"uv-dpu-t-attx-uc1-infras2internal-${attxInfras2IPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-l-attx-uploader&v=${attxUploaderPlugin}&p=jar":"uv-dpu-l-attx-uploader-${attxUploaderPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-l-attx-apicaller&v=${attxAPICallerPlugin}&p=jar":"uv-dpu-l-attx-apicaller-${attxAPICallerPlugin}.jar"
+]
 
-task dockerPrepare () {
-    doLast {
-        mkdir "$projectDir/dpus"
-        tasks.downloadJars.execute()
+import de.undercouch.gradle.tasks.download.Download
+task downloadDPUFiles
+
+for (s in src) {
+    task "downloadDPUFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/dpus/", s.value)
     }
+    downloadDPUFiles.dependsOn("downloadDPUFiles_${s.key.hashCode()}")
 }
 
 dcompose {
@@ -30,5 +30,5 @@ dcompose {
 	}
 }
 
-buildUvattxdpusImage.dependsOn dockerPrepare
-pushUvattxdpusImage.dependsOn dockerPrepare
+buildUvattxdpusImage.dependsOn downloadDPUFiles
+pushUvattxdpusImage.dependsOn downloadDPUFiles

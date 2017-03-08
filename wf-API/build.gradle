@@ -2,7 +2,7 @@ apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${gmAPI}&p=tar.gz":"wf-API-${wfAPI}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${wfAPI}&p=tar.gz":"wf-API-${wfAPI}.tar.gz"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
