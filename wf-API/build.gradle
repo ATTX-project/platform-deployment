@@ -6,7 +6,7 @@ ext.src = [
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadJars {
+task downloadWFJars {
     for (s in src) {
         download {
             src s.key
@@ -16,7 +16,7 @@ task downloadJars {
 }
 
 task dockerPrepare () {
-    dependsOn downloadJars
+    dependsOn downloadWFJars
     doLast {
         mkdir "$projectDir/build/distributions"
     }

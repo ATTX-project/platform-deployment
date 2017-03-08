@@ -7,7 +7,7 @@ ext.src = [
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadJars {
+task downloadGMJars {
     for (s in src) {
         download {
             src s.key
@@ -17,22 +17,22 @@ task downloadJars {
 }
 
 task dockerPrepare () {
-  doLast {
-    mkdir "$projectDir/build/distributions"
-    tasks.downloadJars.execute()
-  }
+    dependsOn downloadGMJars
+    doLast {
+        mkdir "$projectDir/build/distributions"
+    }
 }
 
 dcompose {
-  registry ("$registryURL") {
+    registry ("$registryURL") {
      	 // Needs no user/pass
- 	 }
-  gmapi {
-    baseDir = file('.')
-    repository = "${imageRepo}:${imageRepoPort}/gm-api:${imageGM}"
-    portBindings = ['4302:4302']
-    buildArgs = ['GMAPI': "$gmAPI", 'RDFINDEXER': "$rdfINDEXER"]
-  }
+    	 }
+    gmapi {
+        baseDir = file('.')
+        repository = "${imageRepo}:${imageRepoPort}/gm-api:${imageGM}"
+        portBindings = ['4302:4302']
+        buildArgs = ['GMAPI': "$gmAPI", 'RDFINDEXER': "$rdfINDEXER"]
+    }
 }
 
 buildGmapiImage.dependsOn dockerPrepare
