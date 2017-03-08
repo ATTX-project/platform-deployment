@@ -2,18 +2,18 @@ apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'de.undercouch.download'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.dc&a=attx-api-plugin&v=${attxAPIPlugin}&p=jar"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.dc&a=attx-api-plugin&v=${attxAPIPlugin}&p=jar": "attx-api-plugin-${attxAPIPlugin}.jar"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadGMFiles
+task downloadDCFiles
 
 for (s in src) {
-    task "downloadGMFiles_${s.key.hashCode()}"(type: Download) {
+    task "downloadDCFiles_${s.key.hashCode()}"(type: Download) {
         src s.key
         dest new File("$buildDir", s.value)
     }
-    downloadGMFiles.dependsOn("downloadGMFiles_${s.key.hashCode()}")
+    downloadDCFiles.dependsOn("downloadDCFiles_${s.key.hashCode()}")
 }
 
 
