@@ -1,16 +1,24 @@
 apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${wfAPI}&p=tar.gz":"wf-API-${wfAPI}.tar.gz"
+]
+
 import de.undercouch.gradle.tasks.download.Download
-task downloadJars(type:Download) {
-    src "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${wfAPI}&p=tar.gz"
-    dest "$projectDir/build/distributions/"
+task downloadJars {
+    for (s in src) {
+        download {
+            src s.key
+            dest new File("$projectDir/build/distributions/", s.value)
+        }
+    }
 }
 
 task dockerPrepare () {
+    dependsOn downloadJars
     doLast {
         mkdir "$projectDir/build/distributions"
-        tasks.downloadJars.execute()
     }
 }
 
