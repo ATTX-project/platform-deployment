@@ -6,14 +6,14 @@ ext.src = [
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadDCFiles
+task downloadEssirenFiles
 
 for (s in src) {
-    task "downloadDCFiles_${s.key.hashCode()}"(type: Download) {
+    task "downloadEssirenFiles_${s.key.hashCode()}"(type: Download) {
         src s.key
         dest new File("$buildDir", s.value)
     }
-    downloadDCFiles.dependsOn("downloadDCFiles_${s.key.hashCode()}")
+    downloadEssirenFiles.dependsOn("downloadEssirenFiles_${s.key.hashCode()}")
 }
 
 
@@ -28,3 +28,6 @@ dcompose {
         buildArgs = ["APIPlugin_version": "${sirenAPIPlugin}"]
     }
 }
+
+buildEssirenImage.dependsOn downloadEssirenFiles
+buildEssirenImage.dependsOn downloadEssirenFiles
