@@ -7,20 +7,14 @@ ext.src = [
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadGMJars {
-    for (s in src) {
-        download {
-            src s.key
-            dest new File("$projectDir/build/distributions/", s.value)
-        }
-    }
-}
+task downloadGMFiles
 
-task dockerPrepare () {
-    dependsOn downloadGMJars
-    doLast {
-        mkdir "$projectDir/build/distributions"
+for (s in src) {
+    task "downloadGMFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/build/distributions", s.value)
     }
+    downloadGMFiles.dependsOn("downloadGMFiles_${s.key.hashCode()}")
 }
 
 dcompose {
@@ -35,5 +29,5 @@ dcompose {
     }
 }
 
-buildGmapiImage.dependsOn dockerPrepare
-pushGmapiImage.dependsOn dockerPrepare
+buildGmapiImage.dependsOn downloadGMFiles
+pushGmapiImage.dependsOn downloadGMFiles
