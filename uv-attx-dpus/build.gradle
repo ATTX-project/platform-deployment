@@ -14,7 +14,7 @@ task downloadDPUFiles
 for (s in src) {
     task "downloadDPUFiles_${s.key.hashCode()}"(type: Download) {
         src s.key
-        dest new File("$projectDir/dpus/", s.value)
+        dest new File("$projectDir/dpus", s.value)
     }
     downloadDPUFiles.dependsOn("downloadDPUFiles_${s.key.hashCode()}")
 }
