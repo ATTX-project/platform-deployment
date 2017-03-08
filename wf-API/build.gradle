@@ -2,24 +2,18 @@ apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${wfAPI}&p=tar.gz":"wf-API-${wfAPI}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${gmAPI}&p=tar.gz":"wf-API-${wfAPI}.tar.gz"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadWFJars {
-    for (s in src) {
-        download {
-            src s.key
-            dest new File("$projectDir/build/distributions/", s.value)
-        }
-    }
-}
+task downloadWFFiles
 
-task dockerPrepare () {
-    dependsOn downloadWFJars
-    doLast {
-        mkdir "$projectDir/build/distributions"
+for (s in src) {
+    task "downloadWFFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/build/distributions", s.value)
     }
+    downloadWFFiles.dependsOn("downloadWFFiles_${s.key.hashCode()}")
 }
 
 dcompose {
@@ -34,5 +28,5 @@ dcompose {
 	}
 }
 
-buildWfapiImage.dependsOn dockerPrepare
-pushWfapiImage.dependsOn dockerPrepare
+buildWfapiImage.dependsOn downloadWFFiles
+pushWfapiImage.dependsOn downloadWFFiles
