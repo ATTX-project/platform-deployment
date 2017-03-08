@@ -1,13 +1,19 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'de.undercouch.download'
 
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gm-API&v=${gmAPI}&p=tar.gz":"gm-API-${gmAPI}.tar.gz",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gc-rdf2json-indexer-all&v=${rdfINDEXER}&p=jar&c=all":"gc-rdf2json-indexer-all-${rdfINDEXER}-all.jar"
+]
+
 import de.undercouch.gradle.tasks.download.Download
-task downloadJars(type:Download) {
-    src([
-        "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gm-API&v=${gmAPI}&p=tar.gz",
-        "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gc-rdf2json-indexer-all&v=${rdfINDEXER}&p=jar&c=all"
-    ])
-    dest "$projectDir/build/distributions/"
+task downloadJars {
+    for (s in src) {
+        download {
+            src s.key
+            dest new File("$projectDir/build/distributions/", s.value)
+        }
+    }
 }
 
 task dockerPrepare () {
