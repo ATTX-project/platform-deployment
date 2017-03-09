@@ -3,9 +3,9 @@ apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
 ext.src = [
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-metadata&v=${attxMetadataPlugin}&p=jar":"uv-dpu-t-attx-metadata-${attxMetadataPlugin}.jar",
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-uc1-infras2internal&v=${attxInfras2IPlugin}&p=jar":"uv-dpu-t-attx-uc1-infras2internal-${attxInfras2IPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-l-attx-uploader&v=${attxUploaderPlugin}&p=jar":"uv-dpu-l-attx-uploader-${attxUploaderPlugin}.jar",
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-l-attx-apicaller&v=${attxAPICallerPlugin}&p=jar":"uv-dpu-l-attx-apicaller-${attxAPICallerPlugin}.jar"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-l-attx-apicaller&v=${attxAPICallerPlugin}&p=jar":"uv-dpu-l-attx-apicaller-${attxAPICallerPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-uc1-infras2internal&v=${attxInfras2IPlugin}&p=jar":"uv-dpu-t-attx-uc1-infras2internal-${attxInfras2IPlugin}.jar"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
