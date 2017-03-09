@@ -8,6 +8,7 @@ ADD dpus /dpus
 ENV MASTER_USER=master MASTER_PASSWORD=commander
 
 RUN apt-get update \
+    && apt-get install -y netcat \
     && apt-get install -y curl \
     && apt-get clean
 

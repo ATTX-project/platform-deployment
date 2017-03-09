@@ -14,4 +14,4 @@ COPY build /tmp/build
 COPY build.test.gradle /tmp/build.gradle
 COPY runTests.sh /tmp/
 RUN chmod 700 /tmp/runTests.sh
-COPY uv-dpu-t-attx-metadata-${METADATA_DPU}.jar /tmp/TransformerATTXMetadata-${METADATA_DPU}.jar 
+COPY uv-dpu-t-attx-metadata-${METADATA_DPU}.jar /tmp/uv-dpu-t-attx-metadata-${METADATA_DPU}.jar
