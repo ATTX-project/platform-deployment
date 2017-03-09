@@ -5,6 +5,20 @@ apply plugin: 'com.github.johnrengelman.shadow'
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-metadata&v=${attxMetadataPlugin}&p=jar":"uv-dpu-t-attx-metadata-${attxMetadataPlugin}.jar"
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadMETADPUFile
+
+for (s in src) {
+    task "downloadMETADPUFile_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir", s.value)
+    }
+    downloadMETADPUFile.dependsOn("downloadMETADPUFile_${s.key.hashCode()}")
+}
 
 // These parameters should be set before the tests are run,
 // if there different combinations need to be tested
@@ -107,6 +121,7 @@ dcompose {
         ignoreExitCode = true
         baseDir = file('.')
         dockerFilename = 'Dockerfile'
+        buildArgs = ['METADATA_DPU': "$attxMetadataPlugin"]
         binds = ["/var/run/docker.sock:/run/docker.sock"]
         command = ['sh', '-c', '/tmp/runTests.sh']
         dependsOn = [gmapi, essiren, fuseki, wfapi, frontend, backend, shared]
@@ -125,6 +140,7 @@ task copyReportFiles(type: DcomposeCopyFileFromContainerTask) {
 startTestContainer.finalizedBy copyReportFiles
 
 // making sure the that fresh build of test classes is done before building the image
+buildTestImage.dependsOn downloadMETADPUFile
 buildTestImage.dependsOn shadowJar
 buildTestImage.dependsOn testClasses
 
