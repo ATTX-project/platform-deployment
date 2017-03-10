@@ -1,21 +1,33 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'de.undercouch.download'
 
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.dc&a=attx-api-plugin&v=${sirenAPIPlugin}&p=jar": "attx-api-plugin-${sirenAPIPlugin}.jar"
+]
+
 import de.undercouch.gradle.tasks.download.Download
-task downloadJars(type:Download) {
-    // TODO: Change this to use artifact repository
-    src "http://${imageRepo}:${jenkinsPort}/job/dc-elasticsearch-siren-pipeline/lastSuccessfulBuild/artifact/dc-elasticsearch-siren/attx-api-plugin/build/libs/attx-api-plugin-${attxAPIPlugin}.jar"
-    dest "$buildDir"
+task downloadEssirenFiles
+
+for (s in src) {
+    task "downloadEssirenFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$buildDir", s.value)
+    }
+    downloadEssirenFiles.dependsOn("downloadEssirenFiles_${s.key.hashCode()}")
 }
+
 
 dcompose {
     registry ("${registryURL}") {}
     essiren {
         baseDir = file('.')
         dockerFilename = 'Dockerfile'
-        repository = "${imageRepo}:${imageRepoPort}/essiren:${imageATTXAPIPlugin}"
+        repository = "${imageRepo}:${imageRepoPort}/essiren:${imageSirenAPIPlugin}"
         exposedPorts = ['9200', '9300']
         portBindings = ['9200:9200', '9300:9300']
-        env = ["APIPlugin_version=${attxAPIPlugin}"]
+        buildArgs = ["APIPlugin_version": "${sirenAPIPlugin}"]
     }
 }
+
+buildEssirenImage.dependsOn downloadEssirenFiles
+buildEssirenImage.dependsOn downloadEssirenFiles

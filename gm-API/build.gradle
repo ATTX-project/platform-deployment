@@ -1,34 +1,33 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'de.undercouch.download'
 
-import de.undercouch.gradle.tasks.download.Download
-task downloadJars(type:Download) {
-    // TODO: Change this to use artifact repository
-    src([
-        "${jenkinsArtifactRepoURL}/job/gm-api/lastSuccessfulBuild/artifact/gm-API/build/distributions/gm-API-${gmAPI}.tar.gz",
-        "${artifactRepoURL}/org/uh/attx/gc/gc-rdf2json-indexer-all/${rdfINDEXER}/gc-rdf2json-indexer-all-${rdfINDEXER}-all.jar"
-    ])
-    dest "$projectDir/build/distributions/"
-}
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gm-API&v=${gmAPI}&p=tar.gz":"gm-API-${gmAPI}.tar.gz",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gc-rdf2json-indexer-all&v=${rdfINDEXER}&p=jar&c=all":"gc-rdf2json-indexer-all-${rdfINDEXER}-all.jar"
+]
 
-task dockerPrepare () {
-  doLast {
-    mkdir "$projectDir/build/distributions"
-    tasks.downloadJars.execute()
-  }
+import de.undercouch.gradle.tasks.download.Download
+task downloadGMFiles
+
+for (s in src) {
+    task "downloadGMFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/build/distributions", s.value)
+    }
+    downloadGMFiles.dependsOn("downloadGMFiles_${s.key.hashCode()}")
 }
 
 dcompose {
-  registry ("$registryURL") {
+    registry ("$registryURL") {
      	 // Needs no user/pass
- 	 }
-  gmapi {
-    baseDir = file('.')
-    repository = "${imageRepo}:${imageRepoPort}/gm-api:${imageGM}"
-    portBindings = ['4302:4302']
-    env = ["GMAPI=$gmAPI", "RDFINDEXER=$rdfINDEXER"]
-  }
+    	 }
+    gmapi {
+        baseDir = file('.')
+        repository = "${imageRepo}:${imageRepoPort}/gm-api:${imageGM}"
+        portBindings = ['4302:4302']
+        buildArgs = ['GMAPI': "$gmAPI", 'RDFINDEXER': "$rdfINDEXER"]
+    }
 }
 
-buildGmapiImage.dependsOn dockerPrepare
-pushGmapiImage.dependsOn dockerPrepare
+buildGmapiImage.dependsOn downloadGMFiles
+pushGmapiImage.dependsOn downloadGMFiles

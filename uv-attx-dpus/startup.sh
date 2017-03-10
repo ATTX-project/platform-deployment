@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Wait for MySQL
+dockerize -wait tcp://mysql:3306 -timeout 120s
+
 # Wait till Tomcat startup has finished and webapps are started (max 3 minutes)
 i=0
 until $(curl --output /dev/null --silent --head --fail --user $MASTER_USER:$MASTER_PASSWORD http://frontend:8080/master/api/1/pipelines) || [ "$i" -gt 36 ]; do

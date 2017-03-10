@@ -22,40 +22,40 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
  */
 public class UVPluginsSteps  implements En {
     private PlatformServices s = new PlatformServices(false);
-    
+
     private final String API_USERNAME = "master";
     private final String API_PASSWORD = "commander";
-    
-    
+
+
     public UVPluginsSteps() throws Exception {
         Given("^that platform is up and running$", () -> {
             // Write code here that turns the phrase above into concrete actions
             TestCase.assertTrue(true);
-            
+
         });
 
         Then("^UV should contain uv-metadata plugin$", () -> {
             try {
-                
+
                 // using the UV rest API and trying to add the plugin again. Should response with an error.
                 HttpResponse<JsonNode> response = Unirest.post(s.getUV() + "/master/api/1/import/dpu/jar")
                         .header("accept", "application/json")
                         .queryString("name", "attx-t-metadata-plugin")
                         .queryString("force", "false")
-                        .field("file", new File("TransformerATTXMetadata-1.0-SNAPSHOT.jar"))
+                        .field("file", new File("uv-dpu-t-attx-metadata-1.0-SNAPSHOT.jar"))
                         .basicAuth(API_USERNAME, API_PASSWORD)
                         .asJson();
-                
+
                 System.out.println("**"  + response.getBody().toString());
                 JSONAssert.assertEquals("{\"errorMessage\": \"DPU with this name already exists.\"}", response.getBody().toString(), JSONCompareMode.LENIENT);
-                
+
                 TestCase.assertEquals(400, response.getStatus());
 
-                
-                
+
+
             } catch(Exception ex ) {
                 TestCase.fail(ex.getMessage());
             }
-        });   
+        });
     }
 }

@@ -1,18 +1,19 @@
 apply plugin: 'de.undercouch.download'
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 
-import de.undercouch.gradle.tasks.download.Download
-task downloadJars(type:Download) {
-    // TODO: Change this to use artifact repository
-    src "${jenkinsArtifactRepoURL}/job/wf-api/lastSuccessfulBuild/artifact/wf-API/build/distributions/wf-API-${wfAPI}.tar.gz"
-    dest "$projectDir/build/distributions/wf-API-${wfAPI}.tar.gz"
-}
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${wfAPI}&p=tar.gz":"wf-API-${wfAPI}.tar.gz"
+]
 
-task dockerPrepare () {
-    doLast {
-        mkdir "$projectDir/build/distributions"
-        tasks.downloadJars.execute()
+import de.undercouch.gradle.tasks.download.Download
+task downloadWFFiles
+
+for (s in src) {
+    task "downloadWFFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/build/distributions", s.value)
     }
+    downloadWFFiles.dependsOn("downloadWFFiles_${s.key.hashCode()}")
 }
 
 dcompose {
@@ -23,9 +24,9 @@ dcompose {
 		baseDir = file('.')
 		dockerFilename = 'Dockerfile'
         repository = "${imageRepo}:${imageRepoPort}/wf-api:${imageWF}"
-        env = ["WFAPI=${wfAPI}"]
+        buildArgs = ['WFAPI': "$wfAPI"]
 	}
 }
 
-buildWfapiImage.dependsOn dockerPrepare
-pushWfapiImage.dependsOn dockerPrepare
+buildWfapiImage.dependsOn downloadWFFiles
+pushWfapiImage.dependsOn downloadWFFiles

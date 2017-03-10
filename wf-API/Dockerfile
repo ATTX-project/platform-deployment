@@ -9,7 +9,7 @@ RUN apk add --update --repository http://dl-cdn.alpinelinux.org/alpine/edge/comm
     && apk add --no-cache py-setuptools
 
 EXPOSE 4301
-ENV WFAPI 0.1
+ARG WFAPI
 
 WORKDIR /app
 
