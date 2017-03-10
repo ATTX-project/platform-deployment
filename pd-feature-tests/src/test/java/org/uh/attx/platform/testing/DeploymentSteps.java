@@ -19,6 +19,8 @@ import junit.framework.TestCase;
  */
 public class DeploymentSteps  implements En {
     
+    PlatformServices s = new PlatformServices(false);
+    
     public DeploymentSteps() throws Exception {
         Given("^platform has been started$", () -> {
             // Write code here that turns the phrase above into concrete actions
@@ -30,17 +32,17 @@ public class DeploymentSteps  implements En {
             try {
                 
                 // DC = ES
-                GetRequest getDC = Unirest.get("http://localhost:9200").header("accept", "application/json");
+                GetRequest getDC = Unirest.get(s.getESSiren()).header("accept", "application/json");
                 HttpResponse<JsonNode> responseDC =  getDC.asJson();
                 TestCase.assertEquals(responseDC.getStatus(), 200);
                 
                 // GM = Fuseki
-                GetRequest getGM = Unirest.get("http://localhost:3030");
+                GetRequest getGM = Unirest.get(s.getFuseki());
                 HttpResponse<String> responseGM  = getGM.asString();
                 TestCase.assertEquals(responseGM.getStatus(), 200);
                 
                 // WF = UV                
-                GetRequest getWF = Unirest.get("http://localhost:8080/unifiedviews");
+                GetRequest getWF = Unirest.get(s.getUV() + "/unifiedviews");
                 HttpResponse<String> responseWF = getWF.asString();
                 TestCase.assertEquals(responseWF.getStatus(), 200);
                 
