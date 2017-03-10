@@ -2,7 +2,14 @@ FROM frekele/gradle:3.3-jdk8
 
 RUN apt-get update \
     && apt-get install -y netcat \
+    && apt-get install -y wget \
     && apt-get clean
+
+ENV DOCKERIZE_VERSION v0.3.0
+
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 RUN mkdir -p /tmp/
 
