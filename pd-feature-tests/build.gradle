@@ -29,6 +29,7 @@ ext {
     testImageFuseki = "latest"
     testImageESSiren = "latest"
     testImageUVShared = "latest"
+    testImageATTXDPUs = "feature-pd-uc1"
 }
 
 dependencies {
@@ -126,7 +127,7 @@ dcompose {
     attxdpus {
         forcePull = true
         forceRemoveImage = true
-        image = "${imageRepo}:${imageRepoPort}/uv-attx-dpus:${imageATTXDPUs}"
+        image = "${imageRepo}:${imageRepoPort}/uv-attx-dpus:${testImageATTXDPUs}"
         links = [frontend.link()]
         dependsOn = [frontend, mysql]
     }
@@ -156,6 +157,7 @@ startTestContainer.finalizedBy copyReportFiles
 // making sure the that fresh build of test classes is done before building the image
 buildTestImage.dependsOn downloadMETADPUFile
 buildTestImage.dependsOn shadowJar
+buildTestImage.dependsOn processTestResources
 buildTestImage.dependsOn testClasses
 
 
