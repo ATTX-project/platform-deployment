@@ -73,3 +73,5 @@ if (!project.hasProperty("env") || project.env == "dev") {
 } else {
     throw new GradleException("Build project environment option not recognised.")
 }
+
+ext.unifiedViewsRepoURL = "http://repository.unifiedviews.eu/nexus/content/repositories/public/"
