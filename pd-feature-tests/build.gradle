@@ -29,7 +29,7 @@ ext {
     testImageFuseki = "latest"
     testImageESSiren = "latest"
     testImageUVShared = "latest"
-    testImageATTXDPUs = "feature-pd-uc1"
+    testImageATTXDPUs = "latest"
 }
 
 dependencies {
