@@ -1,0 +1,25 @@
+@base <http://data.hulib.helsinki.fi/attx/> .
+@prefix attxonto: <http://data.hulib.helsinki.fi/attx/onto#> .
+@prefix attx: <http://data.hulib.helsinki.fi/attx/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+
+attx:idstrategy1 a attxonto:LinkStrategy ;
+    attxonto:hasStrategyType "SPARQL" ;
+    dcterms:title "IDs based Linking Strategy" ;
+    dcterms:description "Linking Strategy based on IDs clustering and specifying required datasets."@en;
+    attxonto:hasParameters "List of parameters";
+    schema:query "prefix skos: <http://www.w3.org/2004/02/skos/core#>\n prefix attx: <http://data.hulib.helsinki.fi/attx/>\n construct { ?r1 skos:exactMatch ?r2} where { ?r1 attx:id ?id .\n  ?r2 attx:id ?id .\n  filter(?r1 != ?r2)\n}".
+
+
+attx:idstrategy2 a attxonto:LinkStrategy ;
+    attxonto:hasStrategyType "SPARQL" ;
+    dcterms:title "IDs v2 based Linking Strategy" ;
+    dcterms:description "Linking Strategy based on IDs clustering and specifying required datasets version 2."@en;
+    attxonto:hasParameters "List of parameters";
+    schema:query "prefix skos: <http://www.w3.org/2004/02/skos/core#>\n prefix custom: <<http://data.hulib.helsinki.fi/attx/>\n prefix attx: <http://data.hulib.helsinki.fi/attx/>\n construct {\n  ?r1 attx:hasRelatedInfra ?r2\n}\n where {\n  ?r1 custom:relatedInfra ?infra .\n  ?r2 attx:id ?infra\n}".
