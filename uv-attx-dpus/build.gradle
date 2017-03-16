@@ -5,7 +5,12 @@ ext.src = [
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-metadata&v=${attxMetadataPlugin}&p=jar":"uv-dpu-t-attx-metadata-${attxMetadataPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-l-attx-uploader&v=${attxUploaderPlugin}&p=jar":"uv-dpu-l-attx-uploader-${attxUploaderPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-l-attx-apicaller&v=${attxAPICallerPlugin}&p=jar":"uv-dpu-l-attx-apicaller-${attxAPICallerPlugin}.jar",
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-uc1-infras2internal&v=${attxInfras2IPlugin}&p=jar":"uv-dpu-t-attx-uc1-infras2internal-${attxInfras2IPlugin}.jar"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-uc1-infras2internal&v=${attxInfras2IPlugin}&p=jar":"uv-dpu-t-attx-uc1-infras2internal-${attxInfras2IPlugin}.jar",
+    "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-e-httpRequest/1.0.0/uv-e-httpRequest-1.0.0.jar":"uv-e-httpRequest-1.0.0.jar",
+    "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-e-filesDownload/2.1.6/uv-e-filesDownload-2.1.6.jar":"uv-e-filesDownload-2.1.6.jar",
+    "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-filesToRdf/2.2.1/uv-t-filesToRdf-2.2.1.jar":"uv-t-filesToRdf-2.2.1.jar",
+    "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-rdfMerger/2.1.3/uv-t-rdfMerger-2.1.3.jar":"uv-t-rdfMerger-2.1.3.jar",
+    "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-sparqlConstruct/2.1.6/uv-t-sparqlConstruct-2.1.6.jar":"uv-t-sparqlConstruct-2.1.6.jar"    
 ]
 
 import de.undercouch.gradle.tasks.download.Download
