@@ -565,7 +565,7 @@ public class UC1Steps implements En {
             }
         });
         
-        Then("^one should be able to query JSON documents$", () -> {
+        Then("^one should be able to search for documents$", () -> {
             try {
                 // refresh index
                 Unirest.post(s.getESSiren() + "/current/_refresh");                
