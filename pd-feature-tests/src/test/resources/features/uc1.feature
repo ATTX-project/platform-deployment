@@ -1,5 +1,5 @@
 #----------------------------------
-# Empty Cucumber .feature file
+# Scenarios related to the UC1 - Publications and infrastructure
 #----------------------------------
 Feature: Publications and infrastructures use case (aka UC1)
 
@@ -29,5 +29,5 @@ Feature: Publications and infrastructures use case (aka UC1)
     Scenario: UC1: Publishing new dataset
     Given that platform contains earlier version of the data
     When the aggregated dataset is published to a public endpoint
-    Then one should be able to query JSON documents
+    Then one should be able to search for documents
    
