@@ -3,15 +3,12 @@ FROM python:2.7.12-alpine
 MAINTAINER Stefan Negru <stefan.negru@helsinki.fi>
 
 RUN apk add --update \
-    && apk --no-cache add build-base \
-    && apk --no-cache add linux-headers \
-    && apk --no-cache add bash \
-    && apk --no-cache add py-setuptools \
-    && apk --no-cache add supervisor \
+    && apk add --no-cache build-base \
+    && apk add --no-cache linux-headers \
+    && apk add --no-cache bash \
+    && apk add --no-cache py-setuptools \
+    && apk add --no-cache supervisor \
     && rm -rf /var/cache/apk/*
-
-EXPOSE 4301
-ARG WFAPI
 
 ENV GOSU_VERSION 1.10
 RUN set -x \
@@ -30,7 +27,7 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps
 
-
+ARG WFAPI
 WORKDIR /app
 
 COPY build/distributions/wf-API-${WFAPI}.tar.gz /app/wf-API.tar.gz
@@ -39,6 +36,9 @@ RUN tar -xf wf-API.tar.gz
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
 
+# COPY supervisord specific configurations
+# default.conf is needed to have access to port 8080 as port 80 is not allowed with
+# to be used by a user with lower privileges
 COPY default.conf /etc/nginx/conf.d/default.conf
 COPY supervisor.conf /etc/supervisor/supervisord.conf
 COPY entrypoint.sh /
@@ -46,7 +46,11 @@ COPY entrypoint.sh /
 RUN mkdir logs \
     && chmod +x /entrypoint.sh
 
+# setting environment variables for entrypoint script
+# setting also directories to be owned by the nonroot user
 ENV GOSU_USER nonroot:nonroot
 ENV GOSU_CHOWN /app /var/log /etc/supervisor /var/run
+
+EXPOSE 4301
 
 ENTRYPOINT ["/entrypoint.sh"]

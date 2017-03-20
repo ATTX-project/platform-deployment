@@ -20,11 +20,11 @@ FROM java:8-jre-alpine
 MAINTAINER João M. da Silva <joao.silva@helsinki.fi>
 
 RUN apk add --update \
-    && apk --no-cache add pwgen \
-    && apk --no-cache add linux-headers \
-    && apk --no-cache add bash \
-    && apk --no-cache add ca-certificates \
-    && apk --no-cache add wget \
+    && apk add --no-cache pwgen \
+    && apk add --no-cache linux-headers \
+    && apk add --no-cache bash \
+    && apk add --no-cache ca-certificates \
+    && apk add --no-cache wget \
     && rm -rf /var/cache/apk/*
 
 # Update below according to https://jena.apache.org/download/
@@ -66,6 +66,7 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps
 
+# Adding user without root privileges alongside a user group
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
 
@@ -87,14 +88,20 @@ COPY tdbloader /jena-fuseki/
 RUN chmod 755 /jena-fuseki/load.sh /jena-fuseki/tdbloader /jena-fuseki/start-fuseki.sh /docker-entrypoint.sh
 
 # Config and data volume
+# The volume needs to be set after the directory has been created to avoid
+# permissions issues
 VOLUME /data/fuseki/fuseki_DB
 ENV FUSEKI_BASE /data/fuseki
 
+# setting environment variables for entrypoint script
+# setting also directories to be owned by the nonroot user
 ENV GOSU_USER nonroot:nonroot
 ENV GOSU_CHOWN /jena-fuseki /data
 
 # Where we start our server from
 WORKDIR /jena-fuseki
+
 EXPOSE 3030
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/jena-fuseki/start-fuseki.sh"]
