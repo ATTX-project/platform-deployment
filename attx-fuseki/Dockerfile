@@ -19,22 +19,19 @@ FROM java:8-jre-alpine
 
 MAINTAINER João M. da Silva <joao.silva@helsinki.fi>
 
-RUN apk add --update\
-    && apk add --no-cache pwgen \
-    && apk add --no-cache linux-headers \
-    && apk add --no-cache bash \
-    && apk add --no-cache ca-certificates \
-    && apk add --no-cache wget
+RUN apk add --update \
+    && apk --no-cache add pwgen \
+    && apk --no-cache add linux-headers \
+    && apk --no-cache add bash \
+    && apk --no-cache add ca-certificates \
+    && apk --no-cache add wget \
+    && rm -rf /var/cache/apk/*
 
 # Update below according to https://jena.apache.org/download/
 ENV FUSEKI_MD5 6d954d7c57602dfc131bf7fbcb75c71d
 ENV FUSEKI_VERSION 2.5.0
 ENV FUSEKI_MIRROR http://www.eu.apache.org/dist/
 ENV FUSEKI_ARCHIVE http://archive.apache.org/dist/
-
-# Config and data volume
-VOLUME /data/fuseki/fuseki_DB
-ENV FUSEKI_BASE /data/fuseki
 
 # Installation folder
 RUN mkdir /jena-fuseki
@@ -52,6 +49,26 @@ RUN wget $FUSEKI_MIRROR/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz 
     && rm apache-jena-fuseki-$FUSEKI_VERSION.tar.gz \
     && cd $FUSEKI_HOME && rm -rf fuseki.war
 
+ENV GOSU_VERSION 1.10
+RUN set -x \
+    && apk add --no-cache --virtual .gosu-deps \
+        dpkg \
+        gnupg \
+        openssl \
+    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true \
+    && apk del .gosu-deps
+
+RUN addgroup -S nonroot \
+    && adduser -S -g nonroot nonroot
+
 # As "localhost" is often inaccessible within Docker container,
 # we'll enable basic-auth with a preset admin password
 # (which we'll generate on start-up)
@@ -68,6 +85,13 @@ COPY start-fuseki.sh /jena-fuseki/start-fuseki.sh
 COPY load.sh /jena-fuseki/
 COPY tdbloader /jena-fuseki/
 RUN chmod 755 /jena-fuseki/load.sh /jena-fuseki/tdbloader /jena-fuseki/start-fuseki.sh /docker-entrypoint.sh
+
+# Config and data volume
+VOLUME /data/fuseki/fuseki_DB
+ENV FUSEKI_BASE /data/fuseki
+
+ENV GOSU_USER nonroot:nonroot
+ENV GOSU_CHOWN /jena-fuseki /data
 
 # Where we start our server from
 WORKDIR /jena-fuseki
