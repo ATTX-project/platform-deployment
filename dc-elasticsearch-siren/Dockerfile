@@ -4,12 +4,24 @@ MAINTAINER João M. da Silva <joao.silva@helsinki.fi>
 # Need to update the package repo first
 RUN apt-get -qq update
 
+# grab gosu for easy step-down from root
+ENV GOSU_VERSION 1.10
+RUN set -x \
+	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
+	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
+	&& export GNUPGHOME="$(mktemp -d)" \
+	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+	&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+	&& chmod +x /usr/local/bin/gosu \
+	&& gosu nobody true
+
 # Install Required Packages
 # RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq adduser \
 #    openjdk-7-jre-headless
 
 # Download Elasticsearch Package
-ADD  https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.3.4.deb /tmp/elasticsearch.deb
+ADD https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.3.4.deb /tmp/elasticsearch.deb
 
 # Install the Elasticsearch Package
 RUN  dpkg -i /tmp/elasticsearch.deb
@@ -35,6 +47,32 @@ ARG APIPlugin_version
 # Copy custom plugins
 COPY build/attx-api-plugin-${APIPlugin_version}.jar /tmp/attx-api-plugin.jar
 
+RUN /usr/share/elasticsearch/bin/plugin install elasticsearch/elasticsearch-analysis-icu/2.3.0
+RUN /usr/share/elasticsearch/bin/plugin install com.sindicetech.siren/siren-elasticsearch/1.4
+RUN /usr/share/elasticsearch/bin/plugin --url file:///tmp/attx-api-plugin.jar --install attx-es-api
+
+ENV PATH /usr/share/elasticsearch/bin:$PATH
+
+WORKDIR /usr/share/elasticsearch
+
+RUN set -ex \
+	&& for path in \
+		./data \
+		./logs \
+        ./config \
+		./plugin \
+        ./plugins \
+	; do \
+		mkdir -p "$path"; \
+		chown -R elasticsearch:elasticsearch "$path"; \
+	done
+
+COPY docker-entrypoint.sh /
+
+RUN mkdir -p /data \
+    && chown -R elasticsearch:elasticsearch /tmp/attx-api-plugin.jar \
+    && chown -R elasticsearch:elasticsearch /data \
+    && chmod +x /docker-entrypoint.sh
 
 # Exposed Volumes
 VOLUME ["/data"]
@@ -42,8 +80,5 @@ VOLUME ["/data"]
 # Expose ports
 EXPOSE  9200 9300
 
-RUN /usr/share/elasticsearch/bin/plugin install elasticsearch/elasticsearch-analysis-icu/2.3.0
-RUN /usr/share/elasticsearch/bin/plugin install com.sindicetech.siren/siren-elasticsearch/1.4
-RUN /usr/share/elasticsearch/bin/plugin --url file:///tmp/attx-api-plugin.jar --install attx-es-api
-
-CMD ["/usr/share/elasticsearch/bin/elasticsearch"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["elasticsearch"]
