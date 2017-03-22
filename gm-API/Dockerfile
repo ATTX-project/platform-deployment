@@ -75,7 +75,7 @@ COPY supervisor.conf /etc/supervisor/supervisord.conf
 COPY entrypoint.sh /
 
 RUN mkdir logs \
-    && touch data.db \
+    && mkdir data \
     && chmod +x /entrypoint.sh
 
 # setting environment variables for entrypoint script
@@ -84,5 +84,7 @@ ENV GOSU_USER nonroot:nonroot
 ENV GOSU_CHOWN /app /var/log /etc/supervisor /var/run
 
 EXPOSE 4302
+
+VOLUME ["/app/data"]
 
 ENTRYPOINT ["/entrypoint.sh"]

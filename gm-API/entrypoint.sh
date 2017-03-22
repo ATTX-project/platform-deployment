@@ -21,4 +21,4 @@ if [ "$GOSU_USER" != "0:0" ]; then
 fi
 
 # If GOSU_USER was 0:0 exec command passed in args without gosu (assume already root)
-exec gosu supervisord -c /etc/supervisor/supervisord.conf "$@"
+exec "$@"
