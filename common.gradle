@@ -44,13 +44,13 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
     ext.attxAPICallerPlugin = "1.0-SNAPSHOT"
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
-    ext.imageES5            = "test"
-    ext.imageWF             = "test"
-    ext.imageGM             = "test"
-    ext.imageSirenAPIPlugin = "test"
-    ext.imageATTXDPUs       = "test"
-    ext.imageATTXShared     = "test"
-    ext.imageFuseki         = "test"
+    ext.imageES5            = "supd"
+    ext.imageWF             = "supd"
+    ext.imageGM             = "supd"
+    ext.imageSirenAPIPlugin = "supd"
+    ext.imageATTXDPUs       = "supd"
+    ext.imageATTXShared     = "supd"
+    ext.imageFuseki         = "supd"
 
 } else if (project.env == "release"){
 
