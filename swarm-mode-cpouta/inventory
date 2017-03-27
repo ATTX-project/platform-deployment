@@ -1,0 +1,11 @@
+attx-swarm-1 ansible_ssh_host=192.168.1.18
+attx-swarm-2 ansible_ssh_host=192.168.1.19
+attx-swarm-3 ansible_ssh_host=192.168.1.20
+attx-swarm-4 ansible_ssh_host=192.168.1.21
+attx-swarm-5 ansible_ssh_host=192.168.1.22
+
+[nodes]
+attx-swarm-[1:5]
+
+[all:children]
+nodes
