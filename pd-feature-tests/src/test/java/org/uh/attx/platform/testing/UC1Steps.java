@@ -51,7 +51,7 @@ public class UC1Steps implements En {
     static List<Integer> pipelineIDs = new ArrayList<Integer>();
     static boolean pollingSuccesful = false;
 
-    private void pollForIndexing(int createdIDPython) throws Exception {
+    private void pollForProcessing(int createdIDPython) throws Exception {
         Timer timer = new Timer();
         final CountDownLatch latch = new CountDownLatch(1);
         timer.schedule(new TimerTask() {
@@ -96,7 +96,7 @@ public class UC1Steps implements En {
                 String graphQuery = "SELECT (COUNT(DISTINCT ?g) as ?count)\n"
                         + "WHERE {\n"
                         + "  GRAPH ?g { ?s ?p ?o }\n"
-                        + "  FILTER(?g != <http://data.hulib.helsinki.fi/attx/onto> && ?g != <http://data.hulib.helsinki.fi/attx/prov>)\n"
+                        + "  FILTER(strStarts(str(?g), 'http://data.hulib.helsinki.fi/attx/work'))\n"
                         + "}";
                 HttpResponse<JsonNode> queryResponse = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
@@ -272,10 +272,13 @@ public class UC1Steps implements En {
             try {
                 Thread.sleep(5000);
                 // update prov
-                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=wfapi&graphStore=fuseki")
+                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
                         .header("content-type", "application/json")
                         .asJson();
+                
+                System.out.println(provResponse.getBody());
                 JSONObject provObj = provResponse.getBody().getObject();
+                
                 
                 // query prov graph 
                 
@@ -454,7 +457,7 @@ public class UC1Steps implements En {
             try {
                 Thread.sleep(5000);
                 // update prov
-                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=wfapi&graphStore=fuseki")
+                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
                         .header("content-type", "application/json")
                         .asJson();                
                 
@@ -487,7 +490,7 @@ public class UC1Steps implements En {
             try {
                 Thread.sleep(5000);
                 // update prov (again)
-                Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=wfapi&graphStore=fuseki")
+                Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
                         .header("content-type", "application/json")
                         .asJson();
             
@@ -556,7 +559,9 @@ public class UC1Steps implements En {
                 int indexingID = myObj.getInt("id");
                 int result3 = postResponse.getStatus();
                 assertEquals(202, result3);
-                pollForIndexing(indexingID);
+                pollingSuccesful = false;
+                pollForProcessing(indexingID);
+                
                 assertTrue(pollingSuccesful);
                 
             }catch(Exception ex) {
@@ -571,6 +576,7 @@ public class UC1Steps implements En {
                 Unirest.post(s.getESSiren() + "/current/_refresh");                
                 
                 // query
+                int total = 0;
                 for(int i = 0; i < 10; i++) {
 
                     HttpResponse<JsonNode> jsonResponse = Unirest.get(s.getESSiren() + "/current/_search?q=*")
@@ -578,9 +584,11 @@ public class UC1Steps implements En {
 
                     JSONObject obj = jsonResponse.getBody().getObject();
                     if(obj.has("hits")) {
-                        int total = obj.getJSONObject("hits").getInt("total");
-                        assertTrue( total > 0  );
-                        return;
+                        total = obj.getJSONObject("hits").getInt("total");
+                        if(total > 0) {
+                            assertTrue(true);
+                            return;
+                        }
                     }                    
                     Thread.sleep(1000);
                 }
@@ -589,6 +597,130 @@ public class UC1Steps implements En {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
+        });
+        
+        Given("^that there existing linking identifier in the data$", () -> {
+            // test data is set up so, that there are linking identifiers
+            assertTrue(true);
+            
+        });
+        
+        When("^identifier based linking is executed$", () -> {
+            try {
+                // import Linking pipeline
+                URL resource = UC1Steps.class.getResource("/linking.zip");
+                HttpResponse<JsonNode> postResponse = Unirest.post(s.getUV() + "/master/api/1/pipelines/import")
+                        .header("accept", "application/json")
+                        .basicAuth(API_USERNAME, API_PASSWORD)
+                        .field("importUserData", false)
+                        .field("importSchedule", false)
+                        .field("file", new File(resource.toURI()))
+                        .asJson();
+                assertEquals(200, postResponse.getStatus());
+                JSONObject myObj = postResponse.getBody().getObject();
+                int pipelineID = myObj.getInt("id");
+                
+                // schedule linking 
+                String schedulingURL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", pipelineID);
+                HttpResponse<JsonNode> schedulePipelineResponse1 = Unirest.post(schedulingURL)
+                        .header("accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .basicAuth(API_USERNAME, API_PASSWORD)
+                        .body(ACTIVITY)
+                        .asJson();
+                assertEquals(200, schedulePipelineResponse1.getStatus());
+                
+                // poll for results                
+                for (int i = 0; i < 10; i++) {
+                    String executionGetURL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", pipelineID);
+                    HttpResponse<JsonNode> schedulePipelineResponse2 = Unirest.get(executionGetURL)
+                            .header("accept", "application/json")
+                            .header("Content-Type", "application/json")
+                            .basicAuth(API_USERNAME, API_PASSWORD)
+                            .asJson();
+                    assertEquals(200, schedulePipelineResponse2.getStatus());
+                    JSONArray execs = schedulePipelineResponse2.getBody().getArray();
+                    Iterator<Object> iterator = execs.iterator();
+                    while (iterator.hasNext()) {
+                        JSONObject obj = (JSONObject) iterator.next();
+                        String status = obj.getString("status");
+                        if (status.equals("FAILED")) {
+                            fail("Pipeline execution failed.");
+                            return;
+                        } else if (status.equals("FINISHED_SUCCESS")) {
+                            assertTrue(true);
+                            return;
+                        }
+                    }
+                    Thread.sleep(1000);
+                }
+                
+            }catch(Exception ex) {
+                ex.printStackTrace();
+                fail("Linking failed." + ex.getMessage());
+            }
+            
+            
+        });
+        
+        Then("^there should be a new working dataset that contains links$", () -> {
+            try {
+                String query = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+"ASK \n" +
+"FROM <http://data.hulib.helsinki.fi/attx/work3> {\n" +
+" ?id1 <http://www.w3.org/2004/02/skos/core#exactMatch> ?id2 }";
+
+                HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
+                        .header("Content-Type", "application/sparql-query")
+                        .header("Accept", "application/sparql-results+json")
+                        .body(query)
+                        .asJson();  
+                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
+                
+            }catch(Exception ex) {
+                ex.printStackTrace();
+                fail("Checking for link data set failed." + ex.getMessage());
+            }
+        });
+
+        
+        Then("^there should be a new activity in the provenance dataset$", () -> {
+            try {
+                Thread.sleep(5000);
+                // update prov (again)
+                Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
+                        .header("content-type", "application/json")
+                        .asJson();
+                
+                Thread.sleep(2000);
+            
+                String actQuery = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+"ASK \n" +
+"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+"  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
+"  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
+"                <http://data.hulib.helsinki.fi/attx/work3> .\n" +
+"  ?act1 <http://www.w3.org/ns/prov#used>\n" +
+"                <http://data.hulib.helsinki.fi/attx/work/1> .  \n" +
+"  ?act1 <http://www.w3.org/ns/prov#used>\n" +
+"                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +                       
+"}";
+
+
+                Thread.sleep(2000);
+                
+                HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
+                        .header("Content-Type", "application/sparql-query")
+                        .header("Accept", "application/sparql-results+json")
+                        .body(actQuery)
+                        .asJson();          
+                
+                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));                
+                
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                fail(ex.getMessage());
+            }            
         });
     }
 
