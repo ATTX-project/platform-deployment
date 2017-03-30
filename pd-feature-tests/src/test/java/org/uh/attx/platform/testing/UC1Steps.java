@@ -9,7 +9,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.request.GetRequest;
-import cucumber.api.java.Before;
+
 import cucumber.api.java8.En;
 import java.io.File;
 import java.net.URL;
@@ -21,13 +21,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
-import org.hamcrest.core.AnyOf;
-import org.hamcrest.core.Is;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import static org.junit.Assert.*;
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
 
 
 /**
@@ -39,14 +36,12 @@ public class UC1Steps implements En {
     private static final long START_DELAY = 1000;
     private static final long POLLING_INTERVAL = 3000;
     private final String VERSION = "/0.1";
+
     private final String API_USERNAME = "master";
     private final String API_PASSWORD = "commander";
-    private final String ACTIVITY = "{\n"
-            + "    \"debugging\": false,\n"
-            + "     \"userExternalId\": \"admin\"\n"
-            + "}";
+    private final String ACTIVITY = "{ \"debugging\" : \"false\", \"userExternalId\" : \"admin\" }";
 
-    PlatformServices s = new PlatformServices(false);
+    PlatformServices s = new PlatformServices();
 
     static List<Integer> pipelineIDs = new ArrayList<Integer>();
     static boolean pollingSuccesful = false;

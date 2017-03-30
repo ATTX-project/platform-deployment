@@ -21,7 +21,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
  * @author jkesanie
  */
 public class UVPluginsSteps  implements En {
-    private PlatformServices s = new PlatformServices(false);
+    private PlatformServices s = new PlatformServices();
 
     private final String API_USERNAME = "master";
     private final String API_PASSWORD = "commander";

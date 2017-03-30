@@ -1,7 +1,6 @@
 FROM frekele/gradle:3.3-jdk8
 
 RUN apt-get update \
-    && apt-get install -y netcat \
     && apt-get install -y wget \
     && apt-get clean
 
@@ -14,8 +13,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 RUN mkdir -p /tmp/
 
 WORKDIR /tmp/
-
-ARG METADATA_DPU
 
 COPY build /tmp/build
 COPY build.test.gradle /tmp/build.gradle

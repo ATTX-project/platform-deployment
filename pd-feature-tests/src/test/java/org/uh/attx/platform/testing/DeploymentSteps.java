@@ -19,7 +19,7 @@ import junit.framework.TestCase;
  */
 public class DeploymentSteps  implements En {
     
-    PlatformServices s = new PlatformServices(false);
+    PlatformServices s = new PlatformServices();
     
     public DeploymentSteps() throws Exception {
         Given("^platform has been started$", () -> {
