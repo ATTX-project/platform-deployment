@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Wait for MySQL
-dockerize -wait tcp://mysql:3306 -timeout 120s
+dockerize -wait tcp://mysql:3306 -timeout 240s
 
 # Wait till Tomcat startup has finished and webapps are started (max 3 minutes)
 i=0

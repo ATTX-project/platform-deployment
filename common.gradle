@@ -9,6 +9,7 @@ ext {
     imageRepoPort = "5000"
     artifactRepoPort = "8081"
     jenkinsPort = "49001"
+    unifiedViewsRepoURL = "http://repository.unifiedviews.eu/nexus/content/repositories/public"
 }
 
 // TO BE REMOVED when moving to archiva
@@ -21,7 +22,7 @@ if (!project.hasProperty("registryURL")) {
 }
 
 if (!project.hasProperty("artifactRepoURL")) {
-    ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"
+    ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}"
 }
 
 if (!project.hasProperty("artifactRepoUser")) {
@@ -45,19 +46,19 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.attxAPICallerPlugin = "1.0-SNAPSHOT"
     ext.attxLinkerPlugin    = "1.0-SNAPSHOT"
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
-    ext.imageES5            = "latest"
-    ext.imageWF             = "latest"
-    ext.imageGM             = "latest"
-    ext.imageSirenAPIPlugin = "latest"
-    ext.imageATTXDPUs       = "latest"
-    ext.imageATTXShared     = "latest"
-    ext.imageFuseki         = "latest"
+    ext.imageES5            = "supd"
+    ext.imageWF             = "supd"
+    ext.imageGM             = "supd"
+    ext.imageSirenAPIPlugin = "supd"
+    ext.imageATTXDPUs       = "supd"
+    ext.imageATTXShared     = "supd"
+    ext.imageFuseki         = "supd"
 
 } else if (project.env == "release"){
 
-    ext.wfAPI               = "0.1"
-    ext.gmAPI               = "0.1"
-    ext.rdfINDEXER          = "0.1"
+    ext.wfAPI               = "1.0-SNAPSHOT"
+    ext.gmAPI               = "1.0-SNAPSHOT"
+    ext.rdfINDEXER          = "1.0-SNAPSHOT"
     ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
     ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
     ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
@@ -75,5 +76,3 @@ if (!project.hasProperty("env") || project.env == "dev") {
 } else {
     throw new GradleException("Build project environment option not recognised.")
 }
-
-ext.unifiedViewsRepoURL = "http://repository.unifiedviews.eu/nexus/content/repositories/public/"

@@ -5,10 +5,6 @@
 
 # set -e
 
-FUSEKI_BASE=/data/fuseki
-FUSEKI_OPTS=${FUSEKI_OPTS:-"--config $FUSEKI_BASE/config/config.ttl"}
-cd /jena-fuseki/
-
 # If GOSU_CHOWN environment variable set, recursively chown all specified directories
 # to match the user:group set in GOSU_USER environment variable.
 if [ -n "$GOSU_CHOWN" ]; then
@@ -21,7 +17,7 @@ fi
 # If GOSU_USER environment variable set to something other than 0:0 (root:root),
 # become user:group set within and exec command passed in args
 if [ "$GOSU_USER" != "0:0" ]; then
-    exec gosu $GOSU_USER ./fuseki-server $FUSEKI_OPTS "$@"
+    exec gosu $GOSU_USER supervisord -c /etc/supervisor/supervisord.conf "$@"
 fi
 
 # If GOSU_USER was 0:0 exec command passed in args without gosu (assume already root)
