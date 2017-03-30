@@ -8,87 +8,75 @@ repositories {
 }
 
 dcompose {
-	// createComposeFile.useAWSCompat = true
-	createComposeFile.useTags = true
+    // createComposeFile.useAWSCompat = true
+    createComposeFile.useTags = true
     createComposeFile.version = '2'
-	registry ("http://attx-dev:5000") {
-     	 // Needs no user/pass
- 	 }
+    registry ("http://attx-dev:5000") {
+        // Needs no user/pass
+    }
 
-	shared {
+    shared {
         forceRemoveImage = true
         image = "attx-dev:5000/uv-attx-shared"
-	}
+    }
 
     mysql {
         forceRemoveImage = true
-		image = 'tenforce/unified-views-mariadb:feat-compact-modular'
-		env = ['MYSQL_ROOT_PASSWORD=iamroot!']
-	}
-
-    virtuoso {
-        forceRemoveImage = true
-		image = 'tenforce/virtuoso:virtuoso-v7.2.0-latest'
-	}
+        image = 'tenforce/unified-views-mariadb:feat-compact-modular'
+        env = ['MYSQL_ROOT_PASSWORD=iamroot!']
+    }
 
     backend {
         forceRemoveImage = true
         image = 'tenforce/unified-views-backend:latest'
         volumesFrom =  [shared]
-        links = [mysql.link(), virtuoso.link()]
+        links = [mysql.link()]
         volumesFrom = [mysql, shared]
     }
 
-	frontend {
+    frontend {
         forceRemoveImage = true
-		image = 'tenforce/unified-views-frontend:latest'
-		portBindings = ['8080:8080']
-		volumesFrom = [backend, shared]
-	}
+        image = 'tenforce/unified-views-frontend:latest'
+        portBindings = ['8080:8080']
+        volumesFrom = [backend, shared]
+    }
 
-	uvdpus {
+    attxdpus {
         forceRemoveImage = true
-		image = 'tenforce/unified-views-add-dpus:latest'
-		links = [frontend.link(), mysql.link(), backend.link()]
-		dependsOn = [mysql, backend, frontend]
-	}
+        image = 'attx-dev:5000/uv-attx-dpus:latest'
+        links = [frontend.link(), mysql.link(), backend.link()]
+        dependsOn = [mysql, backend, frontend]
+    }
 
-	attxdpus {
+    wfapi {
         forceRemoveImage = true
-		image = 'attx-dev:5000/uv-attx-dpus:latest'
-		links = [frontend.link(), mysql.link(), backend.link()]
-		dependsOn = [mysql, backend, frontend]
-	}
+        image = 'attx-dev:5000/wf-api:latest'
+        portBindings = ['4301:4301']
+    }
 
-	wfapi {
+    essiren {
         forceRemoveImage = true
-		image = 'attx-dev:5000/wf-api:latest'
-		// portBindings = ['4301:4301']
-	}
+        image = 'attx-dev:5000/essiren:latest'
+        portBindings = ['9200:9200', '9300:9300']
+    }
 
-	essiren {
-        forceRemoveImage = true
-		image = 'attx-dev:5000/essiren:latest'
-		portBindings = ['9200:9200', '9300:9300']
-	}
-
-	elasticsearch5 {
+    elasticsearch5 {
         forceRemoveImage = true
         image = 'attx-dev:5000/attx-es5:latest'
         portBindings = ['9210:9210', '9310:9310']
     }
 
-	fuseki {
+    fuseki {
         forceRemoveImage = true
-		image = 'attx-dev:5000/attx-fuseki:latest'
-		// portBindings = ['3030:3030']
+        image = 'attx-dev:5000/attx-fuseki:latest'
+        portBindings = ['3030:3030']
         env = ['ADMIN_PASSWORD=pw123']
-	}
+    }
 
-	gmapi {
+    gmapi {
         forceRemoveImage = true
-		image = "attx-dev:5000/gm-api:latest"
-		// portBindings = ['4302:4302']
-		links = [fuseki.link(), elasticsearch5.link(), wfapi.link()]
-	}
+        image = "attx-dev:5000/gm-api:latest"
+        portBindings = ['4302:4302']
+        links = [fuseki.link(), elasticsearch5.link(), wfapi.link()]
+    }
 }

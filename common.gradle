@@ -9,6 +9,7 @@ ext {
     imageRepoPort = "5000"
     artifactRepoPort = "8081"
     jenkinsPort = "49001"
+    unifiedViewsRepoURL = "http://repository.unifiedviews.eu/nexus/content/repositories/public"
 }
 
 // TO BE REMOVED when moving to archiva
@@ -21,7 +22,7 @@ if (!project.hasProperty("registryURL")) {
 }
 
 if (!project.hasProperty("artifactRepoURL")) {
-    ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"
+    ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}"
 }
 
 if (!project.hasProperty("artifactRepoUser")) {
@@ -37,7 +38,7 @@ if (!project.hasProperty("artifactRepoPassword")) {
 if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.wfAPI               = "1.0-SNAPSHOT"
-    ext.gmAPI               = "1.1-SNAPSHOT"
+    ext.gmAPI               = "1.0-SNAPSHOT"
     ext.rdfINDEXER          = "1.0-SNAPSHOT"
     ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
     ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
@@ -73,5 +74,3 @@ if (!project.hasProperty("env") || project.env == "dev") {
 } else {
     throw new GradleException("Build project environment option not recognised.")
 }
-
-ext.unifiedViewsRepoURL = "http://repository.unifiedviews.eu/nexus/content/repositories/public/"
