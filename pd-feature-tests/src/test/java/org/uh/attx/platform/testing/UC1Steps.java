@@ -492,31 +492,32 @@ public class UC1Steps implements En {
                 // using timestamps to test that there are atleast two activities linked to the working graphs
                 
                 String actQuery1 = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-"ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
-"  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
-"  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
-"  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
-"  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/1> .\n" +
-"  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/1> .  \n" +
-"  FILTER(?t1 < ?t2)\n" +
-"}";
+                                    "ASK \n" +
+                                    "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                                    "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                                    "  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                                    "  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
+                                    "  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
+                                    "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
+                                    "                <http://data.hulib.helsinki.fi/attx/work/1> .\n" +
+                                    "  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
+                                    "                <http://data.hulib.helsinki.fi/attx/work/1> .  \n" +
+                                    "  FILTER(?t1 < ?t2)\n" +
+                                    "}";
+
                 String actQuery2 = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-"ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
-"  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
-"  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
-"  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
-"  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/2> .\n" +
-"  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +
-"  FILTER(?t1 < ?t2)\n" +
-"}";
+                                    "ASK \n" +
+                                    "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                                    "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                                    "  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                                    "  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
+                                    "  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
+                                    "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
+                                    "                <http://data.hulib.helsinki.fi/attx/work/2> .\n" +
+                                    "  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
+                                    "                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +
+                                    "  FILTER(?t1 < ?t2)\n" +
+                                    "}";
 
                 HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
