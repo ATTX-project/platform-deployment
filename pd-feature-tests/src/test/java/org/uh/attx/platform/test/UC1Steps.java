@@ -8,6 +8,7 @@ package org.uh.attx.platform.test;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.GetRequest;
 
 import cucumber.api.java8.En;
@@ -17,15 +18,18 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
-import org.json.JSONArray;
+import org.awaitility.core.ConditionTimeoutException;
+import org.hamcrest.core.IsEqual;
 import org.json.JSONObject;
 
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
 
 
@@ -35,9 +39,6 @@ import static org.junit.Assert.*;
 public class UC1Steps implements En {
 
     PlatformServices s = new PlatformServices();
-
-    private static final long START_DELAY = 1000;
-    private static final long POLLING_INTERVAL = 3000;
     private final String VERSION = "/0.1";
 
     private final String API_USERNAME = "master";
@@ -45,42 +46,152 @@ public class UC1Steps implements En {
     private final String ACTIVITY = "{ \"debugging\" : \"false\", \"userExternalId\" : \"admin\" }";
 
     static List<Integer> pipelineIDs = new ArrayList<Integer>();
-    static boolean pollingSuccesful = false;
 
-    private void pollForProcessing(int createdIDPython) throws Exception {
-        Timer timer = new Timer();
-        final CountDownLatch latch = new CountDownLatch(1);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                HttpResponse<JsonNode> resp = null;
-                try {
-                    String URL = String.format(s.getGmapi() + VERSION + "/index/%s", createdIDPython);
-                    GetRequest get = Unirest.get(URL);
-                    HttpResponse<JsonNode> response1 = get.asJson();
-                    JSONObject myObj = response1.getBody().getObject();
-                    String status = myObj.getString("status");
-                    int result1 = response1.getStatus();
-                    if (status.equalsIgnoreCase("Done")) {
-                        pollingSuccesful = true;
-                        latch.countDown();
-                        cancel();
-                    } else if (status.equalsIgnoreCase("Error")) {
-                        latch.countDown();
-                        cancel();
-                        fail("Polling returned Error status.");
-                    }
-                    //assertThat(status, anyOf(is("WIP"), is("Done")));
-                    //assertEquals(200, result1);
+    private JSONObject getQueryResultField(HttpResponse<JsonNode> response, String field) {
+        JSONObject queryObject = response.getBody().getObject().getJSONObject("results");
+        return queryObject.getJSONArray("bindings").getJSONObject(0).getJSONObject(field);
+    }
 
-                } catch (Exception ex) {
-                    latch.countDown();
-                    cancel();
-                    fail(ex.getMessage());
+    private HttpResponse<JsonNode> graphQueryResult(String endpoint, String query) {
+        String URL = String.format(s.getFuseki() + "/%s/query", endpoint);
+        HttpResponse<JsonNode> queryResponse = null;
+        try {
+            queryResponse = Unirest.post(URL)
+                    .header("Content-Type", "application/sparql-query")
+                    .header("Accept", "application/sparql-results+json")
+                    .body(query)
+                    .asJson();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            fail("Could not query Graph Store at:" + URL);
+        }
+        return queryResponse;
+    }
+
+    private int importPipeline(URL resource) {
+        int pipelineID = 0;
+        try {
+            HttpResponse<JsonNode> pipelineRequest = Unirest.post(s.getUV() + "/master/api/1/pipelines/import")
+                    .header("accept", "application/json")
+                    .basicAuth(API_USERNAME, API_PASSWORD)
+                    .field("importUserData", false)
+                    .field("importSchedule", false)
+                    .field("file", new File(resource.toURI()))
+                    .asJson();
+            assertEquals(200, pipelineRequest.getStatus());
+            JSONObject pipelineObject = pipelineRequest.getBody().getObject();
+            System.out.println(pipelineObject);
+            pipelineID = pipelineObject.getInt("id");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            fail("Could not import pipeline resource:" + resource);
+        }
+        return pipelineID;
+    }
+
+    private Callable<String> pollForWorkflowExecution(Integer pipelineID) {
+        return new Callable<String>() {
+            public String call() throws Exception {
+                String URL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions/last", pipelineID.intValue());
+                HttpResponse<JsonNode> schedulePipelineResponse = Unirest.get(URL)
+                        .header("accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .basicAuth(API_USERNAME, API_PASSWORD)
+                        .asJson();
+                if (schedulePipelineResponse.getStatus() == 200) {
+                    JSONObject execution = schedulePipelineResponse.getBody().getObject();
+                    String status = execution.getString("status");
+                    System.out.println(status);
+                    return status;
+                } else {
+                    return "Not yet";
                 }
             }
-        }, START_DELAY, POLLING_INTERVAL);
-        latch.await();
+        };
+    }
+
+    private Callable<Integer> pollForWorkflowStart(Integer pipelineID) {
+        return new Callable<Integer>() {
+            public Integer call() throws Exception {
+                String URL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", pipelineID);
+                HttpResponse<JsonNode> workflowStart = Unirest.post(URL)
+                        .header("accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .basicAuth(API_USERNAME, API_PASSWORD)
+                        .body(ACTIVITY)
+                        .asJson();
+                JSONObject execution = workflowStart.getBody().getObject();
+                String status = execution.getString("status");
+                System.out.println(status);
+                return workflowStart.getStatus();
+            }
+        };
+    }
+
+    private void updateProv() throws Exception{
+        String provRequest = String.format(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301" + VERSION +
+                "&graphStore=http://fuseki:3030/ds");
+
+        HttpResponse<JsonNode> wfProv = Unirest.get(provRequest)
+                .header("content-type", "application/json")
+                .asJson();
+        JSONObject provObj = wfProv.getBody().getObject();
+
+        assertEquals(200, wfProv.getStatus());
+        assertEquals("Done", provObj.getString("status"));
+    }
+
+    private Callable<Boolean> askQueryAnswer(String query) {
+        return new Callable<Boolean>() {
+            public Boolean call() throws Exception {
+                boolean queryResult = false;
+                try {
+                    HttpResponse<JsonNode> queryWork = graphQueryResult("ds", query);
+                    System.out.println(queryWork.getBody().getObject().getBoolean("boolean"));
+                    queryResult = queryWork.getBody().getObject().getBoolean("boolean");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    fail("Query not true.\n" + query);
+                }
+                return queryResult;
+            }
+        };
+    }
+
+    private void askGraphStoreIfTrue(String query) throws Exception {
+        await().atMost(120, TimeUnit.SECONDS).until(askQueryAnswer(query), equalTo(true));
+    }
+
+    private Callable<String> pollForIndexStatus(Integer createdID) {
+        return new Callable<String>() {
+            public String call() throws Exception {
+                String URL = String.format(s.getGmapi() + VERSION + "/index/%s", createdID);
+                GetRequest get = Unirest.get(URL);
+                HttpResponse<JsonNode> response1 = get.asJson();
+                JSONObject myObj = response1.getBody().getObject();
+                String status = myObj.getString("status");
+                System.out.println(status);
+                return status;
+            }
+        };
+    }
+
+    private Callable<Integer> waitForESResults(String esEndpoint, String esIndex) {
+        return new Callable<Integer>() {
+            public Integer call() throws Exception {
+                int totalHits = 0;
+                Unirest.post(esEndpoint + "/"+ esIndex +"/_refresh");
+                HttpResponse<com.mashape.unirest.http.JsonNode> jsonResponse = Unirest.get(esEndpoint + "/"+ esIndex +"/_search?q=*")
+                        .asJson();
+
+                JSONObject esObj = jsonResponse.getBody().getObject();
+                if(esObj.has("hits")) {
+                    totalHits = esObj.getJSONObject("hits").getInt("total");
+                }
+                System.out.println(esEndpoint + ": " + totalHits);
+                return totalHits;
+            }
+        };
     }
 
     public UC1Steps() throws Exception {
@@ -94,21 +205,16 @@ public class UC1Steps implements En {
                         + "  GRAPH ?g { ?s ?p ?o }\n"
                         + "  FILTER(strStarts(str(?g), 'http://data.hulib.helsinki.fi/attx/work'))\n"
                         + "}";
-                HttpResponse<JsonNode> queryResponse = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(graphQuery)
-                        .asJson();
+                HttpResponse<JsonNode> emptyGraph = graphQueryResult("ds", graphQuery);
 
-                assertEquals(200, queryResponse.getStatus());
-                assertEquals(0, queryResponse.getBody().getObject().getJSONObject("results").getJSONArray("bindings").getJSONObject(0).getJSONObject("count").getInt("value"));
+                assertEquals(200, emptyGraph.getStatus());
+                assertEquals(0, getQueryResultField(emptyGraph, "count").getInt("value"));
 
                 // check for pipelines and executions in UV
                 HttpResponse<JsonNode> uvResponse = Unirest.get(s.getUV() + "/master/api/1/pipelines?userExternalId=admin")
                         .header("content-type", "application/json")
                         .basicAuth(API_USERNAME, API_PASSWORD)
                         .asJson();
-                //System.out.println(uvResponse.getBody());
                 assertEquals(0, uvResponse.getBody().getArray().length());
 
             } catch (Exception ex) {
@@ -116,165 +222,83 @@ public class UC1Steps implements En {
                 fail("Could not check if platform has no data");
             }
         });
-        Given("^than harvesting pipelines have been scheduled$", () -> {
+
+        Given("^that the harvesting pipelines have been created$", () -> {
+            // import workflows
+            try {
+                if (pipelineIDs.isEmpty()) {
+                    URL resourceHYCRIS = UC1Steps.class.getResource("/harvestHYCRIS.zip");
+                    URL resourceInfras = UC1Steps.class.getResource("/harvestInfras.zip");
+
+                    pipelineIDs.add(importPipeline(resourceHYCRIS));
+                    pipelineIDs.add(importPipeline(resourceInfras));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                fail("Could not import required pipelines");
+            }
+        });
+
+        Given("^harvesting pipelines have been scheduled$", () -> {
             try {
                 // schedule executions
-                for (Integer i : pipelineIDs) {
-                    Thread.sleep(2000);
-                    String URL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", i.intValue());
-                    HttpResponse<JsonNode> schedulePipelineResponse = Unirest.post(URL)
-                            .header("accept", "application/json")
-                            .header("Content-Type", "application/json")
-                            .basicAuth(API_USERNAME, API_PASSWORD)
-                            .body(ACTIVITY)
-                            .asJson();
-                    assertEquals(200, schedulePipelineResponse.getStatus());
+                for (Integer pipelineID : pipelineIDs) {
+                    await().atMost(20, TimeUnit.SECONDS).until(pollForWorkflowStart(pipelineID.intValue()), equalTo(200));
                 }
-
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail("Could not schedule pipelines");
             }
         });
 
-        Given("^that the harvesting pipelines have been created$", () -> {
-            // import workflows
+        When("^harvesting is successfully executed$", () -> {
             try {
-                if (pipelineIDs.isEmpty()) {
-                    URL resource = UC1Steps.class.getResource("/harvestHYCRIS.zip");
-                    HttpResponse<JsonNode> postResponse = Unirest.post(s.getUV() + "/master/api/1/pipelines/import")
-                            .header("accept", "application/json")
-                            .basicAuth(API_USERNAME, API_PASSWORD)
-                            .field("importUserData", false)
-                            .field("importSchedule", false)
-                            .field("file", new File(resource.toURI()))
-                            .asJson();
-                    assertEquals(200, postResponse.getStatus());
-                    JSONObject myObj = postResponse.getBody().getObject();
-                    System.out.println(myObj);
-                    int pipelineID1 = myObj.getInt("id");
-                    pipelineIDs.add(pipelineID1);
-
-                    resource = UC1Steps.class.getResource("/harvestInfras.zip");
-
-                    postResponse = Unirest.post(s.getUV() + "/master/api/1/pipelines/import")
-                            .header("accept", "application/json")
-                            .basicAuth(API_USERNAME, API_PASSWORD)
-                            .field("importUserData", false)
-                            .field("importSchedule", false)
-                            .field("file", new File(resource.toURI()))
-                            .asJson();
-
-                    assertEquals(200, postResponse.getStatus());
-                    JSONObject myObj2 = postResponse.getBody().getObject();
-                    System.out.println(myObj2);
-                    int pipelineID2 = myObj2.getInt("id");
-                    pipelineIDs.add(pipelineID2);
-
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                fail("Could not import required pipelines");
-            }
-
-        });
-
-        When("^harvesting is succesfully executed$", () -> {
-            try {
-                Thread.sleep(5000);
-                // poll until all pipelines executions are finished or fail after 10 attempts
-                String status = "";
-
                 for (Integer pipelineID : pipelineIDs) {
                     System.out.println("Executing pipeline: " + pipelineID);
-                    for (int i = 0; i < 10; i++) {
-                        String URL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", pipelineID.intValue());
-                        HttpResponse<JsonNode> schedulePipelineResponse = Unirest.get(URL)
-                                .header("accept", "application/json")
-                                .header("Content-Type", "application/json")
-                                .basicAuth(API_USERNAME, API_PASSWORD)
-                                .asJson();
-                        assertEquals(200, schedulePipelineResponse.getStatus());
-                        JSONArray execs = schedulePipelineResponse.getBody().getArray();
-                        Iterator<Object> iterator = execs.iterator();
-                        while (iterator.hasNext()) {
-                            JSONObject obj = (JSONObject) iterator.next();
-                            status = obj.getString("status");
-                            if (status.equals("FAILED")) {
-                                fail("Pipeline execution failed.");
-                            } else if (status.equals("FINISHED_SUCCESS")) {
-                                break;
-                            }
-                        }
-                        if (status.equals("FINISHED_SUCCESS")) {
-                            break;
-                        }
-                        Thread.sleep(1000);
-                    }
-
+                    await().atMost(180, TimeUnit.SECONDS).until(pollForWorkflowExecution(pipelineID.intValue()), equalTo("FINISHED_SUCCESS"));
                 }
-                assertTrue(true);
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded, could not get WorkflowExecution as it did not finish successfully.");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail("Pipeline execution failed.");
             }
-
         });
 
         Then("^there should be both publication and infrastructure data available for internal use$", () -> {
-
             try {
+                String infrasQuery = "ASK\n"
+                        + "FROM <http://data.hulib.helsinki.fi/attx/work/1> \n"
+                        + "{?s a <http://data.hulib.helsinki.fi/attx/types/Infrastructure> \n"
+                        + "}";
 
-                Thread.sleep(5000);
-                HttpResponse<JsonNode> queryResponse = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body("ASK\n"
-                                + "FROM <http://data.hulib.helsinki.fi/attx/work/1> \n"
-                                + "{?s a <http://data.hulib.helsinki.fi/attx/types/Infrastructure> \n"
-                                + "}")
-                        .asJson();
+                String pubsQuery = "ASK\n"
+                        + "FROM <http://data.hulib.helsinki.fi/attx/work/1> \n"
+                        + "{?s a <http://data.hulib.helsinki.fi/attx/types/Publication> \n"
+                        + "}";
 
-                HttpResponse<JsonNode> queryResponse2 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body("ASK\n"
-                                + "FROM <http://data.hulib.helsinki.fi/attx/work/1> \n"
-                                + "{?s a <http://data.hulib.helsinki.fi/attx/types/Publication> \n"
-                                + "}")
-                        .asJson();
+                String infrasQuery2 = "ASK\n"
+                        + "FROM <http://data.hulib.helsinki.fi/attx/work/2> \n"
+                        + "{?s a <http://data.hulib.helsinki.fi/attx/types/Infrastructure> \n"
+                        + "}";
 
-                HttpResponse<JsonNode> queryResponse3 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body("ASK\n"
-                                + "FROM <http://data.hulib.helsinki.fi/attx/work/2> \n"
-                                + "{?s a <http://data.hulib.helsinki.fi/attx/types/Infrastructure> \n"
-                                + "}")
-                        .asJson();
+                askGraphStoreIfTrue(infrasQuery);
+                askGraphStoreIfTrue(infrasQuery2);
+                askGraphStoreIfTrue(pubsQuery);
 
-                assertTrue(queryResponse.getBody().getObject().getBoolean("boolean"));
-                assertTrue(queryResponse2.getBody().getObject().getBoolean("boolean"));
-                assertTrue(queryResponse3.getBody().getObject().getBoolean("boolean"));
 
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded, could not get infrastructure and publication data as it did not finish successfully. Graph Store exceeded time limit.");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
-
         });
 
         Then("^there should be provenance data available for each pipeline$", () -> {
             try {
-                Thread.sleep(5000);
                 // update prov
-                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
-                        .header("content-type", "application/json")
-                        .asJson();
-
-                System.out.println(provResponse.getBody());
-                JSONObject provObj = provResponse.getBody().getObject();
-
+                updateProv();
 
                 // query prov graph 
 
@@ -366,48 +390,16 @@ public class UC1Steps implements En {
                         "                <http://data.hulib.helsinki.fi/attx/work/2> ;      \n" +
                         "}	";
 
-
                 // do some quering
-                HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(queryWork1Input)
-                        .asJson();
-                HttpResponse<JsonNode> resp2 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(queryWork1Output)
-                        .asJson();
-                HttpResponse<JsonNode> resp3 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(queryWork2Input)
-                        .asJson();
-                HttpResponse<JsonNode> resp4 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(queryWork2Output)
-                        .asJson();
-                HttpResponse<JsonNode> resp5 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(queryActivity1)
-                        .asJson();
-                HttpResponse<JsonNode> resp6 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(queryActivity2)
-                        .asJson();
+                askGraphStoreIfTrue(queryWork1Input);
+                askGraphStoreIfTrue(queryWork1Output);
+                askGraphStoreIfTrue(queryWork2Input);
+                askGraphStoreIfTrue(queryWork2Output);
+                askGraphStoreIfTrue(queryActivity1);
+                askGraphStoreIfTrue(queryActivity2);
 
-
-                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
-                assertTrue(resp2.getBody().getObject().getBoolean("boolean"));
-                assertTrue(resp3.getBody().getObject().getBoolean("boolean"));
-                assertTrue(resp4.getBody().getObject().getBoolean("boolean"));
-                assertTrue(resp5.getBody().getObject().getBoolean("boolean"));
-                assertTrue(resp6.getBody().getObject().getBoolean("boolean"));
-
-
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded. Graph Store exceeded time limit.");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
@@ -415,7 +407,7 @@ public class UC1Steps implements En {
         });
 
 
-        Given("^that platform contains earlier version of the data$", () -> {
+        Given("^that platform contains an earlier version of the data$", () -> {
             System.out.println("****: 2");
             try {
                 // query for graphs in Fuseki 
@@ -424,116 +416,92 @@ public class UC1Steps implements En {
                         + "  GRAPH ?g { ?s ?p ?o }\n"
                         + "  FILTER(?g != <http://data.hulib.helsinki.fi/attx/onto> && ?g != <http://data.hulib.helsinki.fi/attx/prov>)\n"
                         + "}";
-                HttpResponse<JsonNode> queryResponse = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(graphQuery)
-                        .asJson();
+                HttpResponse<JsonNode> notEmptyGraph = graphQueryResult("ds", graphQuery);
 
-                assertEquals(200, queryResponse.getStatus());
-                assertTrue(0 < queryResponse.getBody().getObject().getJSONObject("results").getJSONArray("bindings").getJSONObject(0).getJSONObject("count").getInt("value"));
+                assertEquals(200, notEmptyGraph.getStatus());
+                assertTrue(0 < getQueryResultField(notEmptyGraph, "count").getInt("value"));
 
                 // check for pipelines and executions in UV
                 HttpResponse<JsonNode> uvResponse = Unirest.get(s.getUV() + "/master/api/1/pipelines?userExternalId=admin")
                         .header("content-type", "application/json")
                         .basicAuth(API_USERNAME, API_PASSWORD)
                         .asJson();
-                //System.out.println(uvResponse.getBody());
                 assertTrue(0 < uvResponse.getBody().getArray().length());
 
             } catch (Exception ex) {
                 ex.printStackTrace();
-                fail("Could not check that contains data");
+                fail("Could not check that contains data.");
             }
-
         });
 
         Then("^the data should be updated and old version removed$", () -> {
             try {
-                Thread.sleep(5000);
                 // update prov
-                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
-                        .header("content-type", "application/json")
-                        .asJson();
+                updateProv();
 
                 // there still exists only one output graph / harvesting pipeline
-                String graphQuery = "SELECT (COUNT(DISTINCT ?g) as ?count)\n" +
-                        "WHERE {\n" +
-                        "  GRAPH ?g { ?s ?p ?o }\n" +
-                        "  FILTER(?g = <http://data.hulib.helsinki.fi/attx/work/1> || ?g = <http://data.hulib.helsinki.fi/attx/work/2>)\n" +
-                        "}";
 
-                HttpResponse<JsonNode> queryResponse = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(graphQuery)
-                        .asJson();
+                String graphQuery = "SELECT (COUNT(DISTINCT ?g) as ?count)\n"
+                        + "WHERE {\n"
+                        + "  GRAPH ?g { ?s ?p ?o }\n"
+                        + "  FILTER(strStarts(str(?g), 'http://data.hulib.helsinki.fi/attx/work'))\n"
+                        + "}";
 
-                assertEquals(200, queryResponse.getStatus());
-                assertEquals(2, queryResponse.getBody().getObject().getJSONObject("results").getJSONArray("bindings").getJSONObject(0).getJSONObject("count").getInt("value"));
+                await().atMost(30, TimeUnit.SECONDS).until(() -> {
+                    try {
+                        HttpResponse<JsonNode> workingGraphs = graphQueryResult("ds", graphQuery);
+                        assertEquals(200, workingGraphs.getStatus());
+                        assertEquals(2, getQueryResultField(workingGraphs, "count").getInt("value"));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        fail("Query for work graphs failed.");
+                    }
+                });
 
-
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded. Graph Store exceeded time limit.");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
-
         });
 
         Then("^the provenance should be updated with a new activity$", () -> {
             try {
-                Thread.sleep(5000);
                 // update prov (again)
-                Unirest.get(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
-                        .header("content-type", "application/json")
-                        .asJson();
+                updateProv();
 
                 // using timestamps to test that there are atleast two activities linked to the working graphs
 
                 String actQuery1 = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                        "ASK \n" +
+                        "ASK\n" +
                         "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-                        "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
-                        "  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
-                        "  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
-                        "  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
-                        "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-                        "                <http://data.hulib.helsinki.fi/attx/work/1> .\n" +
-                        "  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
-                        "                <http://data.hulib.helsinki.fi/attx/work/1> .  \n" +
-                        "  FILTER(?t1 < ?t2)\n" +
+                        "?act1 a <http://www.w3.org/ns/prov#Activity> ; " +
+                        "<http://www.w3.org/ns/prov#endedAtTime> ?t1 ; " +
+                        "<http://www.w3.org/ns/prov#generated> <http://data.hulib.helsinki.fi/attx/work/1> .\n" +
+                        "?act2 a <http://www.w3.org/ns/prov#Activity> ; " +
+                        "<http://www.w3.org/ns/prov#endedAtTime> ?t2 ; " +
+                        "<http://www.w3.org/ns/prov#generated> <http://data.hulib.helsinki.fi/attx/work/1> .\n" +
+//                        "FILTER(?t1 < ?t2)\n" +
                         "}";
 
                 String actQuery2 = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                        "ASK \n" +
+                        "ASK\n" +
                         "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-                        "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
-                        "  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
-                        "  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
-                        "  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
-                        "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-                        "                <http://data.hulib.helsinki.fi/attx/work/2> .\n" +
-                        "  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
-                        "                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +
-                        "  FILTER(?t1 < ?t2)\n" +
+                        "?act1 a <http://www.w3.org/ns/prov#Activity> ; " +
+                        "<http://www.w3.org/ns/prov#endedAtTime> ?t1 ; " +
+                        "<http://www.w3.org/ns/prov#generated> <http://data.hulib.helsinki.fi/attx/work/2> .\n" +
+                        "?act2 a <http://www.w3.org/ns/prov#Activity> ; " +
+                        "<http://www.w3.org/ns/prov#endedAtTime> ?t2 ; " +
+                        "<http://www.w3.org/ns/prov#generated> <http://data.hulib.helsinki.fi/attx/work/2> .\n" +
+//                        "FILTER(?t1 < ?t2)\n" +
                         "}";
 
-                HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(actQuery1)
-                        .asJson();
+                askGraphStoreIfTrue(actQuery1);
+                askGraphStoreIfTrue(actQuery2);
 
-                HttpResponse<JsonNode> resp2 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(actQuery2)
-                        .asJson();
-
-
-                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
-                assertTrue(resp2.getBody().getObject().getBoolean("boolean"));
-
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded. Could not get activities from graph.");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
@@ -546,18 +514,15 @@ public class UC1Steps implements En {
             try {
                 String payload = new String(Files.readAllBytes(Paths.get(getClass().getResource("/indexPayload.json").toURI())));
 
-                HttpResponse<JsonNode> postResponse = Unirest.post(s.getGmapi() + VERSION + "/index")
+                HttpResponse<JsonNode> postIndex = Unirest.post(s.getGmapi() + VERSION + "/index")
                         .header("content-type", "application/json")
                         .body(payload)
                         .asJson();
-                JSONObject myObj = postResponse.getBody().getObject();
-                int indexingID = myObj.getInt("id");
-                int result3 = postResponse.getStatus();
-                assertEquals(202, result3);
-                pollingSuccesful = false;
-                pollForProcessing(indexingID);
+                JSONObject indexObj = postIndex.getBody().getObject();
+                int createdID = indexObj.getInt("id");
+                assertEquals(202, postIndex.getStatus());
 
-                assertTrue(pollingSuccesful);
+                await().atMost(20, TimeUnit.SECONDS).until(pollForIndexStatus(createdID), equalTo("Done"));
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -571,30 +536,17 @@ public class UC1Steps implements En {
                 Unirest.post(s.getESSiren() + "/current/_refresh");
 
                 // query
-                int total = 0;
-                for (int i = 0; i < 10; i++) {
+                await().atMost(45, TimeUnit.SECONDS).until(waitForESResults(s.getESSiren(), "current"), greaterThan(0));
 
-                    HttpResponse<JsonNode> jsonResponse = Unirest.get(s.getESSiren() + "/current/_search?q=*")
-                            .asJson();
-
-                    JSONObject obj = jsonResponse.getBody().getObject();
-                    if (obj.has("hits")) {
-                        total = obj.getJSONObject("hits").getInt("total");
-                        if (total > 0) {
-                            assertTrue(true);
-                            return;
-                        }
-                    }
-                    Thread.sleep(1000);
-                }
-                fail("Could not query indexing results");
-            } catch (Exception ex) {
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded. ESSiren query failed.");
+            }  catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
         });
 
-        Given("^that there existing linking identifier in the data$", () -> {
+        Given("^there are existing linking identifiers$", () -> {
             // test data is set up so, that there are linking identifiers
             assertTrue(true);
 
@@ -603,59 +555,19 @@ public class UC1Steps implements En {
         When("^identifier based linking is executed$", () -> {
             try {
                 // import Linking pipeline
-                URL resource = UC1Steps.class.getResource("/linking.zip");
-                HttpResponse<JsonNode> postResponse = Unirest.post(s.getUV() + "/master/api/1/pipelines/import")
-                        .header("accept", "application/json")
-                        .basicAuth(API_USERNAME, API_PASSWORD)
-                        .field("importUserData", false)
-                        .field("importSchedule", false)
-                        .field("file", new File(resource.toURI()))
-                        .asJson();
-                assertEquals(200, postResponse.getStatus());
-                JSONObject myObj = postResponse.getBody().getObject();
-                int pipelineID = myObj.getInt("id");
+                URL linkResource = UC1Steps.class.getResource("/linking.zip");
+                int pipelineID = importPipeline(linkResource);
 
-                // schedule linking 
-                String schedulingURL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", pipelineID);
-                HttpResponse<JsonNode> schedulePipelineResponse1 = Unirest.post(schedulingURL)
-                        .header("accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .basicAuth(API_USERNAME, API_PASSWORD)
-                        .body(ACTIVITY)
-                        .asJson();
-                assertEquals(200, schedulePipelineResponse1.getStatus());
+                // schedule linking
+                await().atMost(20, TimeUnit.SECONDS).until(pollForWorkflowStart(pipelineID), equalTo(200));
+                await().atMost(180, TimeUnit.SECONDS).until(pollForWorkflowExecution(pipelineID), equalTo("FINISHED_SUCCESS"));
 
-                // poll for results                
-                for (int i = 0; i < 10; i++) {
-                    String executionGetURL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", pipelineID);
-                    HttpResponse<JsonNode> schedulePipelineResponse2 = Unirest.get(executionGetURL)
-                            .header("accept", "application/json")
-                            .header("Content-Type", "application/json")
-                            .basicAuth(API_USERNAME, API_PASSWORD)
-                            .asJson();
-                    assertEquals(200, schedulePipelineResponse2.getStatus());
-                    JSONArray execs = schedulePipelineResponse2.getBody().getArray();
-                    Iterator<Object> iterator = execs.iterator();
-                    while (iterator.hasNext()) {
-                        JSONObject obj = (JSONObject) iterator.next();
-                        String status = obj.getString("status");
-                        if (status.equals("FAILED")) {
-                            fail("Pipeline execution failed.");
-                            return;
-                        } else if (status.equals("FINISHED_SUCCESS")) {
-                            assertTrue(true);
-                            return;
-                        }
-                    }
-                    Thread.sleep(1000);
-                }
-
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded. UnifiedViews did not do its job.");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail("Linking failed." + ex.getMessage());
             }
-
-
         });
 
         Then("^there should be a new working dataset that contains links$", () -> {
@@ -665,14 +577,11 @@ public class UC1Steps implements En {
                         "FROM <http://data.hulib.helsinki.fi/attx/work3> {\n" +
                         " ?id1 <http://www.w3.org/2004/02/skos/core#exactMatch> ?id2 }";
 
-                HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(query)
-                        .asJson();
-                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
+                askGraphStoreIfTrue(query);
 
-            } catch (Exception ex) {
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded. Graph Store exceeded time limit.");
+            }  catch (Exception ex) {
                 ex.printStackTrace();
                 fail("Checking for link data set failed." + ex.getMessage());
             }
@@ -681,13 +590,8 @@ public class UC1Steps implements En {
 
         Then("^there should be a new activity in the provenance dataset$", () -> {
             try {
-                Thread.sleep(5000);
                 // update prov (again)
-                Unirest.get(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
-                        .header("content-type", "application/json")
-                        .asJson();
-
-                Thread.sleep(2000);
+                updateProv();
 
                 String actQuery = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
                         "ASK \n" +
@@ -701,18 +605,11 @@ public class UC1Steps implements En {
                         "                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +
                         "}";
 
+                askGraphStoreIfTrue(actQuery);
 
-                Thread.sleep(2000);
-
-                HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
-                        .header("Content-Type", "application/sparql-query")
-                        .header("Accept", "application/sparql-results+json")
-                        .body(actQuery)
-                        .asJson();
-
-                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
-
-            } catch (Exception ex) {
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded. Graph Store exceeded time limit.");
+            }  catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }

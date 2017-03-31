@@ -14,7 +14,7 @@ dependencies {
         'info.cukes:cucumber-java8:1.2.5',
         'info.cukes:cucumber-junit:1.2.5',
         'com.mashape.unirest:unirest-java:1.4.9',
-        'org.skyscreamer:jsonassert:1.4.0'
+        'org.skyscreamer:jsonassert:1.4.0',
         'org.awaitility:awaitility-groovy:2.0.0'
 }
 
