@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uh.attx.platform.testing;
+package org.uh.attx.platform.test;
 
 /**
- *
  * @author jkesanie
  */
 public class PlatformServices {

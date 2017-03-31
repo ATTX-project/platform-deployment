@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uh.attx.platform.testing;
+package org.uh.attx.platform.test;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -11,6 +11,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.request.GetRequest;
 
 import cucumber.api.java8.En;
+
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
@@ -24,14 +25,16 @@ import java.util.concurrent.CountDownLatch;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import static org.junit.Assert.*;
 
 
 /**
- *
  * @author jkesanie
  */
 public class UC1Steps implements En {
+
+    PlatformServices s = new PlatformServices();
 
     private static final long START_DELAY = 1000;
     private static final long POLLING_INTERVAL = 3000;
@@ -40,8 +43,6 @@ public class UC1Steps implements En {
     private final String API_USERNAME = "master";
     private final String API_PASSWORD = "commander";
     private final String ACTIVITY = "{ \"debugging\" : \"false\", \"userExternalId\" : \"admin\" }";
-
-    PlatformServices s = new PlatformServices();
 
     static List<Integer> pipelineIDs = new ArrayList<Integer>();
     static boolean pollingSuccesful = false;
@@ -60,10 +61,10 @@ public class UC1Steps implements En {
                     JSONObject myObj = response1.getBody().getObject();
                     String status = myObj.getString("status");
                     int result1 = response1.getStatus();
-                    if (status.equalsIgnoreCase("Done")){
+                    if (status.equalsIgnoreCase("Done")) {
                         pollingSuccesful = true;
                         latch.countDown();
-                        cancel();                        
+                        cancel();
                     } else if (status.equalsIgnoreCase("Error")) {
                         latch.countDown();
                         cancel();
@@ -116,7 +117,7 @@ public class UC1Steps implements En {
             }
         });
         Given("^than harvesting pipelines have been scheduled$", () -> {
-            try {                
+            try {
                 // schedule executions
                 for (Integer i : pipelineIDs) {
                     Thread.sleep(2000);
@@ -129,7 +130,7 @@ public class UC1Steps implements En {
                             .asJson();
                     assertEquals(200, schedulePipelineResponse.getStatus());
                 }
-                
+
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail("Could not schedule pipelines");
@@ -223,7 +224,7 @@ public class UC1Steps implements En {
         Then("^there should be both publication and infrastructure data available for internal use$", () -> {
 
             try {
-                
+
                 Thread.sleep(5000);
                 HttpResponse<JsonNode> queryResponse = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
@@ -251,7 +252,7 @@ public class UC1Steps implements En {
                                 + "{?s a <http://data.hulib.helsinki.fi/attx/types/Infrastructure> \n"
                                 + "}")
                         .asJson();
-                
+
                 assertTrue(queryResponse.getBody().getObject().getBoolean("boolean"));
                 assertTrue(queryResponse2.getBody().getObject().getBoolean("boolean"));
                 assertTrue(queryResponse3.getBody().getObject().getBoolean("boolean"));
@@ -262,111 +263,110 @@ public class UC1Steps implements En {
             }
 
         });
-        
+
         Then("^there should be provenance data available for each pipeline$", () -> {
             try {
                 Thread.sleep(5000);
                 // update prov
-                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
+                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
                         .header("content-type", "application/json")
                         .asJson();
-                
+
                 System.out.println(provResponse.getBody());
                 JSONObject provObj = provResponse.getBody().getObject();
-                
-                
+
+
                 // query prov graph 
-                
+
                 // input dataset for infrat pipeline
                 String queryWork2Input = "ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"<http://infrat.avointiede.fi>\n" +
-"        a       <http://data.hulib.helsinki.fi/attx/onto#Dataset> , <http://www.w3.org/ns/sparql-service-description#Dataset> ;\n" +
-"        <http://purl.org/dc/elements/1.1/description>\n" +
-"                \"Test\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/publisher>\n" +
-"                \"CSC\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/source>\n" +
-"                \"http://infrat.avointiede.fi\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/title>\n" +
-"                \"Infrat\" ;\n" +
-"        <https://creativecommons.org/ns#license>\n" +
-"                <http://data.hulib.helsinki.fi/attx/onto#Unknown> .}	";
-                
-                
-                
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "<http://infrat.avointiede.fi>\n" +
+                        "        a       <http://data.hulib.helsinki.fi/attx/onto#Dataset> , <http://www.w3.org/ns/sparql-service-description#Dataset> ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/description>\n" +
+                        "                \"Test\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/publisher>\n" +
+                        "                \"CSC\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/source>\n" +
+                        "                \"http://infrat.avointiede.fi\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/title>\n" +
+                        "                \"Infrat\" ;\n" +
+                        "        <https://creativecommons.org/ns#license>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/onto#Unknown> .}	";
+
+
                 // output dataset for infrat pipeline 
                 String queryWork2Output = "ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"<http://data.hulib.helsinki.fi/attx/work/2>\n" +
-"        a       <http://data.hulib.helsinki.fi/attx/onto#Dataset> , <http://www.w3.org/ns/sparql-service-description#Dataset> ;\n" +
-"        <http://purl.org/dc/elements/1.1/description>\n" +
-"                \"Test\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/publisher>\n" +
-"                \"HY\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/source>\n" +
-"                \"http://infrat.avointiede.fi\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/title>\n" +
-"                \"Work2 - infras\" ;\n" +
-"        <https://creativecommons.org/ns#license>\n" +
-"                <http://data.hulib.helsinki.fi/attx/onto#Unknown> .   \n" +
-"}	";
-                
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "<http://data.hulib.helsinki.fi/attx/work/2>\n" +
+                        "        a       <http://data.hulib.helsinki.fi/attx/onto#Dataset> , <http://www.w3.org/ns/sparql-service-description#Dataset> ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/description>\n" +
+                        "                \"Test\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/publisher>\n" +
+                        "                \"HY\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/source>\n" +
+                        "                \"http://infrat.avointiede.fi\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/title>\n" +
+                        "                \"Work2 - infras\" ;\n" +
+                        "        <https://creativecommons.org/ns#license>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/onto#Unknown> .   \n" +
+                        "}	";
+
                 // input dataset for TUHAT pipeline 
                 String queryWork1Input = "ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"<http://data.hulib.helsinki.fi/attx/work/1/input>\n" +
-"        a       <http://data.hulib.helsinki.fi/attx/onto#Dataset> , <http://www.w3.org/ns/sparql-service-description#Dataset> ;\n" +
-"        <http://purl.org/dc/elements/1.1/description>\n" +
-"                \"Test\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/publisher>\n" +
-"                \"Test\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/source>\n" +
-"                \"http://www.helsinki.fi\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/title>\n" +
-"                \"Original TUHAT pubs and infras\" ;\n" +
-"        <https://creativecommons.org/ns#license>\n" +
-"                <http://data.hulib.helsinki.fi/attx/onto#Unknown> .\n" +
-"\n" +
-"}";
-                
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "<http://data.hulib.helsinki.fi/attx/work/1/input>\n" +
+                        "        a       <http://data.hulib.helsinki.fi/attx/onto#Dataset> , <http://www.w3.org/ns/sparql-service-description#Dataset> ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/description>\n" +
+                        "                \"Test\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/publisher>\n" +
+                        "                \"Test\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/source>\n" +
+                        "                \"http://www.helsinki.fi\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/title>\n" +
+                        "                \"Original TUHAT pubs and infras\" ;\n" +
+                        "        <https://creativecommons.org/ns#license>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/onto#Unknown> .\n" +
+                        "\n" +
+                        "}";
+
                 // output dataset for TUHAT pipeline
                 String queryWork1Output = "ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"<http://data.hulib.helsinki.fi/attx/work/1>\n" +
-"        a       <http://data.hulib.helsinki.fi/attx/onto#Dataset> , <http://www.w3.org/ns/sparql-service-description#Dataset> ;\n" +
-"        <http://purl.org/dc/elements/1.1/description>\n" +
-"                \"Test\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/publisher>\n" +
-"                \"HY\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/source>\n" +
-"                \"http://www.helsinki.fi\" ;\n" +
-"        <http://purl.org/dc/elements/1.1/title>\n" +
-"                \"Internal Tuhat pubs and infras\" ;\n" +
-"        <https://creativecommons.org/ns#license>\n" +
-"                <http://data.hulib.helsinki.fi/attx/onto#Unknown> .\n" +
-"}";
-                
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "<http://data.hulib.helsinki.fi/attx/work/1>\n" +
+                        "        a       <http://data.hulib.helsinki.fi/attx/onto#Dataset> , <http://www.w3.org/ns/sparql-service-description#Dataset> ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/description>\n" +
+                        "                \"Test\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/publisher>\n" +
+                        "                \"HY\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/source>\n" +
+                        "                \"http://www.helsinki.fi\" ;\n" +
+                        "        <http://purl.org/dc/elements/1.1/title>\n" +
+                        "                \"Internal Tuhat pubs and infras\" ;\n" +
+                        "        <https://creativecommons.org/ns#license>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/onto#Unknown> .\n" +
+                        "}";
+
                 // activities             
                 String queryActivity1 = "ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"	?act1 a <http://data.hulib.helsinki.fi/attx/onto#WorkflowExecution> , <http://www.w3.org/ns/prov#Activity> .\n" +
-"    ?act1 <http://www.w3.org/ns/prov#used>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/1/input> .\n" +
-"    ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/1> ;      \n" +
-"}	";
-                
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "	?act1 a <http://data.hulib.helsinki.fi/attx/onto#WorkflowExecution> , <http://www.w3.org/ns/prov#Activity> .\n" +
+                        "    ?act1 <http://www.w3.org/ns/prov#used>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/1/input> .\n" +
+                        "    ?act1 <http://www.w3.org/ns/prov#generated>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/1> ;      \n" +
+                        "}	";
+
                 String queryActivity2 = "ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"	?act1 a <http://data.hulib.helsinki.fi/attx/onto#WorkflowExecution> , <http://www.w3.org/ns/prov#Activity> .\n" +
-"    ?act1 <http://www.w3.org/ns/prov#used>\n" +
-"                <http://infrat.avointiede.fi> .\n" +
-"    ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/2> ;      \n" +
-"}	";
-                
-                
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "	?act1 a <http://data.hulib.helsinki.fi/attx/onto#WorkflowExecution> , <http://www.w3.org/ns/prov#Activity> .\n" +
+                        "    ?act1 <http://www.w3.org/ns/prov#used>\n" +
+                        "                <http://infrat.avointiede.fi> .\n" +
+                        "    ?act1 <http://www.w3.org/ns/prov#generated>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/2> ;      \n" +
+                        "}	";
+
+
                 // do some quering
                 HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
@@ -392,29 +392,29 @@ public class UC1Steps implements En {
                         .header("Content-Type", "application/sparql-query")
                         .header("Accept", "application/sparql-results+json")
                         .body(queryActivity1)
-                        .asJson();                
+                        .asJson();
                 HttpResponse<JsonNode> resp6 = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
                         .header("Accept", "application/sparql-results+json")
                         .body(queryActivity2)
-                        .asJson();          
-                
-                
-                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));                
-                assertTrue(resp2.getBody().getObject().getBoolean("boolean"));                
-                assertTrue(resp3.getBody().getObject().getBoolean("boolean"));                
-                assertTrue(resp4.getBody().getObject().getBoolean("boolean"));                
-                assertTrue(resp5.getBody().getObject().getBoolean("boolean"));                
-                assertTrue(resp6.getBody().getObject().getBoolean("boolean"));                
-                
-                
-            }catch(Exception ex) {
+                        .asJson();
+
+
+                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
+                assertTrue(resp2.getBody().getObject().getBoolean("boolean"));
+                assertTrue(resp3.getBody().getObject().getBoolean("boolean"));
+                assertTrue(resp4.getBody().getObject().getBoolean("boolean"));
+                assertTrue(resp5.getBody().getObject().getBoolean("boolean"));
+                assertTrue(resp6.getBody().getObject().getBoolean("boolean"));
+
+
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
         });
-        
-        
+
+
         Given("^that platform contains earlier version of the data$", () -> {
             System.out.println("****: 2");
             try {
@@ -431,7 +431,7 @@ public class UC1Steps implements En {
                         .asJson();
 
                 assertEquals(200, queryResponse.getStatus());
-                assertTrue( 0 <queryResponse.getBody().getObject().getJSONObject("results").getJSONArray("bindings").getJSONObject(0).getJSONObject("count").getInt("value"));
+                assertTrue(0 < queryResponse.getBody().getObject().getJSONObject("results").getJSONArray("bindings").getJSONObject(0).getJSONObject("count").getInt("value"));
 
                 // check for pipelines and executions in UV
                 HttpResponse<JsonNode> uvResponse = Unirest.get(s.getUV() + "/master/api/1/pipelines?userExternalId=admin")
@@ -445,24 +445,24 @@ public class UC1Steps implements En {
                 ex.printStackTrace();
                 fail("Could not check that contains data");
             }
-            
+
         });
-        
+
         Then("^the data should be updated and old version removed$", () -> {
             try {
                 Thread.sleep(5000);
                 // update prov
-                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
+                HttpResponse<JsonNode> provResponse = Unirest.get(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
                         .header("content-type", "application/json")
-                        .asJson();                
-                
+                        .asJson();
+
                 // there still exists only one output graph / harvesting pipeline
                 String graphQuery = "SELECT (COUNT(DISTINCT ?g) as ?count)\n" +
-"WHERE {\n" +
-"  GRAPH ?g { ?s ?p ?o }\n" +
-"  FILTER(?g = <http://data.hulib.helsinki.fi/attx/work/1> || ?g = <http://data.hulib.helsinki.fi/attx/work/2>)\n" +
-"}";
-                
+                        "WHERE {\n" +
+                        "  GRAPH ?g { ?s ?p ?o }\n" +
+                        "  FILTER(?g = <http://data.hulib.helsinki.fi/attx/work/1> || ?g = <http://data.hulib.helsinki.fi/attx/work/2>)\n" +
+                        "}";
+
                 HttpResponse<JsonNode> queryResponse = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
                         .header("Accept", "application/sparql-results+json")
@@ -471,78 +471,77 @@ public class UC1Steps implements En {
 
                 assertEquals(200, queryResponse.getStatus());
                 assertEquals(2, queryResponse.getBody().getObject().getJSONObject("results").getJSONArray("bindings").getJSONObject(0).getJSONObject("count").getInt("value"));
-                                
 
-                
+
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
 
         });
-        
+
         Then("^the provenance should be updated with a new activity$", () -> {
             try {
                 Thread.sleep(5000);
                 // update prov (again)
-                Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
+                Unirest.get(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
                         .header("content-type", "application/json")
                         .asJson();
-            
+
                 // using timestamps to test that there are atleast two activities linked to the working graphs
-                
+
                 String actQuery1 = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                                    "ASK \n" +
-                                    "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-                                    "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
-                                    "  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
-                                    "  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
-                                    "  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
-                                    "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-                                    "                <http://data.hulib.helsinki.fi/attx/work/1> .\n" +
-                                    "  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
-                                    "                <http://data.hulib.helsinki.fi/attx/work/1> .  \n" +
-                                    "  FILTER(?t1 < ?t2)\n" +
-                                    "}";
+                        "ASK \n" +
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                        "  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                        "  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
+                        "  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
+                        "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/1> .\n" +
+                        "  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/1> .  \n" +
+                        "  FILTER(?t1 < ?t2)\n" +
+                        "}";
 
                 String actQuery2 = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                                    "ASK \n" +
-                                    "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-                                    "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
-                                    "  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
-                                    "  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
-                                    "  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
-                                    "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-                                    "                <http://data.hulib.helsinki.fi/attx/work/2> .\n" +
-                                    "  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
-                                    "                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +
-                                    "  FILTER(?t1 < ?t2)\n" +
-                                    "}";
+                        "ASK \n" +
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                        "  ?act2 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                        "  ?act1 <http://www.w3.org/ns/prov#endedAtTime> ?t1 .\n" +
+                        "  ?act2 <http://www.w3.org/ns/prov#endedAtTime> ?t2 .\n" +
+                        "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/2> .\n" +
+                        "  ?act2 <http://www.w3.org/ns/prov#generated>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +
+                        "  FILTER(?t1 < ?t2)\n" +
+                        "}";
 
                 HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
                         .header("Accept", "application/sparql-results+json")
                         .body(actQuery1)
-                        .asJson();          
-                
+                        .asJson();
+
                 HttpResponse<JsonNode> resp2 = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
                         .header("Accept", "application/sparql-results+json")
                         .body(actQuery2)
-                        .asJson();          
-                
-                
-                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));                
-                assertTrue(resp2.getBody().getObject().getBoolean("boolean"));                
-                
+                        .asJson();
+
+
+                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
+                assertTrue(resp2.getBody().getObject().getBoolean("boolean"));
+
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
-            
+
         });
-        
-        
+
+
         When("^the aggregated dataset is published to a public endpoint$", () -> {
             try {
                 String payload = new String(Files.readAllBytes(Paths.get(getClass().getResource("/indexPayload.json").toURI())));
@@ -557,50 +556,50 @@ public class UC1Steps implements En {
                 assertEquals(202, result3);
                 pollingSuccesful = false;
                 pollForProcessing(indexingID);
-                
+
                 assertTrue(pollingSuccesful);
-                
-            }catch(Exception ex) {
+
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
         });
-        
+
         Then("^one should be able to search for documents$", () -> {
             try {
                 // refresh index
-                Unirest.post(s.getESSiren() + "/current/_refresh");                
-                
+                Unirest.post(s.getESSiren() + "/current/_refresh");
+
                 // query
                 int total = 0;
-                for(int i = 0; i < 10; i++) {
+                for (int i = 0; i < 10; i++) {
 
                     HttpResponse<JsonNode> jsonResponse = Unirest.get(s.getESSiren() + "/current/_search?q=*")
-                    .asJson();
+                            .asJson();
 
                     JSONObject obj = jsonResponse.getBody().getObject();
-                    if(obj.has("hits")) {
+                    if (obj.has("hits")) {
                         total = obj.getJSONObject("hits").getInt("total");
-                        if(total > 0) {
+                        if (total > 0) {
                             assertTrue(true);
                             return;
                         }
-                    }                    
+                    }
                     Thread.sleep(1000);
                 }
                 fail("Could not query indexing results");
-            }catch(Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
             }
         });
-        
+
         Given("^that there existing linking identifier in the data$", () -> {
             // test data is set up so, that there are linking identifiers
             assertTrue(true);
-            
+
         });
-        
+
         When("^identifier based linking is executed$", () -> {
             try {
                 // import Linking pipeline
@@ -615,7 +614,7 @@ public class UC1Steps implements En {
                 assertEquals(200, postResponse.getStatus());
                 JSONObject myObj = postResponse.getBody().getObject();
                 int pipelineID = myObj.getInt("id");
-                
+
                 // schedule linking 
                 String schedulingURL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", pipelineID);
                 HttpResponse<JsonNode> schedulePipelineResponse1 = Unirest.post(schedulingURL)
@@ -625,7 +624,7 @@ public class UC1Steps implements En {
                         .body(ACTIVITY)
                         .asJson();
                 assertEquals(200, schedulePipelineResponse1.getStatus());
-                
+
                 // poll for results                
                 for (int i = 0; i < 10; i++) {
                     String executionGetURL = String.format(s.getUV() + "/master/api/1/pipelines/%s/executions", pipelineID);
@@ -650,73 +649,73 @@ public class UC1Steps implements En {
                     }
                     Thread.sleep(1000);
                 }
-                
-            }catch(Exception ex) {
+
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 fail("Linking failed." + ex.getMessage());
             }
-            
-            
+
+
         });
-        
+
         Then("^there should be a new working dataset that contains links$", () -> {
             try {
                 String query = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-"ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/work3> {\n" +
-" ?id1 <http://www.w3.org/2004/02/skos/core#exactMatch> ?id2 }";
+                        "ASK \n" +
+                        "FROM <http://data.hulib.helsinki.fi/attx/work3> {\n" +
+                        " ?id1 <http://www.w3.org/2004/02/skos/core#exactMatch> ?id2 }";
 
                 HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
                         .header("Accept", "application/sparql-results+json")
                         .body(query)
-                        .asJson();  
+                        .asJson();
                 assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
-                
-            }catch(Exception ex) {
+
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 fail("Checking for link data set failed." + ex.getMessage());
             }
         });
 
-        
+
         Then("^there should be a new activity in the provenance dataset$", () -> {
             try {
                 Thread.sleep(5000);
                 // update prov (again)
-                Unirest.get(s.getGmapi() +  VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
+                Unirest.get(s.getGmapi() + VERSION + "/prov?start=true&wfapi=http://wfapi:4301/0.1&graphStore=http://fuseki:3030/ds")
                         .header("content-type", "application/json")
                         .asJson();
-                
+
                 Thread.sleep(2000);
-            
+
                 String actQuery = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-"ASK \n" +
-"FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
-"  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
-"  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work3> .\n" +
-"  ?act1 <http://www.w3.org/ns/prov#used>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/1> .  \n" +
-"  ?act1 <http://www.w3.org/ns/prov#used>\n" +
-"                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +                       
-"}";
+                        "ASK \n" +
+                        "FROM <http://data.hulib.helsinki.fi/attx/prov> {\n" +
+                        "  ?act1 a <http://www.w3.org/ns/prov#Activity> .\n" +
+                        "  ?act1 <http://www.w3.org/ns/prov#generated>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work3> .\n" +
+                        "  ?act1 <http://www.w3.org/ns/prov#used>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/1> .  \n" +
+                        "  ?act1 <http://www.w3.org/ns/prov#used>\n" +
+                        "                <http://data.hulib.helsinki.fi/attx/work/2> .  \n" +
+                        "}";
 
 
                 Thread.sleep(2000);
-                
+
                 HttpResponse<JsonNode> resp1 = Unirest.post(s.getFuseki() + "/ds/query")
                         .header("Content-Type", "application/sparql-query")
                         .header("Accept", "application/sparql-results+json")
                         .body(actQuery)
-                        .asJson();          
-                
-                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));                
-                
+                        .asJson();
+
+                assertTrue(resp1.getBody().getObject().getBoolean("boolean"));
+
             } catch (Exception ex) {
                 ex.printStackTrace();
                 fail(ex.getMessage());
-            }            
+            }
         });
     }
 
