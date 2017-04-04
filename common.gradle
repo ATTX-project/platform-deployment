@@ -1,7 +1,7 @@
 apply plugin: 'base'
 
 repositories {
-      mavenCentral();
+      mavenCentral()
 }
 
 ext {
