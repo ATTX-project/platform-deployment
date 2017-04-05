@@ -15,12 +15,13 @@ import java.io.File;
 import junit.framework.TestCase;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.uh.hulib.attx.dev.TestUtils;
+
 
 /**
  * @author jkesanie
  */
 public class UVPluginsSteps implements En {
-    private PlatformServices s = new PlatformServices();
 
     private final String API_USERNAME = "master";
     private final String API_PASSWORD = "commander";
@@ -35,7 +36,7 @@ public class UVPluginsSteps implements En {
         Then("^UV should contain uv-metadata plugin$", () -> {
             try {
                 // using the UV rest API and trying to add the plugin again. Should response with an error.
-                HttpResponse<JsonNode> response = Unirest.post(s.getUV() + "/master/api/1/import/dpu/jar")
+                HttpResponse<JsonNode> response = Unirest.post(TestUtils.getUV() + "/master/api/1/import/dpu/jar")
                         .header("accept", "application/json")
                         .queryString("name", "attx-t-metadata-plugin")
                         .queryString("force", "false")
