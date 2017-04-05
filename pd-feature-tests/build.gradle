@@ -7,7 +7,7 @@ import com.bmuschko.gradle.docker.tasks.container.DockerWaitContainer
 
 repositories {
     mavenCentral()
-    maven { url "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"}
+    maven { url "${artifactRepoURL}/repository/attx-releases"}
 }
 
 sourceCompatibility = '1.8'
@@ -272,4 +272,3 @@ task runIntegTests(type: Test) {
     }
     finalizedBy removeImages
 }
-
