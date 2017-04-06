@@ -37,7 +37,7 @@ public class UC1Steps implements En {
     public UC1Steps() throws Exception {
 
         Given("^that the platform has no prior data$", () -> {
-            System.out.println("*** 1");
+            
             try {
                 // query for graphs in Fuseki 
                 String graphQuery = "SELECT (COUNT(DISTINCT ?g) as ?count)\n"
@@ -45,7 +45,7 @@ public class UC1Steps implements En {
                         + "  GRAPH ?g { ?s ?p ?o }\n"
                         + "  FILTER(strStarts(str(?g), 'http://data.hulib.helsinki.fi/attx/work'))\n"
                         + "}";
-                HttpResponse<JsonNode> emptyGraph = TestUtils.graphQueryResult("ds", graphQuery);
+                HttpResponse<JsonNode> emptyGraph = TestUtils.graphQueryResult(graphQuery);
 
                 assertEquals(200, emptyGraph.getStatus());
                 assertEquals(0, TestUtils.getQueryResultField(emptyGraph, "count").getInt("value"));
@@ -256,7 +256,7 @@ public class UC1Steps implements En {
                         + "  GRAPH ?g { ?s ?p ?o }\n"
                         + "  FILTER(?g != <http://data.hulib.helsinki.fi/attx/onto> && ?g != <http://data.hulib.helsinki.fi/attx/prov>)\n"
                         + "}";
-                HttpResponse<JsonNode> notEmptyGraph = TestUtils.graphQueryResult("ds", graphQuery);
+                HttpResponse<JsonNode> notEmptyGraph = TestUtils.graphQueryResult(graphQuery);
 
                 assertEquals(200, notEmptyGraph.getStatus());
                 assertTrue(0 < TestUtils.getQueryResultField(notEmptyGraph, "count").getInt("value"));
@@ -289,7 +289,7 @@ public class UC1Steps implements En {
 
                 await().atMost(30, TimeUnit.SECONDS).until(() -> {
                     try {
-                        HttpResponse<JsonNode> workingGraphs = TestUtils.graphQueryResult("ds", graphQuery);
+                        HttpResponse<JsonNode> workingGraphs = TestUtils.graphQueryResult(graphQuery);
                         assertEquals(200, workingGraphs.getStatus());
                         assertEquals(2, TestUtils.getQueryResultField(workingGraphs, "count").getInt("value"));
                     } catch (Exception ex) {
