@@ -1,14 +1,11 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply from: '../publishDocker.gradle'
 
 dcompose {
-    registry ("$registryURL") {
-        // Needs no user/pass
-    }
-
     attxfuseki {
-        baseDir = file('.')
+        baseDir = file('docker')
 	    dockerFilename = 'Dockerfile'
-	    repository = "${imageRepo}:${imageRepoPort}/attx-fuseki:${imageFuseki}"
+	    repository = "${imageBase}/attx-fuseki:${imageFuseki}"
         attachStdout = true
         exposedPorts = ['3030']
         portBindings = ['3030:3030']

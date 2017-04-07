@@ -1,13 +1,11 @@
 apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
+apply from: '../publishDocker.gradle'
 
 dcompose {
-	registry ("$registryURL") {
-		// Needs no user/pass
-	}
 	uvattxshared{
-		baseDir = file('.')
+		baseDir = file('docker')
 		dockerFilename = 'Dockerfile'
-		repository = "${imageRepo}:${imageRepoPort}/uv-attx-shared:${imageATTXShared}"
+		repository = "${imageBase}/uv-attx-shared:${imageATTXShared}"
 		attachStdout = true
 	}
 }

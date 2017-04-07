@@ -1,5 +1,6 @@
 apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
 apply plugin: 'de.undercouch.download'
+apply from: '../publishDocker.gradle'
 
 ext.src = [
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=gm-API&v=${gmAPI}&p=tar.gz":"gm-API-${gmAPI}.tar.gz",
@@ -12,18 +13,15 @@ task downloadGMFiles
 for (s in src) {
     task "downloadGMFiles_${s.key.hashCode()}"(type: Download) {
         src s.key
-        dest new File("$projectDir/build/distributions", s.value)
+        dest new File("$projectDir/docker/build/distributions", s.value)
     }
     downloadGMFiles.dependsOn("downloadGMFiles_${s.key.hashCode()}")
 }
 
 dcompose {
-    registry ("$registryURL") {
-     	 // Needs no user/pass
-    	 }
     gmapi {
-        baseDir = file('.')
-        repository = "${imageRepo}:${imageRepoPort}/gm-api:${imageGM}"
+        baseDir = file('docker')
+        repository = "${imageBase}/gm-api:${imageGM}"
         portBindings = ['4302:4302']
         buildArgs = ['GMAPI': "$gmAPI", 'RDFINDEXER': "$rdfINDEXER"]
     }

@@ -12,11 +12,6 @@ ext {
     unifiedViewsRepoURL = "http://repository.unifiedviews.eu/nexus/content/repositories/public"
 }
 
-// TO BE REMOVED when moving to archiva
-if(!project.hasProperty("jenkinsArtifactRepoURL")) {
-    ext.jenkinsArtifactRepoURL = "http://${imageRepo}:${jenkinsPort}"
-}
-
 if (!project.hasProperty("registryURL")) {
     ext.registryURL = "http://${imageRepo}:${imageRepoPort}"
 }
@@ -53,6 +48,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageATTXDPUs       = "latest"
     ext.imageATTXShared     = "latest"
     ext.imageFuseki         = "latest"
+    ext.imageBase           = "${imageRepo}:${imageRepoPort}"
 
 } else if (project.env == "release"){
 
@@ -63,7 +59,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
     ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
     ext.attxAPICallerPlugin = "1.0-SNAPSHOT"
-    ext.attxLinkerPlugin    = "1.0-SNAPSHOT"    
+    ext.attxLinkerPlugin    = "1.0-SNAPSHOT"
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
     ext.imageES5            = "latest"
     ext.imageWF             = "latest"
@@ -72,6 +68,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageATTXDPUs       = "latest"
     ext.imageATTXShared     = "latest"
     ext.imageFuseki         = "latest"
+    ext.imageBase           = "attxtest"
 
 } else {
     throw new GradleException("Build project environment option not recognised.")

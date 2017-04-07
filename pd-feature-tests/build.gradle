@@ -7,7 +7,7 @@ import com.bmuschko.gradle.docker.tasks.container.DockerWaitContainer
 
 repositories {
     mavenCentral()
-    maven { url "http://${imageRepo}:${artifactRepoPort}/repository/attx-releases"}
+    maven { url "${artifactRepoURL}/repository/attx-releases"}
 }
 
 sourceCompatibility = '1.8'
@@ -21,7 +21,7 @@ dependencies {
         'com.mashape.unirest:unirest-java:1.4.9',
         'org.skyscreamer:jsonassert:1.4.0',
         'org.awaitility:awaitility-groovy:2.0.0',
-        'org.uh.hulib.attx.dev:dev-test-helper:1.0'
+        'org.uh.hulib.attx.dev:dev-test-helper:1.4'
 }
 
 
@@ -272,4 +272,3 @@ task runIntegTests(type: Test) {
     }
     finalizedBy removeImages
 }
-
