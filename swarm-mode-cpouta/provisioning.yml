@@ -8,25 +8,26 @@
 
     - name: installing dependencies
       apt:
-        name: apt-transport-https,ca-certificates,python-pip,tmux
+        name: apt-transport-https,ca-certificates,curl,python-pip,software-properties-common,tmux
         state: present
         update_cache: true
 
     - name: fetching docker repo key
       apt_key:
-        keyserver: hkp://p80.pool.sks-keyservers.net:80
-        id: 58118E89F3A912897C070ADBF76221572C52609D
+        keyserver: "hkp://p80.pool.sks-keyservers.net:80"
+        id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
+        state: present
 
     - name: adding package repos
       apt_repository:
         repo: "{{ item }}"
         state: present
       with_items:
-        - deb https://apt.dockerproject.org/repo ubuntu-trusty main
+        - deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
 
     - name: installing docker
       apt:
-        name: docker-engine
+        name: docker-ce
         state: present
         update_cache: true
 
@@ -58,6 +59,11 @@
     - name: installing virtualenv
       pip:
         name: virtualenv
+        state: latest
+      
+    - name: installing setuptools
+      pip:
+        name: setuptools
         state: latest
 
     - name: Install Docker Compose via PIP
