@@ -388,7 +388,29 @@ public class UC1Steps implements En {
 
         Given("^there are existing linking identifiers$", () -> {
             // test data is set up so, that there are linking identifiers
-            assertTrue(true);
+            
+            // confirming that by querying both datasets
+            try {
+                String work1Query = "ASK\n"
+                        + "FROM <http://data.hulib.helsinki.fi/attx/work/1> \n"
+                        + "{?s <http://purl.org/dc/terms/identifier> \"urn:nbn:fi:research-infras-201607252\"  \n"
+                        + "}";
+
+                String work2Query = "ASK\n"
+                        + "FROM <http://data.hulib.helsinki.fi/attx/work/2> \n"
+                        + "{?s <http://purl.org/dc/terms/identifier> \"urn:nbn:fi:research-infras-201607252\" \n"
+                        + "}";
+
+                TestUtils.askGraphStoreIfTrue(work1Query);
+                TestUtils.askGraphStoreIfTrue(work2Query);
+
+
+            } catch (ConditionTimeoutException cex) {
+                fail("Timeout exceeded, could not get infrastructure and publication data as it did not finish successfully. Graph Store exceeded time limit.");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                fail(ex.getMessage());
+            }            
 
         });
 
