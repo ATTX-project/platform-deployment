@@ -68,7 +68,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageATTXDPUs       = "latest"
     ext.imageATTXShared     = "latest"
     ext.imageFuseki         = "latest"
-    ext.imageBase           = "attxtest"
+    ext.imageBase           = "attxproject"
 
 } else {
     throw new GradleException("Build project environment option not recognised.")
