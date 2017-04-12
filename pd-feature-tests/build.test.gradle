@@ -1,0 +1,45 @@
+plugins {
+    id "java"
+}
+
+dependencies {
+    testCompile fileTree(dir: 'build/libs', include: ['*.jar'])
+}
+
+task integTest(type: Test){
+    doFirst {
+        systemProperty 'frontend.port', 8080
+        systemProperty 'frontend.host', 'frontend'
+        systemProperty 'wfapi.port', 4301
+        systemProperty 'wfapi.host', 'wfapi'
+        systemProperty 'fuseki.port', 3030
+        systemProperty 'fuseki.host', 'fuseki'
+        systemProperty 'gmapi.port', 4302
+        systemProperty 'gmapi.host', 'gmapi'
+        systemProperty 'essiren.port', 9200
+        systemProperty 'essiren.tcp', 9300
+        systemProperty 'essiren.host', 'essiren'
+        systemProperty 'es5.port', 9210
+        systemProperty 'es5.host', 'es5'
+    }
+    forkEvery = 2
+    maxParallelForks = 2
+    testLogging {
+        showStackTraces = true
+    }
+    doLast {
+        systemProperties.remove 'frontend.port'
+        systemProperties.remove 'frontend.host'
+        systemProperties.remove 'wfapi.port'
+        systemProperties.remove 'wfapi.host'
+        systemProperties.remove 'fuseki.port'
+        systemProperties.remove 'fuseki.host'
+        systemProperties.remove 'gmapi.port'
+        systemProperties.remove 'gmapi.host'
+        systemProperties.remove 'essiren.port'
+        systemProperties.remove 'essiren.tcp'
+        systemProperties.remove 'essiren.host'
+        systemProperties.remove 'es5.port'
+        systemProperties.remove 'es5.host'
+    }
+}

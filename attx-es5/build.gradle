@@ -1,0 +1,11 @@
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply from: '../publishDocker.gradle'
+
+dcompose {
+	attxes5 {
+		baseDir = file('docker')
+		dockerFilename = 'Dockerfile'
+		repository = "${imageBase}/attx-es5:${imageES5}"
+		attachStdout = true
+	}
+}

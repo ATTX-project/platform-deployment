@@ -1,0 +1,118 @@
+---
+- hosts: nodes
+  sudo: true
+  vars_files:
+    - cpouta.yml
+
+  tasks:
+
+    - name: installing dependencies
+      apt:
+        name: apt-transport-https,ca-certificates,curl,python-pip,software-properties-common,tmux
+        state: present
+        update_cache: true
+
+    - name: fetching docker repo key
+      apt_key:
+        keyserver: "hkp://p80.pool.sks-keyservers.net:80"
+        id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
+        state: present
+
+    - name: adding package repos
+      apt_repository:
+        repo: "{{ item }}"
+        state: present
+      with_items:
+        - deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+
+    - name: installing docker
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: true
+
+    - name: adding user cloud-user to group docker
+      user:
+        name: cloud-user
+        groups: docker
+        append: yes
+
+    - name: making docker daemon listen to port 55555
+      lineinfile:
+        dest: /etc/default/docker
+        line: DOCKER_OPTS="--host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:55555"
+        regexp: '^#?DOCKER_OPTS=.*$'
+        state: present
+      register: docker_opts
+
+    - name: restarting docker daemon, if needed
+      service:
+        name: docker
+        state: restarted
+      when: docker_opts is defined and docker_opts.changed
+
+    - name: performing pip autoupgrade
+      pip:
+        name: pip
+        state: latest
+
+    - name: installing virtualenv
+      pip:
+        name: virtualenv
+        state: latest
+      
+    - name: installing setuptools
+      pip:
+        name: setuptools
+        state: latest
+
+    - name: Install Docker Compose via PIP
+      pip: name=docker-compose
+
+    - name:
+      file:
+        path="/usr/local/bin/docker-compose"
+        state=file
+        mode=0755
+        owner=cloud-user
+        group=docker
+
+    - name: building the /etc/hosts file with all nodes
+      lineinfile:
+        dest: /etc/hosts
+        line: "{{ item.private_ip }} {{ item.hostname }}"
+        regexp: "^{{ item.private_ip }} {{ item.hostname }}$"
+        state: present
+      with_items: "{{ instances }}"
+
+    - name: copying the ssh key to the nodes
+      copy:
+        src: private-key
+        dest: /home/cloud-user/provision-swarm
+        mode: 0600
+        group: root
+        owner: cloud-user
+
+    - name: copying ssh configuration
+      copy:
+        src: ssh-config
+        dest: /home/cloud-user/.ssh/config
+        mode: 0600
+        group: root
+        owner: cloud-user
+
+    - name: adjusting the /etc/hosts to the new hostname
+      lineinfile:
+        dest: /etc/hosts
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        owner: root
+        group: root
+        mode: 0644
+      with_items:
+        - regexp: '^127\.0\.0\.1'
+          line: "127.0.0.1 localhost {{ inventory_hostname }}"
+        - regexp: '^127\.0\.1\.1'
+          line: "127.0.1.1 {{ inventory_hostname }}"
+
+

@@ -1,0 +1,75 @@
+apply plugin: 'base'
+
+repositories {
+      mavenCentral()
+}
+
+ext {
+    imageRepo = "attx-dev"
+    imageRepoPort = "5000"
+    artifactRepoPort = "8081"
+    jenkinsPort = "49001"
+    unifiedViewsRepoURL = "http://repository.unifiedviews.eu/nexus/content/repositories/public"
+}
+
+if (!project.hasProperty("registryURL")) {
+    ext.registryURL = "http://${imageRepo}:${imageRepoPort}"
+}
+
+if (!project.hasProperty("artifactRepoURL")) {
+    ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}"
+}
+
+if (!project.hasProperty("artifactRepoUser")) {
+    ext.artifactRepoUser = ""
+}
+
+if (!project.hasProperty("artifactRepoPassword")) {
+    ext.artifactRepoPassword = ""
+}
+
+// TO DO: Figure out a smarter way to do the switch of environments
+
+if (!project.hasProperty("env") || project.env == "dev") {
+
+    ext.wfAPI               = "1.0-SNAPSHOT"
+    ext.gmAPI               = "1.0-SNAPSHOT"
+    ext.rdfINDEXER          = "1.0-SNAPSHOT"
+    ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
+    ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
+    ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
+    ext.attxAPICallerPlugin = "1.0-SNAPSHOT"
+    ext.attxLinkerPlugin    = "1.0-SNAPSHOT"
+    ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
+    ext.imageES5            = "latest"
+    ext.imageWF             = "latest"
+    ext.imageGM             = "latest"
+    ext.imageSirenAPIPlugin = "latest"
+    ext.imageATTXDPUs       = "latest"
+    ext.imageATTXShared     = "latest"
+    ext.imageFuseki         = "latest"
+    ext.imageBase           = "${imageRepo}:${imageRepoPort}"
+
+} else if (project.env == "release"){
+
+    ext.wfAPI               = "1.0-SNAPSHOT"
+    ext.gmAPI               = "1.0-SNAPSHOT"
+    ext.rdfINDEXER          = "1.0-SNAPSHOT"
+    ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
+    ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
+    ext.attxUploaderPlugin  = "1.0-SNAPSHOT"
+    ext.attxAPICallerPlugin = "1.0-SNAPSHOT"
+    ext.attxLinkerPlugin    = "1.0-SNAPSHOT"
+    ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
+    ext.imageES5            = "1.0"
+    ext.imageWF             = "1.0"
+    ext.imageGM             = "1.0"
+    ext.imageSirenAPIPlugin = "1.0"
+    ext.imageATTXDPUs       = "1.0"
+    ext.imageATTXShared     = "1.0"
+    ext.imageFuseki         = "1.0"
+    ext.imageBase           = "attxproject"
+
+} else {
+    throw new GradleException("Build project environment option not recognised.")
+}

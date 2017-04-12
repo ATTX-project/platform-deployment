@@ -1,0 +1,151 @@
+version: '3'                                                                            
+services:                                                                               
+
+  mysql:
+    image: tenforce/unified-views-mariadb:feat-compact-modular
+    volumes:
+      - /uv-data/mysql:/var/lib/mysql
+    environment:
+    - MYSQL_ROOT_PASSWORD=iamroot!
+    networks:
+      - attx
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-1]         
+
+  shared:
+    image: attxtest/uv-attx-shared:latest
+    volumes:
+      - shared_config:/config
+      - shared_dpu:/unified-views/dpu
+      - shared_lib:/unified-views/lib
+      - shared_scripts:/unified-views/scripts
+    networks:
+      - attx
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-1]
+
+  backend:                                                                              
+    image: tenforce/unified-views-backend:latest                                        
+    volumes:                                                                            
+      - shared_config:/config                                                           
+      - shared_dpu:/unified-views/dpu                                                   
+      - shared_lib:/unified-views/lib                                                   
+      - shared_scripts:/unified-views/scripts
+    networks:                                                                           
+      - attx                                                                            
+    depends_on:                                                                         
+      - shared                                                                          
+      - mysql                                                                           
+    deploy:                                                                             
+      placement:                                                                        
+        constraints: [node.hostname == attx-swarm-1]                                             
+
+  frontend:                                                                             
+    image: tenforce/unified-views-frontend:latest                                       
+    volumes:                                                                            
+      - shared_config:/config                                                           
+      - shared_dpu:/unified-views/dpu                                                   
+      - shared_lib:/unified-views/lib                                                   
+      - shared_scripts:/unified-views/scripts
+    ports:                                                                              
+      - 8080:8080                                                                         
+    networks:                                                                           
+      - attx                                                                            
+    depends_on:                                                                         
+      - shared                                                                          
+      - backend                                                                         
+    deploy:                                                                             
+      placement:                                                                        
+        constraints: [node.hostname == attx-swarm-1]                                           
+
+  uv-dpus:
+    image: tenforce/unified-views-add-dpus:latest
+    networks:
+      - attx
+    depends_on:
+      - mysql
+      - backend
+      - frontend
+
+  attx-dpus:
+    image: attxtest/uv-attx-dpus:latest
+    networks:
+      - attx
+    depends_on:
+      - mysql
+      - backend
+      - uv-dpus
+
+  wfapi:
+    image: attxtest/wf-api:latest
+    networks:
+      - attx
+    depends_on:
+      - mysql
+
+  essiren:
+    image: attxtest/essiren:latest
+    volumes:
+      - /attx-data/essiren:/usr/share/elasticsearch/data
+    networks:
+      - attx
+    ports:
+      - 9200:9200
+      - 9300:9300
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-2]
+
+
+  elasticsearch5:
+    image: attxtest/attx-es5:latest
+    volumes:
+      - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
+    networks:
+      - attx
+    ports:
+      - 9210:9210
+      - 9310:9310
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-2]
+
+  fuseki:
+    image: attxtest/attx-fuseki:latest
+    volumes:
+      - /attx-data/fuseki:/data/fuseki 
+    networks:
+      - attx
+    environment:
+      - ADMIN_PASSWORD=pw123
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-2]
+
+  gmapi:
+    image: attxtest/gm-api:latest
+    volumes:
+      - /attx-data/gm-api:/app/data
+    networks:
+      - attx
+    depends_on:
+      - frontend
+      - fuseki
+      - essiren
+      - elasticsearch5
+      - wfapi
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-2]
+
+networks:                                                                               
+  attx:                                                                                 
+    driver: "overlay"                                                                   
+                                                                                        
+volumes:                                                                                
+  shared_config:                                                                        
+  shared_dpu:                                                                           
+  shared_lib:
+  shared_scripts:

@@ -1,0 +1,30 @@
+apply plugin: 'de.undercouch.download'
+apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${wfAPI}&p=tar.gz":"wf-API-${wfAPI}.tar.gz"
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadWFFiles
+
+for (s in src) {
+    task "downloadWFFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/build/distributions", s.value)
+    }
+    downloadWFFiles.dependsOn("downloadWFFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+	wfapi {
+		baseDir = file('docker')
+		dockerFilename = 'Dockerfile'
+        repository = "${imageBase}/wf-api:${imageWF}"
+        buildArgs = ['WFAPI': "$wfAPI"]
+	}
+}
+
+buildWfapiImage.dependsOn downloadWFFiles
+pushWfapiImage.dependsOn downloadWFFiles

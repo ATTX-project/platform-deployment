@@ -1,0 +1,14 @@
+{
+  "strategy": {
+      "uri": "http://data.hulib.helsinki.fi/attx/idstrategy1",
+      "output": "http://data.hulib.helsinki.fi/attx/work3"
+  },
+  "graphStore": {
+      "endpoint": {
+          "host": "fuseki",
+          "port": 3030,
+          "dataset": "ds"
+      },
+      "graphs": ["http://data.hulib.helsinki.fi/attx/work/1", "http://data.hulib.helsinki.fi/attx/work/2"]
+  }
+}

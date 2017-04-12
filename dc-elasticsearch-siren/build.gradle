@@ -1,0 +1,32 @@
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply plugin: 'de.undercouch.download'
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.dc&a=attx-api-plugin&v=${sirenAPIPlugin}&p=jar": "attx-api-plugin-${sirenAPIPlugin}.jar"
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadEssirenFiles
+
+for (s in src) {
+    task "downloadEssirenFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/build", s.value)
+    }
+    downloadEssirenFiles.dependsOn("downloadEssirenFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+    essiren {
+        baseDir = file('docker')
+        dockerFilename = 'Dockerfile'
+        repository = "${imageBase}/essiren:${imageSirenAPIPlugin}"
+        exposedPorts = ['9200', '9300']
+        portBindings = ['9200:9200', '9300:9300']
+        buildArgs = ["APIPlugin_version": "${sirenAPIPlugin}"]
+    }
+}
+
+buildEssirenImage.dependsOn downloadEssirenFiles
+buildEssirenImage.dependsOn downloadEssirenFiles
