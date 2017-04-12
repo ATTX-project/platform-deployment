@@ -3,6 +3,8 @@ services:
 
   mysql:
     image: tenforce/unified-views-mariadb:feat-compact-modular
+    volumes:
+      - /uv-data/mysql:/var/lib/mysql
     environment:
     - MYSQL_ROOT_PASSWORD=iamroot!
     networks:
@@ -12,7 +14,7 @@ services:
         constraints: [node.hostname == attx-swarm-1]         
 
   shared:
-    image: attxproject/uv-attx-shared:latest
+    image: attxtest/uv-attx-shared:latest
     volumes:
       - shared_config:/config
       - shared_dpu:/unified-views/dpu
@@ -39,6 +41,7 @@ services:
     deploy:                                                                             
       placement:                                                                        
         constraints: [node.hostname == attx-swarm-1]                                             
+
   frontend:                                                                             
     image: tenforce/unified-views-frontend:latest                                       
     volumes:                                                                            
@@ -67,7 +70,7 @@ services:
       - frontend
 
   attx-dpus:
-    image: attxproject/uv-attx-dpus:latest
+    image: attxtest/uv-attx-dpus:latest
     networks:
       - attx
     depends_on:
@@ -76,37 +79,55 @@ services:
       - uv-dpus
 
   wfapi:
-    image: attxproject/wf-api:latest
+    image: attxtest/wf-api:latest
     networks:
       - attx
     depends_on:
       - mysql
 
   essiren:
-    image: attxproject/essiren:latest
+    image: attxtest/essiren:latest
+    volumes:
+      - /attx-data/essiren:/usr/share/elasticsearch/data
     networks:
       - attx
     ports:
       - 9200:9200
       - 9300:9300
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-2]
+
 
   elasticsearch5:
-    image: attxproject/attx-es5:latest
+    image: attxtest/attx-es5:latest
+    volumes:
+      - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
     networks:
       - attx
     ports:
       - 9210:9210
       - 9310:9310
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-2]
 
   fuseki:
-    image: attxproject/attx-fuseki:latest
+    image: attxtest/attx-fuseki:latest
+    volumes:
+      - /attx-data/fuseki:/data/fuseki 
     networks:
-     - attx
+      - attx
     environment:
-     - ADMIN_PASSWORD=pw123
+      - ADMIN_PASSWORD=pw123
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-2]
 
   gmapi:
-    image: attxproject/gm-api:latest
+    image: attxtest/gm-api:latest
+    volumes:
+      - /attx-data/gm-api:/app/data
     networks:
       - attx
     depends_on:
@@ -115,6 +136,9 @@ services:
       - essiren
       - elasticsearch5
       - wfapi
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-2]
 
 networks:                                                                               
   attx:                                                                                 
