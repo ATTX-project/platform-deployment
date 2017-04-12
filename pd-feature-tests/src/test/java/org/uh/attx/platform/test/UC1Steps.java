@@ -393,12 +393,12 @@ public class UC1Steps implements En {
             try {
                 String work1Query = "ASK\n"
                         + "FROM <http://data.hulib.helsinki.fi/attx/work/1> \n"
-                        + "{?s <http://purl.org/dc/terms/identifier> \"urn:nbn:fi:research-infras-201607252\"  \n"
+                        + "{?s <http://data.hulib.helsinki.fi/attx/urn> <urn:nbn:fi:research-infras-201607252>  \n"
                         + "}";
 
                 String work2Query = "ASK\n"
                         + "FROM <http://data.hulib.helsinki.fi/attx/work/2> \n"
-                        + "{?s <http://purl.org/dc/terms/identifier> \"urn:nbn:fi:research-infras-201607252\" \n"
+                        + "{?s <http://purl.org/dc/terms/identifier> <urn:nbn:fi:research-infras-201607252> \n"
                         + "}";
 
                 TestUtils.askGraphStoreIfTrue(work1Query);
