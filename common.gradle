@@ -62,12 +62,12 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.attxLinkerPlugin    = "1.0-SNAPSHOT"
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
     ext.imageES5            = "1.0"
-    ext.imageWF             = "latest"
-    ext.imageGM             = "latest"
-    ext.imageSirenAPIPlugin = "latest"
-    ext.imageATTXDPUs       = "latest"
-    ext.imageATTXShared     = "latest"
-    ext.imageFuseki         = "latest"
+    ext.imageWF             = "1.0"
+    ext.imageGM             = "1.0"
+    ext.imageSirenAPIPlugin = "1.0"
+    ext.imageATTXDPUs       = "1.0"
+    ext.imageATTXShared     = "1.0"
+    ext.imageFuseki         = "1.0"
     ext.imageBase           = "attxproject"
 
 } else {
