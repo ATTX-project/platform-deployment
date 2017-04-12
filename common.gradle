@@ -61,7 +61,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.attxAPICallerPlugin = "1.0-SNAPSHOT"
     ext.attxLinkerPlugin    = "1.0-SNAPSHOT"
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
-    ext.imageES5            = "latest"
+    ext.imageES5            = "1.0"
     ext.imageWF             = "latest"
     ext.imageGM             = "latest"
     ext.imageSirenAPIPlugin = "latest"
