@@ -127,6 +127,7 @@ dcompose {
         if (testSet == "localhost") {
             portBindings = ['3030:3030']
         }
+        env = ['ADMIN_PASSWORD=pw123']
     }
 
     essiren {
