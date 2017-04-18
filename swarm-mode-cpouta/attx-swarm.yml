@@ -1,5 +1,5 @@
-version: '3'                                                                            
-services:                                                                               
+version: '3'
+services:
 
   mysql:
     image: tenforce/unified-views-mariadb:feat-compact-modular
@@ -11,10 +11,10 @@ services:
       - attx
     deploy:
       placement:
-        constraints: [node.hostname == attx-swarm-1]         
+        constraints: [node.hostname == attx-swarm-1]
 
   shared:
-    image: attxproject/uv-attx-shared:latest
+    image: attxproject/uv-attx-shared:1.0
     volumes:
       - shared_config:/config
       - shared_dpu:/unified-views/dpu
@@ -26,39 +26,39 @@ services:
       placement:
         constraints: [node.hostname == attx-swarm-1]
 
-  backend:                                                                              
-    image: tenforce/unified-views-backend:latest                                        
-    volumes:                                                                            
-      - shared_config:/config                                                           
-      - shared_dpu:/unified-views/dpu                                                   
-      - shared_lib:/unified-views/lib                                                   
+  backend:
+    image: tenforce/unified-views-backend:latest
+    volumes:
+      - shared_config:/config
+      - shared_dpu:/unified-views/dpu
+      - shared_lib:/unified-views/lib
       - shared_scripts:/unified-views/scripts
-    networks:                                                                           
-      - attx                                                                            
-    depends_on:                                                                         
-      - shared                                                                          
-      - mysql                                                                           
-    deploy:                                                                             
-      placement:                                                                        
-        constraints: [node.hostname == attx-swarm-1]                                             
+    networks:
+      - attx
+    depends_on:
+      - shared
+      - mysql
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-1]
 
-  frontend:                                                                             
-    image: tenforce/unified-views-frontend:latest                                       
-    volumes:                                                                            
+  frontend:
+    image: tenforce/unified-views-frontend:latest
+    volumes:
       - shared_config:/config                                                           
-      - shared_dpu:/unified-views/dpu                                                   
-      - shared_lib:/unified-views/lib                                                   
+      - shared_dpu:/unified-views/dpu
+      - shared_lib:/unified-views/lib
       - shared_scripts:/unified-views/scripts
-    ports:                                                                              
-      - 8080:8080                                                                         
-    networks:                                                                           
-      - attx                                                                            
-    depends_on:                                                                         
-      - shared                                                                          
-      - backend                                                                         
-    deploy:                                                                             
-      placement:                                                                        
-        constraints: [node.hostname == attx-swarm-1]                                           
+    ports:
+      - 8080:8080
+    networks:
+      - attx
+    depends_on:
+      - shared
+      - backend
+    deploy:
+      placement:
+        constraints: [node.hostname == attx-swarm-1]
 
   uv-dpus:
     image: tenforce/unified-views-add-dpus:latest
@@ -70,7 +70,7 @@ services:
       - frontend
 
   attx-dpus:
-    image: attxproject/uv-attx-dpus:latest
+    image: attxproject/uv-attx-dpus:1.0
     networks:
       - attx
     depends_on:
@@ -79,14 +79,14 @@ services:
       - uv-dpus
 
   wfapi:
-    image: attxproject/wf-api:latest
+    image: attxproject/wf-api:1.0
     networks:
       - attx
     depends_on:
       - mysql
 
   essiren:
-    image: attxproject/essiren:latest
+    image: attxproject/essiren:1.0
     volumes:
       - /attx-data/essiren:/usr/share/elasticsearch/data
     networks:
@@ -100,7 +100,7 @@ services:
 
 
   elasticsearch5:
-    image: attxproject/attx-es5:latest
+    image: attxproject/attx-es5:1.0
     volumes:
       - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
     networks:
@@ -113,9 +113,9 @@ services:
         constraints: [node.hostname == attx-swarm-2]
 
   fuseki:
-    image: attxproject/attx-fuseki:latest
+    image: attxproject/attx-fuseki:1.0
     volumes:
-      - /attx-data/fuseki:/data/fuseki 
+      - /attx-data/fuseki:/data/fuseki
     networks:
       - attx
     environment:
@@ -125,7 +125,7 @@ services:
         constraints: [node.hostname == attx-swarm-2]
 
   gmapi:
-    image: attxproject/gm-api:latest
+    image: attxproject/gm-api:1.0
     volumes:
       - /attx-data/gm-api:/app/data
     networks:
@@ -140,12 +140,12 @@ services:
       placement:
         constraints: [node.hostname == attx-swarm-2]
 
-networks:                                                                               
-  attx:                                                                                 
-    driver: "overlay"                                                                   
-                                                                                        
-volumes:                                                                                
-  shared_config:                                                                        
-  shared_dpu:                                                                           
+networks:
+  attx:
+    driver: "overlay"
+
+volumes:
+  shared_config:
+  shared_dpu:
   shared_lib:
   shared_scripts:
