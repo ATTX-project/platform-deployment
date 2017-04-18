@@ -14,7 +14,7 @@ services:
         constraints: [node.hostname == attx-swarm-1]         
 
   shared:
-    image: attxtest/uv-attx-shared:latest
+    image: attxproject/uv-attx-shared:latest
     volumes:
       - shared_config:/config
       - shared_dpu:/unified-views/dpu
@@ -70,7 +70,7 @@ services:
       - frontend
 
   attx-dpus:
-    image: attxtest/uv-attx-dpus:latest
+    image: attxproject/uv-attx-dpus:latest
     networks:
       - attx
     depends_on:
@@ -79,14 +79,14 @@ services:
       - uv-dpus
 
   wfapi:
-    image: attxtest/wf-api:latest
+    image: attxproject/wf-api:latest
     networks:
       - attx
     depends_on:
       - mysql
 
   essiren:
-    image: attxtest/essiren:latest
+    image: attxproject/essiren:latest
     volumes:
       - /attx-data/essiren:/usr/share/elasticsearch/data
     networks:
@@ -100,7 +100,7 @@ services:
 
 
   elasticsearch5:
-    image: attxtest/attx-es5:latest
+    image: attxproject/attx-es5:latest
     volumes:
       - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
     networks:
@@ -113,7 +113,7 @@ services:
         constraints: [node.hostname == attx-swarm-2]
 
   fuseki:
-    image: attxtest/attx-fuseki:latest
+    image: attxproject/attx-fuseki:latest
     volumes:
       - /attx-data/fuseki:/data/fuseki 
     networks:
@@ -125,7 +125,7 @@ services:
         constraints: [node.hostname == attx-swarm-2]
 
   gmapi:
-    image: attxtest/gm-api:latest
+    image: attxproject/gm-api:latest
     volumes:
       - /attx-data/gm-api:/app/data
     networks:
