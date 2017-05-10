@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 for i in 1 2 3; do
-  docker-machine create -d virtualbox node-$i
+  docker-machine create -d virtualbox --virtualbox-memory "3072" node-$i
 done
 
 eval $(docker-machine env node-1)
