@@ -34,13 +34,15 @@ for i in 1 2 3; do
         swarm-$i
 done
 
-echo ">> The swarm cluster is up and running"
+echo ">> The Docker-Machine swarm cluster is up and running"
 
 export DOCKER_IP=$(docker-machine ip swarm-1)
 
 docker-compose -f docker-compose-proxy.yml \
     up -d consul-server
-    
+
+echo ">> The Consul serverr is up and running in swarm-1"
+
 export CONSUL_SERVER_IP=$(docker-machine ip swarm-1)
 
 for i in 2 3; do
@@ -52,11 +54,15 @@ for i in 2 3; do
         up -d consul-agent
 done
 
-echo ">> The Consul Server and Agents are up and running"
+echo ">> The Consul agents are up and running in swarm-2 and swarm-3"
 
 eval $(docker-machine env swarm-1)
 
 docker network create --driver overlay proxy
+
+docker network create --driver overlay backend
+
+echo ">> The proxy and backend overlay networks have been created"
 
 docker service create --name proxy \
     -p 80:80 \
@@ -70,7 +76,19 @@ docker service create --name proxy \
 
 docker service ps proxy
 
-echo ">> The proxy service is up and running"
+echo ">> The proxy overlay network has been created"
+
+docker service create --name util \
+    --network proxy --mode global \
+    alpine sleep 1000000000
+
+docker service ps util
+
+ID=$(docker ps -q --filter label=com.docker.swarm.service.name=util)
+
+docker exec -it $ID apk add --update drill
+
+echo ">> The Drill DNS utlity has been deployed to the swarm cluster"
 
 docker service create --name swarm-listener \
     --network proxy \
@@ -79,8 +97,5 @@ docker service create --name swarm-listener \
     -e DF_NOTIFY_REMOVE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/remove \
     --constraint 'node.role==manager' \
     vfarcic/docker-flow-swarm-listener
- 
- 
-docker service ps swarm-listener
-
-echo ">> The swarm-listener is up and running"
+    
+echo ">> The Docker Flow Swarm Listener has been deployed to the swarm cluster"
