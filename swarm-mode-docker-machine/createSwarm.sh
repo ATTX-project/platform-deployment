@@ -104,6 +104,8 @@ docker service create --name util \
 
 docker service ps util
 
+eval $(docker-machine env swarm-1)
+
 ID=$(docker ps -q --filter label=com.docker.swarm.service.name=util)
 
 docker exec -it $ID apk add --update drill
