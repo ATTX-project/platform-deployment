@@ -97,20 +97,3 @@ docker service create --name swarm-listener \
 docker service ps swarm-listener
 
 echo ">> The swarm-listener service is up and running"
-
-docker service create --name util \
-    --network proxy --mode global \
-    alpine sleep 1000000000
-
-docker service ps util
-
-eval $(docker-machine env swarm-1)
-
-ID=$(docker ps -q --filter label=com.docker.swarm.service.name=util)
-
-docker exec -it $ID apk add --update drill
-
-echo ">> The DNS drill util service is up and running"
-
-
-
