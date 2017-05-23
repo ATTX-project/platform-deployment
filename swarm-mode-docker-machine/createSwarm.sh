@@ -40,9 +40,9 @@ eval $(docker-machine env swarm-1)
 
 docker node ls
 
-curl -o docker-compose-proxy.yml \
-    https://raw.githubusercontent.com/\
-vfarcic/docker-flow-proxy/master/docker-compose.yml
+
+wget https://raw.githubusercontent.com/\
+ATTX-project/platform-deployment/feature-docker-machine/swarm-mode-docker-machine/docker-compose-proxy.yml
 
 
 
