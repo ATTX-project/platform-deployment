@@ -14,5 +14,9 @@ done
 # Add DPUs
 for f in /dpus/*.jar; do bash /usr/local/bin/add-dpu.sh "$f"; done
 
-# Add Pipelines
-for f in /data/*.zip; do bash /usr/local/bin/add-pipeline.sh "$f"; done
+data_directory=/data
+
+if [ -d "$data_directory" ]; then
+    # Add Pipelines
+    for f in /data/*.zip; do bash /usr/local/bin/add-pipeline.sh "$f"; done
+fi

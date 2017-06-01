@@ -22,7 +22,7 @@ gradle-app.setting
 
 /pd-feature-tests/.idea
 
-/uv-attx-dpus/dpus
+/uv-attx-dpus/dpus/*
 
 ### Java ###
 # Compiled class file

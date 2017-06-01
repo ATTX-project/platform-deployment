@@ -6,7 +6,7 @@ VOLUME /dpus
 ADD dpus /dpus
 
 VOLUME /data
-ADD data /data
+ADD demo /data
 
 ENV MASTER_USER=master MASTER_PASSWORD=commander
 ENV DOCKERIZE_VERSION v0.3.0
