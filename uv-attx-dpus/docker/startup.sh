@@ -13,3 +13,6 @@ done
 
 # Add DPUs
 for f in /dpus/*.jar; do bash /usr/local/bin/add-dpu.sh "$f"; done
+
+# Add Pipelines
+for f in /data/*.zip; do bash /usr/local/bin/add-pipeline.sh "$f"; done

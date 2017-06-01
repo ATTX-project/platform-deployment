@@ -63,11 +63,11 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
     ext.imageES5            = "1.0"
     ext.imageWF             = "1.0"
-    ext.imageGM             = "1.0"
+    ext.imageGM             = "1.1"
     ext.imageSirenAPIPlugin = "1.0"
-    ext.imageATTXDPUs       = "1.0"
+    ext.imageATTXDPUs       = "elag2017"
     ext.imageATTXShared     = "1.0"
-    ext.imageFuseki         = "1.0"
+    ext.imageFuseki         = "elag2017"
     ext.imageBase           = "attxproject"
 
 } else {
