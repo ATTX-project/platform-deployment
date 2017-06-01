@@ -5,6 +5,9 @@ MAINTAINER João M. da Silva <joao.silva@helsinki.fi>
 VOLUME /dpus
 ADD dpus /dpus
 
+VOLUME /data
+ADD data /data
+
 ENV MASTER_USER=master MASTER_PASSWORD=commander
 ENV DOCKERIZE_VERSION v0.3.0
 
@@ -18,6 +21,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-ADD startup.sh add-dpu.sh /usr/local/bin/
+ADD startup.sh add-dpu.sh add-pipeline.sh /usr/local/bin/
 
 CMD ["/bin/bash", "/usr/local/bin/startup.sh"]
