@@ -9,10 +9,10 @@ services:
       - MYSQL_ROOT_PASSWORD=iamroot!
 
   shared:
-    image: attxproject/uv-attx-shared:1.0
+    image: tenforce/unified-views-shared:feat-compact-modular
 
   backend:
-    image: tenforce/unified-views-backend:latest
+    image: tenforce/unified-views-backend:feat-compact-modular
     links:
       - mysql:mysql
     volumes_from:
@@ -20,7 +20,7 @@ services:
       - shared
 
   frontend:
-    image: tenforce/unified-views-frontend:latest
+    image: tenforce/unified-views-frontend:feat-compact-modular
     volumes_from:
       - backend
       - shared
@@ -31,14 +31,14 @@ services:
       - mysql
 
   uv-dpus:
-    image: tenforce/unified-views-add-dpus:latest
+    image: tenforce/unified-views-add-dpus:feat-compact-modular
     depends_on:
       - mysql
       - backend
       - frontend
 
   attx-dpus:
-    image: attxproject/uv-attx-dpus:1.0
+    image: attxproject/uv-attx-dpus:elag2017
     depends_on:
       - mysql
       - backend
@@ -68,7 +68,7 @@ services:
       - 9310:9310
 
   fuseki:
-    image: attxproject/attx-fuseki:1.0
+    image: attxproject/attx-fuseki:elag2017
     volumes:
       - ./attx-data/elasticsearch5:/usr/share/elasticsearch/data
     environment:
@@ -77,7 +77,7 @@ services:
       - 3030:3030
 
   gmapi:
-    image: attxproject/gm-api:1.0
+    image: attxproject/gm-api:1.2
     volumes:
       - ./attx-data/gm-api:/app/data
     ports:
