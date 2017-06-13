@@ -2,17 +2,17 @@ version: '2'
 services:
 
   mysql:
-    image: tenforce/unified-views-mariadb:feat-compact-modular
+    image: attxproject/unified-views-mariadb:1.1
     volumes:
       - ./uv-data/mysql:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=iamroot!
 
   shared:
-    image: tenforce/unified-views-shared:feat-compact-modular
+    image: attxproject/unified-views-shared:1.1
 
   backend:
-    image: tenforce/unified-views-backend:feat-compact-modular
+    image: attxproject/unified-views-backend:1.1
     links:
       - mysql:mysql
     volumes_from:
@@ -20,7 +20,7 @@ services:
       - shared
 
   frontend:
-    image: tenforce/unified-views-frontend:feat-compact-modular
+    image: attxproject/unified-views-frontend:1.1
     volumes_from:
       - backend
       - shared
@@ -30,19 +30,11 @@ services:
       - shared
       - mysql
 
-  uv-dpus:
-    image: tenforce/unified-views-add-dpus:feat-compact-modular
-    depends_on:
-      - mysql
-      - backend
-      - frontend
-
   attx-dpus:
     image: attxproject/uv-attx-dpus:elag2017
     depends_on:
       - mysql
       - backend
-      - uv-dpus
 
   wfapi:
     image: attxproject/wf-api:1.0
@@ -59,7 +51,7 @@ services:
     - 9200:9200
     - 9300:9300
 
-  elasticsearch5:
+  es5:
     image: attxproject/attx-es5:1.0
     volumes:
       - ./attx-data/elasticsearch5:/usr/share/elasticsearch/data
@@ -84,11 +76,16 @@ services:
       - 4302:4302
     links:
       - fuseki:fuseki
-      - elasticsearch5:elasticsearch5
+      - es5:es5
       - wfapi:wfapi
     depends_on:
       - frontend
       - fuseki
       - essiren
-      - elasticsearch5
+      - es5
       - wfapi
+
+  demodata:
+    image: attxproject/demodata:elag2017
+    ports:
+      - 80:80
