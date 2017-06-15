@@ -95,7 +95,7 @@ public class UC1Steps implements En {
             try {
                 for (Integer pipelineID : pipelineIDs) {
                     System.out.println("Executing pipeline: " + pipelineID);
-                    await().atMost(180, TimeUnit.SECONDS).until(TestUtils.pollForWorkflowExecution(pipelineID.intValue()), equalTo("FINISHED_SUCCESS"));
+                    await().atMost(240, TimeUnit.SECONDS).until(TestUtils.pollForWorkflowExecution(pipelineID.intValue()), equalTo("FINISHED_SUCCESS"));
                 }
             } catch (ConditionTimeoutException cex) {
                 fail("Timeout exceeded, could not get WorkflowExecution as it did not finish successfully.");

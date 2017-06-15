@@ -31,7 +31,7 @@ services:
       - mysql
 
   attx-dpus:
-    image: attxproject/uv-attx-dpus:elag2017
+    image: attxtest/uv-attx-dpus:1.1
     depends_on:
       - mysql
       - backend
@@ -60,7 +60,7 @@ services:
       - 9310:9310
 
   fuseki:
-    image: attxproject/attx-fuseki:elag2017
+    image: attxproject/attx-fuseki:1.0
     volumes:
       - ./attx-data/elasticsearch5:/usr/share/elasticsearch/data
     environment:
@@ -85,7 +85,7 @@ services:
       - es5
       - wfapi
 
-  demodata:
-    image: attxproject/demodata:elag2017
-    ports:
-      - 80:80
+  # demodata:
+  #   image: attxproject/demodata:elag2017
+  #   ports:
+  #     - 80:80

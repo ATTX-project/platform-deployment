@@ -57,7 +57,6 @@ ext {
     testImageFuseki = "latest"
     testImageES5 = "latest"
     testImageESSiren = "latest"
-    testImageUVShared = "latest"
     testImageATTXDPUs = "latest"
 }
 
@@ -73,14 +72,14 @@ dcompose {
     shared {
         forcePull = true
         forceRemoveImage = true
-        image = "${imageRepo}:${imageRepoPort}/uv-attx-shared:${testImageUVShared}"
+        image = 'attxproject/unified-views-shared:1.1'
         networks = [pdTest]
     }
 
     mysql {
         forcePull = true
         forceRemoveImage = true
-        image = 'tenforce/unified-views-mariadb:feat-compact-modular'
+        image = 'attxproject/unified-views-mariadb:1.1'
         env = ['MYSQL_ROOT_PASSWORD=iamroot!']
         networks = [pdTest]
         hostName = 'mysql'
@@ -91,7 +90,7 @@ dcompose {
     backend {
         forcePull = true
         forceRemoveImage = true
-        image = 'tenforce/unified-views-backend:latest'
+        image = 'attxproject/unified-views-backend:1.1'
         volumesFrom =  [shared]
         dependsOn = [mysql, shared]
         networks = [pdTest]
@@ -100,7 +99,7 @@ dcompose {
     frontend {
         forcePull = true
         forceRemoveImage = true
-        image = 'tenforce/unified-views-frontend:latest'
+        image = 'attxproject/unified-views-frontend:1.1'
         volumesFrom = [shared]
         dependsOn = [backend, shared]
         networks = [pdTest]
