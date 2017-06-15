@@ -65,7 +65,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageGM             = "1.2"
     ext.imageSirenAPIPlugin = "1.0"
     ext.imageATTXDPUs       = "1.1"
-    ext.imageFuseki         = "elag2017"
+    ext.imageFuseki         = "1.1"
     ext.imageBase           = "attxproject"
 
 } else {
