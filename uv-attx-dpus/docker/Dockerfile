@@ -1,12 +1,11 @@
-FROM alpine:3.3
+FROM alpine:3.6
 
 MAINTAINER João M. da Silva <joao.silva@helsinki.fi>
 
 VOLUME /dpus
 ADD dpus /dpus
 
-ENV MASTER_USER=master MASTER_PASSWORD=commander
-ENV DOCKERIZE_VERSION v0.5.0
+ENV MASTER_USER=master MASTER_PASSWORD=commander FRONTEND=frontend FRONTENDPORT=8080
 
 RUN apk add --no-cache bash curl wget
 RUN apk add --no-cache openssl
@@ -19,7 +18,9 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 RUN mkdir -p /var/log/adddpus
 RUN chmod 777 /var/log/adddpus
 VOLUME /var/log/adddpus
-ADD startup.sh add-dpu.sh /usr/local/bin/
-# ADD startup.sh add-dpu.sh add-pipeline.sh /usr/local/bin/
+# ADD startup.sh add-dpu.sh /usr/local/bin/
+ADD startup.sh add-dpu.sh add-pipeline.sh /usr/local/bin/
+RUN chmod a+x -R /usr/local/bin/
 
-CMD ["/bin/bash", "/usr/local/bin/startup.sh"]
+
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/startup.sh"]

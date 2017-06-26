@@ -1,6 +1,6 @@
 #!/bin/bash
 
-URL="http://frontend:8080/master/api/1/pipelines/import"
+URL="http://$FRONTEND:$FRONTENDPORT/master/api/1/pipelines/import"
 
 echo "---------------------------------------------------------------------"
 echo "Installing Pipeline.."

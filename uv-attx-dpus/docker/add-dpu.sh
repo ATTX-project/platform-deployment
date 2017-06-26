@@ -1,6 +1,6 @@
 #!/bin/bash
 
-URL="http://frontend:8080/master/api/1/import/dpu/jar"
+URL="http://$FRONTEND:$FRONTENDPORT/master/api/1/import/dpu/jar"
 
 echo "---------------------------------------------------------------------"
 echo "Installing DPU.."

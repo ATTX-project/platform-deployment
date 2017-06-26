@@ -72,14 +72,14 @@ dcompose {
     shared {
         forcePull = true
         forceRemoveImage = true
-        image = 'attxproject/unified-views-shared:1.1'
+        image = 'attxtest/unified-views-shared:stable-1.2'
         networks = [pdTest]
     }
 
     mysql {
         forcePull = true
         forceRemoveImage = true
-        image = 'attxproject/unified-views-mariadb:1.1'
+        image = 'attxtest/unified-views-mariadb:stable-1.2'
         env = ['MYSQL_ROOT_PASSWORD=iamroot!']
         networks = [pdTest]
         hostName = 'mysql'
@@ -90,7 +90,7 @@ dcompose {
     backend {
         forcePull = true
         forceRemoveImage = true
-        image = 'attxproject/unified-views-backend:1.1'
+        image = 'attxtest/unified-views-backend:stable-1.2'
         volumesFrom =  [shared]
         dependsOn = [mysql, shared]
         networks = [pdTest]
@@ -99,7 +99,7 @@ dcompose {
     frontend {
         forcePull = true
         forceRemoveImage = true
-        image = 'attxproject/unified-views-frontend:1.1'
+        image = 'attxtest/unified-views-frontend:stable-1.2'
         volumesFrom = [shared]
         dependsOn = [backend, shared]
         networks = [pdTest]
