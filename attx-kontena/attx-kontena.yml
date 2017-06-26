@@ -1,0 +1,159 @@
+---
+version: 0.1.9
+stack: attxproject/attx
+#expose: frontend
+#expose: es5
+#expose: fuseki
+services:
+
+  mysql:
+    image: attxtest/unified-views-mariadb:stable-1.2
+    ports:
+      - "3306:3306"
+    stateful: true
+    environment:
+      MYSQL_ROOT_PASSWORD: "UV"
+      MYSQL_PASSWORD: "UV"
+    affinity:
+      - node==icy-butterfly-39
+
+  shared:
+    image: attxtest/unified-views-shared:stable-1.2
+    environment:
+      UV_DATABASE_SQL_PASSWORD: "UV"
+    volumes:
+      - shared_config:/unified-views/config
+      - shared_dpu:/unified-views/dpu
+      - shared_lib:/unified-views/lib
+      #   - shared_scripts:/unified-views/scripts
+      - shared_backend:/unified-views/backend
+      - shared_logs:/unified-views/logs
+    depends_on:
+      - mysql
+    affinity:
+      - node==icy-butterfly-39
+
+  backend:
+    image: attxtest/unified-views-backend:stable-1.2
+    ports:
+      - "8066:8066"
+    volumes:
+      - shared_config:/unified-views/config
+      - shared_dpu:/unified-views/dpu
+      - shared_lib:/unified-views/lib
+      #   - shared_scripts:/unified-views/scripts
+      - shared_backend:/unified-views/backend
+      - shared_logs:/unified-views/logs
+    depends_on:
+      - shared
+      - mysql
+      - mysql
+    affinity:
+      - node==icy-butterfly-39
+
+  frontend:
+    image: attxtest/unified-views-frontend:stable-1.2
+    ports:
+      - "8080:8080"
+#    links:
+#      - ingress-lb/lb
+#    environment:
+#      - KONTENA_LB_INTERNAL_PORT=8080
+#      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
+    volumes:
+      - shared_config:/unified-views/config
+      - shared_dpu:/unified-views/dpu
+      - shared_lib:/unified-views/lib
+      #   - shared_scripts:/unified-views/scripts
+      - shared_backend:/unified-views/backend
+      - shared_logs:/unified-views/logs
+#    links:
+#      - uvdb:mysql
+#      - uvbackend:uvbackend
+    depends_on:
+      - shared
+      - mysql
+      - backend
+    affinity:
+      - node==icy-butterfly-39
+
+  attxdpus:
+   image: attxtest/uv-attx-dpus:elag2017
+   depends_on:
+     - mysql
+     - backend
+     - frontend
+   affinity:
+     - node==icy-butterfly-39
+
+  wfapi:
+    image: attxproject/wf-api:1.0
+    depends_on:
+      - mysql
+
+  es5:
+    image: attxproject/attx-es5:1.0
+#    volumes:
+#      - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
+    stateful: true
+    ports:
+      - "9210:9210"
+      - "9310:9310"
+#    links:
+#      - ingress-lb/lb
+#    environment:
+#      - KONTENA_LB_INTERNAL_PORT=9210
+#      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
+
+  fuseki:
+    image: attxproject/attx-fuseki:elag2017
+    ports:
+      - "3030:3030"
+#    volumes:
+#      - /attx-data/fuseki:/data/fuseki
+    stateful: true
+#    links:
+#      - ingress-lb/lb
+    environment:
+      - ADMIN_PASSWORD=pw123
+
+  gmapi:
+    image: attxproject/gm-api:1.2
+#    volumes:
+#      - /attx-data/gm-api:/app/data
+    stateful: true
+    ports:
+      - "4302:4302"
+    depends_on:
+      - fuseki
+      - es5
+      - wfapi
+    # deploy:
+    #   placement:
+    #     constraints: [node.hostname == attx-swarm-2]
+
+#  demodata:
+#    image: attxproject/demodata:elag2017
+#    ports:
+#      - "8008:80"
+
+
+volumes:
+  shared_config:
+    external:
+      name: ${STACK}-config
+  shared_dpu:
+    external:
+      name: ${STACK}-dpu
+  shared_lib:
+    external:
+      name: ${STACK}-lib
+  shared_backend:
+    external:
+      name: ${STACK}-backend
+  shared_logs:
+    external:
+      name: ${STACK}-logs
+#scripts:
+#  external:
+#    name: ${STACK}-scripts
