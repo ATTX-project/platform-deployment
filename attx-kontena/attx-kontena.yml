@@ -1,5 +1,5 @@
 ---
-version: 0.1.9
+version: 0.1.11
 stack: attxproject/attx
 #expose: frontend
 #expose: es5
@@ -15,41 +15,43 @@ services:
       MYSQL_ROOT_PASSWORD: "UV"
       MYSQL_PASSWORD: "UV"
     affinity:
-      - node==icy-butterfly-39
+      - label==master
 
   shared:
     image: attxtest/unified-views-shared:stable-1.2
     environment:
       UV_DATABASE_SQL_PASSWORD: "UV"
     volumes:
-      - shared_config:/unified-views/config
-      - shared_dpu:/unified-views/dpu
-      - shared_lib:/unified-views/lib
+      - uv-shared:/unified-views
+#      - shared_config:/unified-views/config
+#      - shared_dpu:/unified-views/dpu
+#      - shared_lib:/unified-views/lib
       #   - shared_scripts:/unified-views/scripts
-      - shared_backend:/unified-views/backend
-      - shared_logs:/unified-views/logs
+#      - shared_backend:/unified-views/backend
+#      - shared_logs:/unified-views/logs
     depends_on:
       - mysql
     affinity:
-      - node==icy-butterfly-39
+      - label==master
 
   backend:
     image: attxtest/unified-views-backend:stable-1.2
     ports:
       - "8066:8066"
     volumes:
-      - shared_config:/unified-views/config
-      - shared_dpu:/unified-views/dpu
-      - shared_lib:/unified-views/lib
+      - uv-shared:/unified-views
+#      - shared_config:/unified-views/config
+#      - shared_dpu:/unified-views/dpu
+#      - shared_lib:/unified-views/lib
       #   - shared_scripts:/unified-views/scripts
-      - shared_backend:/unified-views/backend
-      - shared_logs:/unified-views/logs
+#      - shared_backend:/unified-views/backend
+#      - shared_logs:/unified-views/logs
     depends_on:
       - shared
       - mysql
       - mysql
     affinity:
-      - node==icy-butterfly-39
+      - label==master
 
   frontend:
     image: attxtest/unified-views-frontend:stable-1.2
@@ -61,12 +63,13 @@ services:
 #      - KONTENA_LB_INTERNAL_PORT=8080
 #      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
     volumes:
-      - shared_config:/unified-views/config
-      - shared_dpu:/unified-views/dpu
-      - shared_lib:/unified-views/lib
+      - uv-shared:/unified-views
+#      - shared_config:/unified-views/config
+#      - shared_dpu:/unified-views/dpu
+#      - shared_lib:/unified-views/lib
       #   - shared_scripts:/unified-views/scripts
-      - shared_backend:/unified-views/backend
-      - shared_logs:/unified-views/logs
+#      - shared_backend:/unified-views/backend
+#      - shared_logs:/unified-views/logs
 #    links:
 #      - uvdb:mysql
 #      - uvbackend:uvbackend
@@ -75,7 +78,7 @@ services:
       - mysql
       - backend
     affinity:
-      - node==icy-butterfly-39
+      - label==master
 
   attxdpus:
    image: attxtest/uv-attx-dpus:elag2017
@@ -84,7 +87,7 @@ services:
      - backend
      - frontend
    affinity:
-     - node==icy-butterfly-39
+     - label==master
 
   wfapi:
     image: attxproject/wf-api:1.0
@@ -139,21 +142,25 @@ services:
 
 
 volumes:
-  shared_config:
+  uv-shared:
     external:
-      name: ${STACK}-config
-  shared_dpu:
-    external:
-      name: ${STACK}-dpu
-  shared_lib:
-    external:
-      name: ${STACK}-lib
-  shared_backend:
-    external:
-      name: ${STACK}-backend
-  shared_logs:
-    external:
-      name: ${STACK}-logs
+      name: ${STACK}-uv-shared
+
+#  shared_config:
+#    external:
+#      name: ${STACK}-config
+#  shared_dpu:
+#    external:
+#      name: ${STACK}-dpu
+#  shared_lib:
+#    external:
+#      name: ${STACK}-lib
+#  shared_backend:
+#    external:
+#      name: ${STACK}-backend
+#  shared_logs:
+#    external:
+#      name: ${STACK}-logs
 #scripts:
 #  external:
 #    name: ${STACK}-scripts
