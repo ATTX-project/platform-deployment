@@ -2,8 +2,6 @@
 version: 0.1.11
 stack: attxproject/attx
 #expose: frontend
-#expose: es5
-#expose: fuseki
 services:
 
   mysql:
@@ -23,12 +21,6 @@ services:
       UV_DATABASE_SQL_PASSWORD: "UV"
     volumes:
       - uv-shared:/unified-views
-#      - shared_config:/unified-views/config
-#      - shared_dpu:/unified-views/dpu
-#      - shared_lib:/unified-views/lib
-      #   - shared_scripts:/unified-views/scripts
-#      - shared_backend:/unified-views/backend
-#      - shared_logs:/unified-views/logs
     depends_on:
       - mysql
     affinity:
@@ -40,12 +32,6 @@ services:
       - "8066:8066"
     volumes:
       - uv-shared:/unified-views
-#      - shared_config:/unified-views/config
-#      - shared_dpu:/unified-views/dpu
-#      - shared_lib:/unified-views/lib
-      #   - shared_scripts:/unified-views/scripts
-#      - shared_backend:/unified-views/backend
-#      - shared_logs:/unified-views/logs
     depends_on:
       - shared
       - mysql
@@ -64,15 +50,6 @@ services:
 #      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
     volumes:
       - uv-shared:/unified-views
-#      - shared_config:/unified-views/config
-#      - shared_dpu:/unified-views/dpu
-#      - shared_lib:/unified-views/lib
-      #   - shared_scripts:/unified-views/scripts
-#      - shared_backend:/unified-views/backend
-#      - shared_logs:/unified-views/logs
-#    links:
-#      - uvdb:mysql
-#      - uvbackend:uvbackend
     depends_on:
       - shared
       - mysql
@@ -135,32 +112,9 @@ services:
     #   placement:
     #     constraints: [node.hostname == attx-swarm-2]
 
-#  demodata:
-#    image: attxproject/demodata:elag2017
-#    ports:
-#      - "8008:80"
 
 
 volumes:
   uv-shared:
     external:
       name: ${STACK}-uv-shared
-
-#  shared_config:
-#    external:
-#      name: ${STACK}-config
-#  shared_dpu:
-#    external:
-#      name: ${STACK}-dpu
-#  shared_lib:
-#    external:
-#      name: ${STACK}-lib
-#  shared_backend:
-#    external:
-#      name: ${STACK}-backend
-#  shared_logs:
-#    external:
-#      name: ${STACK}-logs
-#scripts:
-#  external:
-#    name: ${STACK}-scripts
