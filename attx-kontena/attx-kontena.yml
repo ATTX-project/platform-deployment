@@ -32,6 +32,7 @@ services:
       - "8066:8066"
     volumes:
       - uv-shared:/unified-views
+      - sb-shared:/attx-shared
     depends_on:
       - shared
       - mysql
@@ -50,6 +51,7 @@ services:
 #      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
     volumes:
       - uv-shared:/unified-views
+      - sb-shared:/attx-shared
     depends_on:
       - shared
       - mysql
@@ -99,8 +101,9 @@ services:
 
   gmapi:
     image: attxproject/gm-api:1.2
-#    volumes:
+    volumes:
 #      - /attx-data/gm-api:/app/data
+      - sb-shared:/attx-shared
     stateful: true
     ports:
       - "4302:4302"
@@ -118,3 +121,6 @@ volumes:
   uv-shared:
     external:
       name: ${STACK}-uv-shared
+  attx-shared:
+    external:
+      name: ${STACK}-sb-shared
