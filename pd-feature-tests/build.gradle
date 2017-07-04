@@ -210,8 +210,8 @@ shadowJar {
 // making sure the that fresh build of test classes is done before building the image
 buildTestImage.dependsOn downloadMETADPUFile
 buildTestImage.dependsOn shadowJar
-buildTestImage.dependsOn processTestResources
 buildTestImage.dependsOn testClasses
+buildTestImage.dependsOn processTestResources
 
 task checkDPUDone(type: DockerWaitContainer) {
     dependsOn startGmapiContainer

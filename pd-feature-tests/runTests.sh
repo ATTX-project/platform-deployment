@@ -11,4 +11,4 @@ dockerize -wait http://es5:9210 -timeout 60s
 # wait for es5 9310 apparently not working
 # dockerize -wait tcp://es5:9310 -timeout 60s
 
-gradle -b build.gradle --offline integTest
+gradle integTest
