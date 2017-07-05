@@ -180,6 +180,7 @@ dcompose {
         baseDir = file('.')
         dockerFilename = 'Dockerfile'
         buildArgs = ['METADATA_DPU': "$attxMetadataPlugin"]
+        env = ["REPO=$artifactRepoURL"]
         if (testSet == "container") {
             binds = ["/var/run/docker.sock:/run/docker.sock"]
         }
@@ -188,6 +189,7 @@ dcompose {
         waitForCommand = true
         forceRemoveImage = true
         attachStdout = true
+        attachStderr = true
         networks = [pdTest]
     }
 }
@@ -197,6 +199,7 @@ task copyReportFiles(type: DcomposeCopyFileFromContainerTask) {
     containerPath = '/tmp/build/reports/tests'
     destinationDir = file("build/reports/")
     cleanDestinationDir = false
+    dependsOn startTestContainer
 }
 
 startTestContainer.finalizedBy copyReportFiles

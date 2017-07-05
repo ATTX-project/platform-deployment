@@ -2,8 +2,30 @@ plugins {
     id "java"
 }
 
+ext {
+    imageRepo = "attx-dev"
+    artifactRepoPort = "8081"
+}
+
+if (!project.hasProperty("artifactRepoURL")) {
+    ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}"
+}
+
+repositories {
+    mavenCentral()
+    maven { url "${artifactRepoURL}/repository/attx-releases"}
+}
+
 dependencies {
-    testCompile fileTree(dir: 'build/libs', include: ['*.jar'])
+    testCompile \
+        fileTree(dir: 'build/libs', include: ['*.jar']),
+        'junit:junit:4.10',
+        'info.cukes:cucumber-java8:1.2.5',
+        'info.cukes:cucumber-junit:1.2.5',
+        'com.mashape.unirest:unirest-java:1.4.9',
+        'org.skyscreamer:jsonassert:1.4.0',
+        'org.awaitility:awaitility-groovy:2.0.0',
+        'org.uh.hulib.attx.dev:dev-test-helper:1.4'
 }
 
 task integTest(type: Test){

@@ -16,7 +16,7 @@ WORKDIR /tmp
 
 ARG METADATA_DPU
 
-COPY build /tmp/build
+COPY src /tmp/src
 COPY build.test.gradle /tmp/build.gradle
 COPY runTests.sh /tmp
 RUN chmod 700 /tmp/runTests.sh
