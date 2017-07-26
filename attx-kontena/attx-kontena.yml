@@ -1,5 +1,5 @@
 ---
-version: 0.1.11
+version: 0.1.12
 stack: attxproject/attx
 #expose: frontend
 services:
@@ -121,6 +121,6 @@ volumes:
   uv-shared:
     external:
       name: ${STACK}-uv-shared
-  attx-shared:
+  sb-shared:
     external:
       name: ${STACK}-sb-shared
