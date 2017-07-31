@@ -180,7 +180,7 @@ dcompose {
         baseDir = file('.')
         dockerFilename = 'Dockerfile'
         buildArgs = ['METADATA_DPU': "$attxMetadataPlugin"]
-        env = ["REPO=$artifactRepoOutURL"]
+        env = ["REPO=$artifactRepoURL"]
         if (testSet == "container") {
             binds = ["/var/run/docker.sock:/run/docker.sock"]
         }
@@ -190,7 +190,7 @@ dcompose {
         forceRemoveImage = true
         attachStdout = true
         attachStderr = true
-        networks = [pdTest]
+        networks = [pdTest, root_default]
     }
 }
 

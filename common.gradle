@@ -19,9 +19,6 @@ if (!project.hasProperty("registryURL")) {
 if (!project.hasProperty("artifactRepoURL")) {
     ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}"
 }
-if (!project.hasProperty("artifactRepoOutURL")) {
-    ext.artifactRepoURL = "http://${imageRepo}:${artifactRepoPort}"
-}
 
 if (!project.hasProperty("artifactRepoUser")) {
     ext.artifactRepoUser = ""
