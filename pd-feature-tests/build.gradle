@@ -190,7 +190,7 @@ dcompose {
         forceRemoveImage = true
         attachStdout = true
         attachStderr = true
-        networks = [pdTest, root_default]
+        networks = [pdTest, network('root_default')]
     }
 }
 
