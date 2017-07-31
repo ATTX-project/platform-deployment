@@ -33,7 +33,7 @@ ext.src = [
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadTestFiles_
+task downloadTestFiles
 
 for (s in src) {
     task "downloadTestFiles_${s.key.hashCode()}"(type: Download) {
