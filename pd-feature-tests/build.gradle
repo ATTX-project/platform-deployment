@@ -13,6 +13,8 @@ repositories {
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+ext.attxTestHelperPlugin = '1.4'
+
 dependencies {
     testCompile \
         'junit:junit:4.10',
@@ -26,18 +28,19 @@ dependencies {
 
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-metadata&v=${attxMetadataPlugin}&p=jar":"uv-dpu-t-attx-metadata-${attxMetadataPlugin}.jar"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-dpu-t-attx-metadata&v=${attxMetadataPlugin}&p=jar":"uv-dpu-t-attx-metadata-${attxMetadataPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.dev&a=dev-test-helper&v=${attxMetadataPlugin}&p=jar":"dev-test-helper-${attxTestHelperPlugin}.jar"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadMETADPUFile
+task downloadTestFiles_
 
 for (s in src) {
-    task "downloadMETADPUFile_${s.key.hashCode()}"(type: Download) {
+    task "downloadTestFiles_${s.key.hashCode()}"(type: Download) {
         src s.key
         dest new File("$projectDir", s.value)
     }
-    downloadMETADPUFile.dependsOn("downloadMETADPUFile_${s.key.hashCode()}")
+    downloadTestFiles.dependsOn("downloadTestFiles_${s.key.hashCode()}")
 }
 
 if (!project.hasProperty("testEnv") || project.testEnv == "dev") {
@@ -191,7 +194,6 @@ dcompose {
         attachStdout = true
         attachStderr = true
         networks = [pdTest]
-        links = ['archiva']
     }
 }
 
