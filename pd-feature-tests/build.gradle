@@ -214,7 +214,7 @@ shadowJar {
 }
 
 // making sure the that fresh build of test classes is done before building the image
-buildTestImage.dependsOn downloadMETADPUFile
+buildTestImage.dependsOn downloadTestFiles
 buildTestImage.dependsOn shadowJar
 buildTestImage.dependsOn testClasses
 buildTestImage.dependsOn processTestResources
