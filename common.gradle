@@ -33,7 +33,7 @@ if (!project.hasProperty("artifactRepoPassword")) {
 if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.wfAPI               = "1.0-SNAPSHOT"
-    ext.gmAPI               = "1.2-SNAPSHOT"
+    ext.gmAPI               = "1.3-SNAPSHOT"
     ext.rdfINDEXER          = "1.0-SNAPSHOT"
     ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
     ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
@@ -52,7 +52,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
 } else if (project.env == "release"){
 
     ext.wfAPI               = "1.0-SNAPSHOT"
-    ext.gmAPI               = "1.2-SNAPSHOT"
+    ext.gmAPI               = "1.3-SNAPSHOT"
     ext.rdfINDEXER          = "1.0-SNAPSHOT"
     ext.attxMetadataPlugin  = "1.0-SNAPSHOT"
     ext.attxInfras2IPlugin  = "1.0-SNAPSHOT"
