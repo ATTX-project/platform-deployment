@@ -48,6 +48,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageATTXDPUs       = "latest"
     ext.imageFuseki         = "latest"
     ext.imageBase           = "${imageRepo}:${imageRepoPort}"
+    ext.attxTestHelperPlugin = '1.4'
 
 } else if (project.env == "release"){
 
@@ -67,6 +68,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageATTXDPUs       = "1.2"
     ext.imageFuseki         = "1.1"
     ext.imageBase           = "attxproject"
+    ext.attxTestHelperPlugin = '1.4'
 
 } else {
     throw new GradleException("Build project environment option not recognised.")

@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     testCompile \
-        fileTree(dir: 'build/libs', include: ['*.jar']),
+        files("dev-test-helper.jar"),
         'junit:junit:4.10',
         'info.cukes:cucumber-java8:1.2.5',
         'info.cukes:cucumber-junit:1.2.5',

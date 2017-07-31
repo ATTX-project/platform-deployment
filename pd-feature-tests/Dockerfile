@@ -15,9 +15,12 @@ RUN mkdir -p /tmp
 WORKDIR /tmp
 
 ARG METADATA_DPU
+ARG attxTestHelperPlugin
 
 COPY src /tmp/src
 COPY build.test.gradle /tmp/build.gradle
 COPY runTests.sh /tmp
 RUN chmod 700 /tmp/runTests.sh
 COPY uv-dpu-t-attx-metadata-${METADATA_DPU}.jar /tmp/uv-dpu-t-attx-metadata-${METADATA_DPU}.jar
+
+COPY dev-test-helper-${attxTestHelperPlugin}.jar /tmp/dev-test-helper.jar
