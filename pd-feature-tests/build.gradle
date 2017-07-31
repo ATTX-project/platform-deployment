@@ -191,7 +191,7 @@ dcompose {
         attachStdout = true
         attachStderr = true
         networks = [pdTest]
-        networkMode = 'host'
+        links = ['archiva']
     }
 }
 
