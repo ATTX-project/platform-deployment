@@ -1,1 +1,1 @@
-include "pd-feature-tests", "uv-attx-dpus", "wf-API", "gm-API", "dc-elasticsearch-siren", "attx-es5", "attx-fuseki"
+include "pd-feature-tests", "uv-attx-dpus", "wf-API", "gm-API", "dc-elasticsearch-siren", "attx-es5", "attx-fuseki", "rml-service"
