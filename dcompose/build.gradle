@@ -83,6 +83,6 @@ dcompose {
     mom {
         forceRemoveImage = true
         image = "attx-dev:5000/mom:latest"
-        portBindings = ['8161:8161', '61616:6166']
+        portBindings = ['8161:8161', '61616:61616']
     }
 }
