@@ -81,6 +81,10 @@ RUN apk --no-cache update && \
 # Update path to log files as to write them to the logs directory.
     sed -i -e"s|\${activemq.base}/data/\(.*\).log|\${activemq.base}/logs/\1.log|g" ${HOME_DIRECTORY}/conf/log4j.properties
 
+
+# Copy activemq.xml to configuration directory
+COPY ./activemq.xml ${CONFIGURATION_DIRECTORY}
+
 # Copy the start script.
 COPY ./start-activemq.sh ${HOME_DIRECTORY}/
 
