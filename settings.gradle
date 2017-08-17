@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-include "pd-feature-tests", "uv-attx-dpus", "wf-API", "gm-API", "dc-elasticsearch-siren", "attx-es5", "attx-fuseki", "rml-service"
-=======
-include "pd-feature-tests", "uv-attx-dpus", "wf-API", "gm-API", "dc-elasticsearch-siren", "attx-es5", "attx-fuseki", "mom"
->>>>>>> attx-activemq
+include "pd-feature-tests", "uv-attx-dpus", "wf-API", "gm-API", "dc-elasticsearch-siren", "attx-es5", "attx-fuseki", "rml-service", "mom", "attx-activemq"
