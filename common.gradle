@@ -47,6 +47,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageSirenAPIPlugin = "latest"
     ext.imageATTXDPUs       = "latest"
     ext.imageFuseki         = "latest"
+    ext.imageActivemq       = "latest"
     ext.imageBase           = "${imageRepo}:${imageRepoPort}"
     ext.attxTestHelperPlugin = '1.4'
     ext.RMLService          = '0.0.1-SNAPSHOT'
@@ -69,6 +70,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageSirenAPIPlugin = "1.0"
     ext.imageATTXDPUs       = "1.2"
     ext.imageFuseki         = "1.1"
+    ext.imageActivemq       = "latest"
     ext.imageBase           = "attxproject"
     ext.attxTestHelperPlugin = '1.4'
     ext.RMLService          = '0.0.1-SNAPSHOT'
