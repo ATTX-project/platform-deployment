@@ -8,23 +8,23 @@ parameters:
   key_name:
     type: string
     default: Cpouta Test
-    #Chris: replace above with your key pair name as per: https://pouta.csc.fi/dashboard/project/access_and_security/
+    # replace above with your key pair name as per: https://pouta.csc.fi/dashboard/project/access_and_security/
   az:
     type: string
     default: nova
-    #Chris: above should be nova
+    #: above should be nova
   public_network:
     type: string
     default: project_2000561
-    #Chris: replace the above with your projectname / tenant name e.g project_2000561
+    # replace the above with your projectname / tenant name e.g project_2000561
   public_ip_pool:
     type: string
     default: public
-    #Chris: above should be public
+    # above should be public
   name:
     type: string
     default: kontena-master
-    #Chris: this can stay as kontena-master
+    # this can stay as kontena-master
   volume_size:
     type: number
     default: 20
