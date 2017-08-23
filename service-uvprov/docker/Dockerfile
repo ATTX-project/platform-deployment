@@ -27,11 +27,11 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps
 
-ARG WFAPI
+ARG uvprov
 WORKDIR /app
 
-COPY build/distributions/wf-API-${WFAPI}.tar.gz /app/wf-API.tar.gz
-RUN tar -xf wf-API.tar.gz
+COPY build/distributions/wf-API-${uvprov}.tar.gz /app/uvprov.tar.gz
+RUN tar -xf uvprov.tar.gz
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
