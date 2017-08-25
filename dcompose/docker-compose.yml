@@ -2,7 +2,7 @@ version: '2'
 services:
 
   mysql:
-    image: attxproject/unified-views-mariadb:1.1
+    image: attxtest/unified-views-mariadb:stable-1.2
     volumes:
       - ./uv-data/mysql:/var/lib/mysql
     environment:
@@ -12,7 +12,7 @@ services:
     image: attxproject/unified-views-shared:1.1
 
   backend:
-    image: attxproject/unified-views-backend:1.1
+    image: attxtest/unified-views-backend:stable-1.2
     links:
       - mysql:mysql
     volumes_from:
@@ -20,7 +20,7 @@ services:
       - shared
 
   frontend:
-    image: attxproject/unified-views-frontend:1.1
+    image: attxtest/unified-views-frontend:stable-1.2
     volumes_from:
       - backend
       - shared
@@ -31,7 +31,7 @@ services:
       - mysql
 
   attx-dpus:
-    image: attxtest/uv-attx-dpus:1.1
+    image: attxtest/uv-attx-dpus:elag2017
     depends_on:
       - mysql
       - backend
@@ -60,7 +60,7 @@ services:
       - 9310:9310
 
   fuseki:
-    image: attxproject/attx-fuseki:1.0
+    image: attxproject/attx-fuseki:elag2017
     volumes:
       - ./attx-data/elasticsearch5:/usr/share/elasticsearch/data
     environment:
@@ -84,6 +84,17 @@ services:
       - essiren
       - es5
       - wfapi
+
+  mom:
+    image: attxproject/mom:latest
+    ports:
+      - 8161:8161
+      - 61616:61616
+      - 5672:5672
+      - 61613:61613
+      - 1883:1883
+      - 61614:61614
+
 
   # demodata:
   #   image: attxproject/demodata:elag2017
