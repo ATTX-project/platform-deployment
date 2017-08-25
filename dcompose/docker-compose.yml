@@ -86,7 +86,7 @@ services:
       - wfapi
 
   mom:
-    image: attxproject/mom:latest
+    image: attxproject/mom:0.1
     ports:
       - 8161:8161
       - 61616:61616
