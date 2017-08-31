@@ -1,4 +1,4 @@
-FROM frekele/gradle:3.3-jdk8
+FROM frekele/gradle:4.1-jdk8
 
 RUN apt-get update \
     && apt-get install -y wget \

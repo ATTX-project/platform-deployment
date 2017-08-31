@@ -55,7 +55,7 @@ if (!project.hasProperty("testEnv") || project.testEnv == "dev") {
 // if there different combinations need to be tested
 
 ext {
-    testImageWF = "latest"
+    testImageUVProv = "latest"
     testImageGM = "latest"
     testImageFuseki = "latest"
     testImageES5 = "latest"
@@ -157,7 +157,7 @@ dcompose {
     wfapi {
         forcePull = true
         forceRemoveImage = true
-        image = "${imageRepo}:${imageRepoPort}/wf-api:${testImageWF}"
+        image = "${imageRepo}:${imageRepoPort}/uv-prov:${testImageUVProv}"
         dependsOn = [mysql]
         networks = [pdTest]
         hostName = 'wfapi'
