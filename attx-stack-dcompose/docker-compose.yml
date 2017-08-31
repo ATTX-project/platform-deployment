@@ -9,7 +9,7 @@ services:
       - MYSQL_ROOT_PASSWORD=iamroot!
 
   shared:
-    image: attxproject/unified-views-shared:1.1
+    image: attxtest/unified-views-shared:stable-1.2
 
   backend:
     image: attxtest/unified-views-backend:stable-1.2

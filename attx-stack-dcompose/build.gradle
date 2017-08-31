@@ -17,7 +17,7 @@ dcompose {
 
     shared {
         forceRemoveImage = true
-        image = "attx-dev:5000/uv-attx-shared"
+        image = "attxtest/unified-views-shared:stable-1.2"
     }
 
     mysql {
@@ -48,9 +48,9 @@ dcompose {
         dependsOn = [mysql, backend, frontend]
     }
 
-    wfapi {
+    uvprov {
         forceRemoveImage = true
-        image = 'attx-dev:5000/wf-api:latest'
+        image = 'attx-dev:5000/uv-prov:latest'
         portBindings = ['4301:4301']
     }
 
@@ -77,17 +77,17 @@ dcompose {
         forceRemoveImage = true
         image = "attx-dev:5000/gm-api:latest"
         portBindings = ['4302:4302']
-        links = [fuseki.link(), elasticsearch5.link(), wfapi.link()]
+        links = [fuseki.link(), elasticsearch5.link(), uvprov.link()]
     }
 
-    if (!project.hasProperty("mom") || project.mon == "rabbitmq") {
+    if (!project.hasProperty("mom") || project.mom == "rabbitmq") {
         messagebroker {
             forceRemoveImage = true
             image = "rabbitmq:3.6.11-management"
             portBindings = ['4369:4369', '5671:5671', '5672:5672', '15671:15671', '15672:15672', '25672:25672']
             env = ['RABBITMQ_DEFAULT_USER=user', 'RABBITMQ_DEFAULT_PASS=password']
         }
-    } else if (project.testEnv == "activemq"){
+    } else if (project.mom == "activemq"){
         messagebroker {
             forceRemoveImage = true
             image = "attx-dev:5000/attx-activemq:latest"
