@@ -20,18 +20,18 @@ RUN set -x \
     && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && apk del .gosu-deps
 
-ARG WFAPI
+ARG uvprov
 WORKDIR /app
 
-COPY build/distributions/wf-API-${WFAPI}.tar.gz /app/wf-API.tar.gz
-RUN tar -xf wf-API.tar.gz
+COPY build/distributions/wf-API-${uvprov}.tar.gz /app/uvprov.tar.gz
+RUN tar -xf uvprov.tar.gz
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot

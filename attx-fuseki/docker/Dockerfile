@@ -28,8 +28,8 @@ RUN apk add --update \
     && rm -rf /var/cache/apk/*
 
 # Update below according to https://jena.apache.org/download/
-ENV FUSEKI_MD5 65d4c73ea03c34c5930f1edab09d75e8
-ENV FUSEKI_VERSION 2.6.0
+ENV FUSEKI_MD5 de1034d261ac7191847cb165aa9c3929
+ENV FUSEKI_VERSION 3.4.0
 ENV FUSEKI_MIRROR http://www.eu.apache.org/dist/
 ENV FUSEKI_ARCHIVE http://archive.apache.org/dist/
 
@@ -39,7 +39,7 @@ ENV FUSEKI_HOME /jena-fuseki
 
 WORKDIR /tmp
 # sha1 checksum
-RUN echo "$FUSEKI_MD5  apache-jena-fuseki-2.6.0.tar.gz" > apache-jena-fuseki-$FUSEKI_VERSION.tar.gz.md5
+RUN echo "$FUSEKI_MD5  apache-jena-fuseki-3.4.0.tar.gz" > apache-jena-fuseki-$FUSEKI_VERSION.tar.gz.md5
 # Download/check/unpack/move in one go (to reduce image size)
 RUN wget $FUSEKI_MIRROR/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz \
     || wget $FUSEKI_ARCHIVE/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz \
@@ -59,7 +59,7 @@ RUN set -x \
     && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
