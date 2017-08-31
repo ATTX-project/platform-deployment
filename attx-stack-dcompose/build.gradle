@@ -1,5 +1,5 @@
 plugins {
-    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.9.0"
+    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.9.1"
 }
 
 repositories {
