@@ -27,10 +27,10 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps
 
-ARG uvprov
+ARG UVPROV
 WORKDIR /app
 
-COPY build/distributions/wf-API-${uvprov}.tar.gz /app/uvprov.tar.gz
+COPY build/distributions/wf-API-${UVPROV}.tar.gz /app/uvprov.tar.gz
 RUN tar -xf uvprov.tar.gz
 
 RUN addgroup -S nonroot \

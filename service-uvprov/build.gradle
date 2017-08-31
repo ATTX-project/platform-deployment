@@ -3,28 +3,28 @@ apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 apply from: '../publishDocker.gradle'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${uvprov}&p=tar.gz":"wf-API-${uvprov}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${uvProv}&p=tar.gz":"wf-API-${uvProv}.tar.gz"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadWFFiles
+task downloadUVProvFiles
 
 for (s in src) {
-    task "downloadWFFiles_${s.key.hashCode()}"(type: Download) {
+    task "downloadUVProvFiles_${s.key.hashCode()}"(type: Download) {
         src s.key
         dest new File("$projectDir/docker/build/distributions", s.value)
     }
-    downloadWFFiles.dependsOn("downloadWFFiles_${s.key.hashCode()}")
+    downloadUVProvFiles.dependsOn("downloadUVProvFiles_${s.key.hashCode()}")
 }
 
 dcompose {
 	uvprov {
 		baseDir = file('docker')
 		dockerFilename = 'Dockerfile'
-        repository = "${imageBase}/wf-api:${imageWF}"
-        buildArgs = ['uvprov': "$uvprov"]
+        repository = "${imageBase}/uv-prov:${imageUVProv}"
+        buildArgs = ['UVPROV': "$uvProv"]
 	}
 }
 
-buildUvprovImage.dependsOn downloadWFFiles
-pushUvprovImage.dependsOn downloadWFFiles
+buildUvprovImage.dependsOn downloadUVProvFiles
+pushUvprovImage.dependsOn downloadUVProvFiles
