@@ -80,9 +80,18 @@ dcompose {
         links = [fuseki.link(), elasticsearch5.link(), wfapi.link()]
     }
 
-    mom {
-        forceRemoveImage = true
-        image = "attx-dev:5000/mom:latest"
-        portBindings = ['8161:8161', '61616:61616', '5672:5672', '61613:61613', '1883:1883', '61614:61614']
+    if (!project.hasProperty("mom") || project.mon == "rabbitmq") {
+        messagebroker {
+            forceRemoveImage = true
+            image = "rabbitmq:3.6.11-management"
+            portBindings = ['4369:4369', '5671:5671', '5672:5672', '15671:15671', '15672:15672', '25672:25672']
+            env = ['RABBITMQ_DEFAULT_USER=user', 'RABBITMQ_DEFAULT_PASS=password']
+        }
+    } else if (project.testEnv == "activemq"){
+        messagebroker {
+            forceRemoveImage = true
+            image = "attx-dev:5000/attx-activemq:latest"
+            portBindings = ['8161:8161', '61616:61616', '5672:5672', '61613:61613', '1883:1883', '61614:61614']
+        }
     }
 }

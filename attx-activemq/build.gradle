@@ -5,6 +5,6 @@ dcompose {
 	activemq {
 		baseDir = file('docker')
 		dockerFilename = 'Dockerfile'
-    		repository = "${imageBase}/attx-active:${imageActivemq}"		
+    		repository = "${imageBase}/attx-activemq:${imageActivemq}"		
 	}
 }
