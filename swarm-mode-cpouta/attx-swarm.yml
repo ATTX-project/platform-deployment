@@ -90,7 +90,7 @@ services:
         constraints: [node.hostname == attx-swarm-1]
 
   uvprov:
-    image: attxproject/wf-api:1.0
+    image: attxproject/uv-prov:1.0
     networks:
       - attx
     depends_on:
