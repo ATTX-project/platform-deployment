@@ -17,18 +17,18 @@ dcompose {
 
     shared {
         forceRemoveImage = true
-        image = "attxtest/unified-views-shared:stable-1.2"
+        image = "attxproject/unified-views-shared:stable-1.2"
     }
 
     mysql {
         forceRemoveImage = true
-        image = 'attxtest/unified-views-mariadb:stable-1.2'
+        image = 'attxproject/unified-views-mariadb:stable-1.2'
         env = ['MYSQL_ROOT_PASSWORD=iamroot!']
     }
 
     backend {
         forceRemoveImage = true
-        image = 'attxtest/unified-views-backend:stable-1.2'
+        image = 'attxproject/unified-views-backend:stable-1.2'
         volumesFrom =  [shared]
         links = [mysql.link()]
         volumesFrom = [mysql, shared]
@@ -36,7 +36,7 @@ dcompose {
 
     frontend {
         forceRemoveImage = true
-        image = 'attxtest/unified-views-frontend:stable-1.2'
+        image = 'attxproject/unified-views-frontend:stable-1.2'
         portBindings = ['8080:8080']
         volumesFrom = [backend, shared]
     }

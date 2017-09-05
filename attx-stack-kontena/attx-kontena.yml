@@ -5,7 +5,7 @@ stack: attxproject/attx
 services:
 
   mysql:
-    image: attxtest/unified-views-mariadb:stable-1.2
+    image: attxproject/unified-views-mariadb:stable-1.2
     ports:
       - "3306:3306"
     stateful: true
@@ -16,7 +16,7 @@ services:
       - label==master
 
   shared:
-    image: attxtest/unified-views-shared:stable-1.2
+    image: attxproject/unified-views-shared:stable-1.2
     environment:
       UV_DATABASE_SQL_PASSWORD: "UV"
     volumes:
@@ -27,7 +27,7 @@ services:
       - label==master
 
   backend:
-    image: attxtest/unified-views-backend:stable-1.2
+    image: attxproject/unified-views-backend:stable-1.2
     ports:
       - "8066:8066"
     volumes:
@@ -41,7 +41,7 @@ services:
       - label==master
 
   frontend:
-    image: attxtest/unified-views-frontend:stable-1.2
+    image: attxproject/unified-views-frontend:stable-1.2
     ports:
       - "8080:8080"
 #    links:
@@ -60,7 +60,7 @@ services:
       - label==master
 
   attxdpus:
-   image: attxtest/uv-attx-dpus:elag2017
+   image: attxproject/uv-attx-dpus:stable-1.2
    depends_on:
      - mysql
      - backend
@@ -68,8 +68,8 @@ services:
    affinity:
      - label==master
 
-  wfapi:
-    image: attxproject/wf-api:1.0
+  uvprov:
+    image: attxproject/uv-prov:1.0
     depends_on:
       - mysql
 
@@ -88,7 +88,7 @@ services:
 #      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
 
   fuseki:
-    image: attxproject/attx-fuseki:elag2017
+    image: attxproject/attx-fuseki:fuseki3.4.0
     ports:
       - "3030:3030"
 #    volumes:
@@ -110,13 +110,13 @@ services:
     depends_on:
       - fuseki
       - es5
-      - wfapi
+      - uvprov
     # deploy:
     #   placement:
     #     constraints: [node.hostname == attx-swarm-2]
 
   messagebroker:
-    image: attxproject/mom:0.1
+    image: attxproject/attx-activemq:0.1
     ports:
       - '8161:8161'
       - '61616:61616'

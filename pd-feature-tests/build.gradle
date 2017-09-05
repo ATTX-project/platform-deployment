@@ -75,14 +75,14 @@ dcompose {
     shared {
         forcePull = true
         forceRemoveImage = true
-        image = 'attxtest/unified-views-shared:stable-1.2'
+        image = 'attxproject/unified-views-shared:stable-1.2'
         networks = [pdTest]
     }
 
     mysql {
         forcePull = true
         forceRemoveImage = true
-        image = 'attxtest/unified-views-mariadb:stable-1.2'
+        image = 'attxproject/unified-views-mariadb:stable-1.2'
         env = ['MYSQL_ROOT_PASSWORD=iamroot!']
         networks = [pdTest]
         hostName = 'mysql'
@@ -93,7 +93,7 @@ dcompose {
     backend {
         forcePull = true
         forceRemoveImage = true
-        image = 'attxtest/unified-views-backend:stable-1.2'
+        image = 'attxproject/unified-views-backend:stable-1.2'
         volumesFrom =  [shared]
         dependsOn = [mysql, shared]
         networks = [pdTest]
@@ -102,7 +102,7 @@ dcompose {
     frontend {
         forcePull = true
         forceRemoveImage = true
-        image = 'attxtest/unified-views-frontend:stable-1.2'
+        image = 'attxproject/unified-views-frontend:stable-1.2'
         volumesFrom = [shared]
         dependsOn = [backend, shared]
         networks = [pdTest]
@@ -249,8 +249,8 @@ task runIntegTests(type: Test) {
     doFirst {
         systemProperty 'frontend.port', dcompose.frontend.findHostPort(8080)
         systemProperty 'frontend.host', dcompose.frontend.dockerHost
-        systemProperty 'wfapi.port', dcompose.wfapi.findHostPort(4301)
-        systemProperty 'wfapi.host', dcompose.wfapi.dockerHost
+        systemProperty 'wfapi.port', dcompose.uvprov.findHostPort(4301)
+        systemProperty 'wfapi.host', dcompose.uvprov.dockerHost
         systemProperty 'fuseki.port', dcompose.fuseki.findHostPort(3030)
         systemProperty 'fuseki.host', dcompose.fuseki.dockerHost
         systemProperty 'gmapi.port', dcompose.gmapi.findHostPort(4302)

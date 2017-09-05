@@ -2,17 +2,17 @@ version: '2'
 services:
 
   mysql:
-    image: attxtest/unified-views-mariadb:stable-1.2
+    image: attxproject/unified-views-mariadb:stable-1.2
     volumes:
       - ./uv-data/mysql:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=iamroot!
 
   shared:
-    image: attxtest/unified-views-shared:stable-1.2
+    image: attxproject/unified-views-shared:stable-1.2
 
   backend:
-    image: attxtest/unified-views-backend:stable-1.2
+    image: attxproject/unified-views-backend:stable-1.2
     links:
       - mysql:mysql
     volumes_from:
@@ -20,7 +20,7 @@ services:
       - shared
 
   frontend:
-    image: attxtest/unified-views-frontend:stable-1.2
+    image: attxproject/unified-views-frontend:stable-1.2
     volumes_from:
       - backend
       - shared
@@ -31,13 +31,13 @@ services:
       - mysql
 
   attx-dpus:
-    image: attxtest/uv-attx-dpus:elag2017
+    image: attxproject/uv-attx-dpus:stable-1.2
     depends_on:
       - mysql
       - backend
 
-  wfapi:
-    image: attxproject/wf-api:1.0
+  uprov:
+    image: attxproject/uv-prov:1.0
     ports:
       - 4301:4301
     depends_on:
@@ -60,7 +60,7 @@ services:
       - 9310:9310
 
   fuseki:
-    image: attxproject/attx-fuseki:elag2017
+    image: attxproject/attx-fuseki:fuseki3.4.0
     volumes:
       - ./attx-data/elasticsearch5:/usr/share/elasticsearch/data
     environment:
@@ -77,16 +77,16 @@ services:
     links:
       - fuseki:fuseki
       - es5:es5
-      - wfapi:wfapi
+      - uprov:uprov
     depends_on:
       - frontend
       - fuseki
       - essiren
       - es5
-      - wfapi
+      - uprov
 
   mom:
-    image: attxproject/mom:0.1
+    image: attxproject/attx-activemq:0.1
     ports:
       - 8161:8161
       - 61616:61616
