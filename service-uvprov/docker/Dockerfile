@@ -30,7 +30,7 @@ RUN set -x \
 ARG UVPROV
 WORKDIR /app
 
-COPY build/distributions/wf-API-${UVPROV}.tar.gz /app/uvprov.tar.gz
+COPY build/distributions/UVProvenance-API-${UVPROV}.tar.gz /app/uvprov.tar.gz
 RUN tar -xf uvprov.tar.gz
 
 RUN addgroup -S nonroot \
