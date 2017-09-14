@@ -12,31 +12,6 @@ RUN apk add --update \
     && apk add --no-cache supervisor \
     && rm -rf /var/cache/apk/*
 
-# JAVA portion reused from https://github.com/docker-library/openjdk/blob/master/8-jdk/alpine/Dockerfile
-
-# Default to UTF-8 file.encoding
-ENV LANG C.UTF-8
-
-# add a simple script that can auto-detect the appropriate JAVA_HOME value
-# based on whether the JDK or only the JRE is installed
-RUN { \
-        echo '#!/bin/sh'; \
-        echo 'set -e'; \
-        echo; \
-        echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
-        } > /usr/local/bin/docker-java-home \
-        && chmod +x /usr/local/bin/docker-java-home
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
-ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
-
-ENV JAVA_VERSION 8u111
-ENV JAVA_ALPINE_VERSION 8.111.14-r0
-
-RUN set -x \
-    && apk add --no-cache openjdk8-jre="$JAVA_ALPINE_VERSION" \
-    && [ "$JAVA_HOME" = "$(docker-java-home)" ] \
-    && rm -rf /var/cache/apk/*
-
 ENV GOSU_VERSION 1.10
 RUN set -x \
     && apk add --no-cache --virtual .gosu-deps \
@@ -54,14 +29,11 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps
 
-ARG GMAPI
-ARG RDFINDEXER
+ARG GMS
 WORKDIR /app
 
-COPY build/distributions/gm-API-${GMAPI}.tar.gz /app/gm-API.tar.gz
-RUN tar -xf gm-API.tar.gz
-
-COPY build/distributions/gc-rdf2json-indexer-all-${RDFINDEXER}-all.jar /app/java/gc-rdf2json-indexer.jar
+COPY build/distributions/graphManager-${GMS}.tar.gz /app/graphManager.tar.gz
+RUN tar -xf graphManager.tar.gz
 
 # Adding user without root privileges alongside a user group
 RUN addgroup -S nonroot \
@@ -75,16 +47,18 @@ COPY supervisor.conf /etc/supervisor/supervisord.conf
 COPY entrypoint.sh /
 
 RUN mkdir logs \
-    && mkdir data \
+    && mkdir /attx-sb-shared \
+    && mkdir /attx-sb-shared/graphmanager \
     && chmod +x /entrypoint.sh
 
 # setting environment variables for entrypoint script
 # setting also directories to be owned by the nonroot user
 ENV GOSU_USER nonroot:nonroot
-ENV GOSU_CHOWN /app /var/log /etc/supervisor /var/run
+ENV GOSU_CHOWN /app /var/log /etc/supervisor /var/run /attx-sb-shared
+RUN chmod 777 /attx-sb-shared/graphmanager
 
 EXPOSE 4302
 
-VOLUME ["/app/data"]
+VOLUME ["/attx-sb-shared"]
 
 ENTRYPOINT ["/entrypoint.sh"]
