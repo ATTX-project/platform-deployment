@@ -30,8 +30,8 @@ RUN set -x \
 ARG UVPROV
 WORKDIR /app
 
-COPY build/distributions/uv-provenance-service-${UVPROV}.tar.gz /app/uv-provenance-service.tar.gz
-RUN tar -xf uv-provenance-service.tar.gz
+COPY build/distributions/service-uv-provenance-${UVPROV}.tar.gz /app/service-uv-provenance.tar.gz
+RUN tar -xf service-uv-provenance.tar.gz
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot

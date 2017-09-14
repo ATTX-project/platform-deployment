@@ -22,7 +22,7 @@ dcompose {
         baseDir = file('docker')
         repository = "${imageBase}/gm-api:${imageGM}"
         portBindings = ['4302:4302']
-        buildArgs = ['GMAPI': "$gmAPI"]
+        buildArgs = ['GMS': "$gmAPI"]
     }
 }
 

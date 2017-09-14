@@ -32,8 +32,8 @@ RUN set -x \
 ARG GMS
 WORKDIR /app
 
-COPY build/distributions/graphManager-${GMS}.tar.gz /app/graphManager.tar.gz
-RUN tar -xf graphManager.tar.gz
+COPY build/distributions/graphmanager-service-${GMS}.tar.gz /app/graphmanager-service.tar.gz
+RUN tar -xf graphmanager-service.tar.gz
 
 # Adding user without root privileges alongside a user group
 RUN addgroup -S nonroot \
