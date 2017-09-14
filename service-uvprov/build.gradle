@@ -3,7 +3,7 @@ apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
 apply from: '../publishDocker.gradle'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=wf-API&v=${uvProv}&p=tar.gz":"wf-API-${uvProv}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc&a=uv-provenance-service&v=${uvProv}&p=tar.gz":"uv-provenance-service-${uvProv}.tar.gz"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
