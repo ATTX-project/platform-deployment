@@ -3,7 +3,7 @@ apply plugin: 'de.undercouch.download'
 apply from: '../publishDocker.gradle'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.gc&a=graphmanager-service&v=${gmAPI}&p=tar.gz":"graphmanager-service-${gmAPI}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=graphmanager-service&v=${gmAPI}&p=tar.gz":"graphmanager-service-${gmAPI}.tar.gz"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
