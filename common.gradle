@@ -34,6 +34,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.uvProv              = "2.0-SNAPSHOT"
     ext.gmAPI               = "2.0-SNAPSHOT"
+    ext.provenance          = "2.0-SNAPSHOT"
     // ext.rdfINDEXER          = "1.0-SNAPSHOT"
     ext.replacedsPlugin     = "1.0-SNAPSHOT"
     ext.describedsPlugin    = "1.0-SNAPSHOT"
@@ -42,6 +43,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
     ext.imageES5            = "latest"
     ext.imageUVProv         = "latest"
+    ext.imageProvenance     = "latest"
     ext.imageGM             = "latest"
     ext.imageSirenAPIPlugin = "latest"
     ext.imageATTXDPUs       = "latest"
@@ -56,6 +58,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.uvProv              = "2.0-SNAPSHOT"
     ext.gmAPI               = "2.0-SNAPSHOT"
+    ext.provenance          = "2.0-SNAPSHOT"
     // ext.rdfINDEXER          = "1.0-SNAPSHOT"
     ext.replacedsPlugin     = "1.0-SNAPSHOT"
     ext.describedsPlugin    = "1.0-SNAPSHOT"
@@ -64,6 +67,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
     ext.imageES5            = "1.0"
     ext.imageUVProv         = "1.0"
+    ext.imageProvenance     = "latest"
     ext.imageGM             = "1.2"
     ext.imageSirenAPIPlugin = "1.0"
     ext.imageATTXDPUs       = "1.3"

@@ -1,0 +1,30 @@
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply plugin: 'de.undercouch.download'
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=provenance-service&v=${provenance}&p=tar.gz":"provenance-service-${provenance}.tar.gz"
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadProvFiles
+
+for (s in src) {
+    task "downloadProvFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/build/distributions", s.value)
+    }
+    downloadGMFiles.dependsOn("downloadProvFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+    provenance {
+        baseDir = file('docker')
+        repository = "${imageBase}/provenance-service:${imageProvenance}"
+        portBindings = ['7030:7030']
+        buildArgs = ['PROVS': "$provenance"]
+    }
+}
+
+buildGmapiImage.dependsOn downloadGMFiles
+pushGmapiImage.dependsOn downloadGMFiles
