@@ -34,7 +34,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.uvProv              = "2.0-SNAPSHOT"
     ext.gmAPI               = "2.0-SNAPSHOT"
-    ext.provenance          = "2.0-SNAPSHOT"
+    ext.provenanceS         = "2.0-SNAPSHOT"
     // ext.rdfINDEXER          = "1.0-SNAPSHOT"
     ext.replacedsPlugin     = "1.0-SNAPSHOT"
     ext.describedsPlugin    = "1.0-SNAPSHOT"
@@ -58,7 +58,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
 
     ext.uvProv              = "2.0-SNAPSHOT"
     ext.gmAPI               = "2.0-SNAPSHOT"
-    ext.provenance          = "2.0-SNAPSHOT"
+    ext.provenanceS         = "2.0-SNAPSHOT"
     // ext.rdfINDEXER          = "1.0-SNAPSHOT"
     ext.replacedsPlugin     = "1.0-SNAPSHOT"
     ext.describedsPlugin    = "1.0-SNAPSHOT"

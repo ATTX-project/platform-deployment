@@ -3,7 +3,7 @@ apply plugin: 'de.undercouch.download'
 apply from: '../publishDocker.gradle'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=provenance-service&v=${provenance}&p=tar.gz":"provenance-service-${provenance}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=provenance-service&v=${provenanceS}&p=tar.gz":"provenance-service-${provenanceS}.tar.gz"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
@@ -14,7 +14,7 @@ for (s in src) {
         src s.key
         dest new File("$projectDir/docker/build/distributions", s.value)
     }
-    downloadGMFiles.dependsOn("downloadProvFiles_${s.key.hashCode()}")
+    downloadProvFiles.dependsOn("downloadProvFiles_${s.key.hashCode()}")
 }
 
 dcompose {
@@ -22,9 +22,9 @@ dcompose {
         baseDir = file('docker')
         repository = "${imageBase}/provenance-service:${imageProvenance}"
         portBindings = ['7030:7030']
-        buildArgs = ['PROVS': "$provenance"]
+        buildArgs = ['PROVS': "$provenanceS"]
     }
 }
 
-buildGmapiImage.dependsOn downloadGMFiles
-pushGmapiImage.dependsOn downloadGMFiles
+buildProvenanceImage.dependsOn downloadProvFiles
+pushProvenanceImage.dependsOn downloadProvFiles
