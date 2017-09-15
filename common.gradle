@@ -52,7 +52,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageBase           = "${imageRepo}:${imageRepoPort}"
     ext.attxTestHelperPlugin = '1.4'
     ext.RMLService          = '0.0.1-SNAPSHOT'
-    ext.imageRMLService     = 'dev'
+    ext.imageRMLService     = 'latest'
 
 } else if (project.env == "release"){
 
