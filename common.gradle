@@ -67,7 +67,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
     ext.imageES5            = "1.0"
     ext.imageUVProv         = "1.0"
-    ext.imageProvenance     = "latest"
+    ext.imageProvenance     = "2.0"
     ext.imageGM             = "1.2"
     ext.imageSirenAPIPlugin = "1.0"
     ext.imageATTXDPUs       = "1.3"
