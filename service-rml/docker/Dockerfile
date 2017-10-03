@@ -28,11 +28,12 @@ WORKDIR /app
 ADD jars/rmlservice.jar /app/rmlservice.jar
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
+RUN chmod +x /app/rmlservice.jar
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
 
 ENV GOSU_USER nonroot:nonroot
-ENV GOSU_CHOWN /app 
+ENV GOSU_CHOWN /app /var/run
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh", "--brokerURL=${BROKER_URL}", "--queue=${QUEUE}", "--exchange=${EXCHANGE}"]
