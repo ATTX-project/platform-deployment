@@ -36,4 +36,4 @@ RUN addgroup -S nonroot \
 ENV GOSU_USER nonroot:nonroot
 ENV GOSU_CHOWN /app /var/run
 
-ENTRYPOINT ["/entrypoint.sh", "--brokerURL=${BROKER_URL}", "--queue=${QUEUE}", "--exchange=${EXCHANGE}"]
+ENTRYPOINT ["/entrypoint.sh", "--brokerURL=${MHOST}", "--queue=${MQUEUE}", "--exchange=${MEXCHANGE}", "--username=${MUSER}", "--password=${MPASS}"]

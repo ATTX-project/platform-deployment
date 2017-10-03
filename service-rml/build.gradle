@@ -22,7 +22,7 @@ dcompose {
 		baseDir = file('docker')
 		dockerFilename = 'Dockerfile'
     repository = "${imageBase}/rml-service:${imageRMLService}"
-    env=['BROKER_URL=tcp://messagebroker:61616', 'QUEUE=rmlservice', 'EXCHANGE=']
+    env=['MHOST=amqp://messagebroker', 'MQUEUE=rmlservice', 'MEXCHANGE=', 'MUSER=', 'MPASS=']
 	}
 }
 
