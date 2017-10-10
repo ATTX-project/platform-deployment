@@ -34,6 +34,8 @@ RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
 
 ENV GOSU_USER nonroot:nonroot
-ENV GOSU_CHOWN /app /var/run
+ENV GOSU_CHOWN /app /var/run /tmp
+
+EXPOSE 8090
 
 ENTRYPOINT ["/entrypoint.sh", "--brokerURL=${MHOST}", "--queue=${MQUEUE}", "--exchange=${MEXCHANGE}", "--username=${MUSER}", "--password=${MPASS}"]
