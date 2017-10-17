@@ -1,4 +1,4 @@
-if(project.hasProperty("env") && project.env == "release") {
+if(project.hasProperty("env") && (project.env == "release" || project.env == "test")) {
     if (!project.hasProperty("dockerUser") || !project.hasProperty("dockerPass")) {
             throw new GradleException("No Username and Password combo for DockerHub.")
     } else {
@@ -8,7 +8,7 @@ if(project.hasProperty("env") && project.env == "release") {
                 withRegistryPassword project.dockerPass
             }
         }
-    } 
+    }
 }
 else {
     dcompose {
