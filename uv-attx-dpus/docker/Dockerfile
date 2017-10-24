@@ -1,4 +1,4 @@
-FROM alpine:3.6
+FROM alpine:3.3
 
 MAINTAINER João M. da Silva <joao.silva@helsinki.fi>
 
