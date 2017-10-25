@@ -1,0 +1,30 @@
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply plugin: 'de.undercouch.download'
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=indexing-service&v=${indexing}&p=tar.gz":"indexing-service-${indexing}.tar.gz"
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadIndexingFiles
+
+for (s in src) {
+    task "downloadIndexingFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/build/distributions", s.value)
+    }
+    downloadGMFiles.dependsOn("downloadIndexingFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+    indexservice {
+        baseDir = file('docker')
+        repository = "${imageBase}/indexservice:${imageIndexing}"
+        portBindings = ['4304:4304']
+        buildArgs = ['INDEX': "$indexing"]
+    }
+}
+
+buildGmapiImage.dependsOn downloadIndexingFiles
+pushGmapiImage.dependsOn downloadIndexingFiles
