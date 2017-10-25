@@ -14,7 +14,7 @@ for (s in src) {
         src s.key
         dest new File("$projectDir/docker/build/distributions", s.value)
     }
-    downloadGMFiles.dependsOn("downloadFrameFiles_${s.key.hashCode()}")
+    downloadFrameFiles.dependsOn("downloadFrameFiles_${s.key.hashCode()}")
 }
 
 dcompose {
@@ -26,5 +26,5 @@ dcompose {
     }
 }
 
-buildGmapiImage.dependsOn downloadFrameFiles
-pushGmapiImage.dependsOn downloadFrameFiles
+buildGmframeImage.dependsOn downloadFrameFiles
+pushGmframeImage.dependsOn downloadFrameFiles

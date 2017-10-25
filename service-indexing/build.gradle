@@ -14,7 +14,7 @@ for (s in src) {
         src s.key
         dest new File("$projectDir/docker/build/distributions", s.value)
     }
-    downloadGMFiles.dependsOn("downloadIndexingFiles_${s.key.hashCode()}")
+    downloadIndexingFiles.dependsOn("downloadIndexingFiles_${s.key.hashCode()}")
 }
 
 dcompose {
@@ -26,5 +26,5 @@ dcompose {
     }
 }
 
-buildGmapiImage.dependsOn downloadIndexingFiles
-pushGmapiImage.dependsOn downloadIndexingFiles
+buildIndexserviceImage.dependsOn downloadIndexingFiles
+pushIndexserviceImage.dependsOn downloadIndexingFiles
