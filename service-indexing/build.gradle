@@ -20,7 +20,7 @@ for (s in src) {
 dcompose {
     indexservice {
         baseDir = file('docker')
-        repository = "${imageBase}/indexservice:${imageIndexing}"
+        repository = "${imageBase}/index-service:${imageIndexing}"
         portBindings = ['4304:4304']
         buildArgs = ['INDEX': "$indexing"]
     }
