@@ -10,7 +10,11 @@ ext {
     artifactRepoPort = "8081"
     jenkinsPort = "49001"
     unifiedViewsRepoURL = "http://maven.eea.sk/artifactory/simple/ext-releases-local"
+
+    // Setting Docker image tags
+    privateRepoTag = "latest"
     testTag = "dev"
+    releaseTag = "2.0"
 }
 
 if (!project.hasProperty("registryURL")) {
@@ -33,63 +37,75 @@ if (!project.hasProperty("artifactRepoPassword")) {
 
 if (!project.hasProperty("env") || project.env == "dev") {
 
-    ext.uvProv              = "2.0-SNAPSHOT"
-    ext.gmAPI               = "2.0-SNAPSHOT"
-    ext.provenanceS         = "2.0-SNAPSHOT"
-    ext.replacedsPlugin     = "1.0-SNAPSHOT"
-    ext.describedsPlugin    = "1.0-SNAPSHOT"
+    ext.uvProv                    = "2.0-SNAPSHOT"
+    ext.gmAPI                     = "2.0-SNAPSHOT"
+    ext.gmFrame                   = "2.0-SNAPSHOT"
+    ext.indexing                  = "2.0-SNAPSHOT"
+    ext.provenanceS               = "2.0-SNAPSHOT"
+    ext.replacedsPlugin           = "1.0-SNAPSHOT"
+    ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
-    ext.rmlservicePlugin    = "1.0-SNAPSHOT"
-    ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
-    ext.attxTestHelperPlugin = '1.4'
-    ext.RMLService          = '0.0.1-SNAPSHOT'
-    ext.imageES5            = "latest"
-    ext.imageUVProv         = "latest"
-    ext.imageProvenance     = "latest"
-    ext.imageGM             = "latest"
-    ext.imageSirenAPIPlugin = "latest"
-    ext.imageATTXDPUs       = "latest"
-    ext.imageFuseki         = "latest"
-    ext.imageActivemq       = "latest"
+    ext.rmlservicePlugin          = "1.0-SNAPSHOT"
+    ext.sirenAPIPlugin            = "1.0-SNAPSHOT"
+    ext.RMLService                = "0.0.1-SNAPSHOT"
+
     ext.imageBase           = "${imageRepo}:${imageRepoPort}"
-    ext.imageRMLService     = 'latest'
+    ext.imageFraming        = "${privateRepoTag}"
+    ext.imageIndexing       = "${privateRepoTag}"
+    ext.imageES5            = "${privateRepoTag}"
+    ext.imageUVProv         = "${privateRepoTag}"
+    ext.imageProvenance     = "${privateRepoTag}"
+    ext.imageGM             = "${privateRepoTag}"
+    ext.imageSirenAPIPlugin = "${privateRepoTag}"
+    ext.imageATTXDPUs       = "${privateRepoTag}"
+    ext.imageFuseki         = "${privateRepoTag}"
+    ext.imageActivemq       = "${privateRepoTag}"
+    ext.imageRMLService     = "${privateRepoTag}"
 
 } else if (project.env == "release"){
 
-    ext.uvProv              = "2.0-SNAPSHOT"
-    ext.gmAPI               = "2.0-SNAPSHOT"
-    ext.provenanceS         = "2.0-SNAPSHOT"
-    ext.replacedsPlugin     = "1.0-SNAPSHOT"
-    ext.describedsPlugin    = "1.0-SNAPSHOT"
+    ext.uvProv                    = "2.0-SNAPSHOT"
+    ext.gmAPI                     = "2.0-SNAPSHOT"
+    ext.gmFrame                   = "2.0-SNAPSHOT"
+    ext.indexing                  = "2.0-SNAPSHOT"
+    ext.provenanceS               = "2.0-SNAPSHOT"
+    ext.replacedsPlugin           = "1.0-SNAPSHOT"
+    ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
-    ext.rmlservicePlugin    = "1.0-SNAPSHOT"
-    ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
-    ext.attxTestHelperPlugin = '1.4'
-    ext.RMLService          = '0.0.1-SNAPSHOT'
-    ext.imageES5            = "1.0"
-    ext.imageUVProv         = "1.0"
-    ext.imageProvenance     = "2.0"
-    ext.imageGM             = "1.2"
-    ext.imageSirenAPIPlugin = "1.0"
-    ext.imageATTXDPUs       = "1.3"
-    ext.imageFuseki         = "fuseki3.4.0"
-    ext.imageActivemq       = "latest"
+    ext.rmlservicePlugin          = "1.0-SNAPSHOT"
+    ext.sirenAPIPlugin            = "1.0-SNAPSHOT"
+    ext.RMLService                = "0.0.1-SNAPSHOT"
+
     ext.imageBase           = "attxproject"
-    ext.imageRMLService     = 'dev'
+    ext.imageFraming        = "${releaseTag}"
+    ext.imageIndexing       = "${releaseTag}"
+    ext.imageES5            = "${releaseTag}"
+    ext.imageUVProv         = "${releaseTag}"
+    ext.imageProvenance     = "${releaseTag}"
+    ext.imageGM             = "${releaseTag}"
+    ext.imageSirenAPIPlugin = "${releaseTag}"
+    ext.imageATTXDPUs       = "${releaseTag}"
+    ext.imageFuseki         = "${releaseTag}"
+    ext.imageActivemq       = "${releaseTag}"
+    ext.imageRMLService     = "${releaseTag}"
 
 } else if (project.env == "test"){
 
-    ext.uvProv              = "2.0-SNAPSHOT"
-    ext.gmAPI               = "2.0-SNAPSHOT"
-    ext.provenanceS         = "2.0-SNAPSHOT"
-    // ext.rdfINDEXER          = "1.0-SNAPSHOT"
-    ext.replacedsPlugin     = "1.0-SNAPSHOT"
-    ext.describedsPlugin    = "1.0-SNAPSHOT"
+    ext.uvProv                    = "2.0-SNAPSHOT"
+    ext.gmAPI                     = "2.0-SNAPSHOT"
+    ext.gmFrame                   = "2.0-SNAPSHOT"
+    ext.indexing                  = "2.0-SNAPSHOT"
+    ext.provenanceS               = "2.0-SNAPSHOT"
+    ext.replacedsPlugin           = "1.0-SNAPSHOT"
+    ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
-    ext.rmlservicePlugin    = "1.0-SNAPSHOT"
-    ext.sirenAPIPlugin      = "1.0-SNAPSHOT"
-    ext.attxTestHelperPlugin = '1.4'
-    ext.RMLService          = '0.0.1-SNAPSHOT'
+    ext.rmlservicePlugin          = "1.0-SNAPSHOT"
+    ext.sirenAPIPlugin            = "1.0-SNAPSHOT"
+    ext.RMLService                = "0.0.1-SNAPSHOT"
+
+    ext.imageBase           = "attxproject"
+    ext.imageFraming        = "${testTag}"
+    ext.imageIndexing       = "${testTag}"
     ext.imageES5            = "${testTag}"
     ext.imageUVProv         = "${testTag}"
     ext.imageProvenance     = "${testTag}"
@@ -98,7 +114,6 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageATTXDPUs       = "${testTag}"
     ext.imageFuseki         = "${testTag}"
     ext.imageActivemq       = "${testTag}"
-    ext.imageBase           = "attxproject"
     ext.imageRMLService     = "${testTag}"
 
 } else {
