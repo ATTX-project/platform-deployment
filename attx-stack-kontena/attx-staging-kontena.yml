@@ -1,0 +1,145 @@
+---
+version: 0.1.14
+stack: attxproject/attx
+expose: frontend
+services:
+
+  mysql:
+    image: attxproject/unified-views-mariadb:stable-1.2
+    ports:
+      - "3306:3306"
+    stateful: true
+    environment:
+      MYSQL_ROOT_PASSWORD: "UV"
+      MYSQL_PASSWORD: "UV"
+#    volumes:
+#      - /mnt/volume-fra1-01:/var/lib/mysql
+    affinity:
+      - label==master
+
+  shared:
+    image: attxproject/unified-views-shared:stable-1.2
+    environment:
+      UV_DATABASE_SQL_PASSWORD: "UV"
+    volumes:
+      - uv-shared:/unified-views
+    depends_on:
+      - mysql
+    affinity:
+      - label==master
+
+  backend:
+    image: attxproject/unified-views-backend:stable-1.2
+    ports:
+      - "8066:8066"
+    volumes:
+      - uv-shared:/unified-views
+      - sb-shared:/attx-shared
+    depends_on:
+      - shared
+      - mysql
+      - mysql
+    affinity:
+      - label==master
+
+  frontend:
+    image: attxproject/unified-views-frontend:stable-1.2
+    ports:
+      - "8080:8080"
+    links:
+      - ingress-lb/lb
+    environment:
+      - KONTENA_LB_INTERNAL_PORT=8080
+      - KONTENA_LB_VIRTUAL_HOSTS=vm1057.kaj.pouta.csc.fi
+    volumes:
+      - uv-shared:/unified-views
+      - sb-shared:/attx-shared
+    depends_on:
+      - shared
+      - mysql
+      - backend
+    affinity:
+      - label==master
+
+  attxdpus:
+   image: attxproject/uv-attx-dpus:dev
+   depends_on:
+     - mysql
+     - backend
+     - frontend
+   affinity:
+     - label==master
+
+  uvprov:
+    image: attxproject/uv-prov:dev
+    ports:
+      - "4301:4301"
+    depends_on:
+      - mysql
+
+  es5:
+    image: attxproject/attx-es5:dev
+#    volumes:
+#      - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
+    stateful: true
+    ports:
+      - "9210:9210"
+      - "9310:9310"
+#    links:
+#      - ingress-lb/lb
+#    environment:
+#      - KONTENA_LB_INTERNAL_PORT=9210
+#      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
+
+  fuseki:
+    image: attxproject/attx-fuseki:dev
+    ports:
+      - "3030:3030"
+#    volumes:
+#      - /attx-data/fuseki:/data/fuseki
+    stateful: true
+#    links:
+#      - ingress-lb/lb
+    environment:
+      - ADMIN_PASSWORD=pw123
+
+  graphmanager:
+    image: attxproject/gm-api:dev
+    volumes:
+#      - /attx-data/gm-api:/app/data
+      - sb-shared:/attx-shared
+    stateful: true
+    ports:
+      - "4302:4302"
+    depends_on:
+      - fuseki
+      - es5
+      - uvprov
+    # deploy:
+    #   placement:
+    #     constraints: [node.hostname == attx-swarm-2]
+
+  messagebroker:
+    image: rabbitmq:3.6.11-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASSWORD=password
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "15671:15671"
+      - "15672:15672"
+      - "25672:25672"
+
+
+volumes:
+#  uv-db:
+#    external:
+#      name: ${STACK}-uv-db
+  uv-shared:
+    external:
+      name: ${STACK}-uv-shared
+  sb-shared:
+    external:
+      name: ${STACK}-sb-shared
