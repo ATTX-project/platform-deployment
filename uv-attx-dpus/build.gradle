@@ -18,11 +18,11 @@ import de.undercouch.gradle.tasks.download.Download
 task downloadDPUFiles
 
 for (s in src) {
-    task "downloadDPUFiles_${s.value}"(type: Download) {
+    task "downloadDPUFiles_${s.key.hashcode()}"(type: Download) {
         src s.key
         dest new File("$projectDir/docker/dpus", s.value)
     }
-    downloadDPUFiles.dependsOn("downloadDPUFiles_${s.key.value}")
+    downloadDPUFiles.dependsOn("downloadDPUFiles_${s.key.hashcode()}")
 }
 
 dcompose {
