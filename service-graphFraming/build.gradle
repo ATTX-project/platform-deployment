@@ -3,7 +3,7 @@ apply plugin: 'de.undercouch.download'
 apply from: '../publishDocker.gradle'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=graphframing-service&v=${gmFrame}&p=tar.gz":"graphmanager-graphframing-${gmFrame}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=graphframing-service&v=${gmFrame}&p=tar.gz":"graphframing-service-${gmFrame}.tar.gz"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
@@ -20,7 +20,7 @@ for (s in src) {
 dcompose {
     gmframe {
         baseDir = file('docker')
-        repository = "${imageBase}/graphframing:${imageFraming}"
+        repository = "${imageBase}/ldframe-service:${imageFraming}"
         portBindings = ['4303:4303']
         buildArgs = ['GMFrame': "$gmFrame"]
     }
