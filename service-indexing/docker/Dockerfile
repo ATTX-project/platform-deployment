@@ -44,12 +44,15 @@ COPY supervisor.conf /etc/supervisor/supervisord.conf
 COPY entrypoint.sh /
 
 RUN mkdir logs \
+    && mkdir /attx-sb-shared \
+    && mkdir /attx-sb-shared/indexing \
     && chmod +x /entrypoint.sh
 
 # setting environment variables for entrypoint script
 # setting also directories to be owned by the nonroot user
 ENV GOSU_USER nonroot:nonroot
-ENV GOSU_CHOWN /app /var/log /etc/supervisor /var/run
+ENV GOSU_CHOWN /app /var/log /etc/supervisor /var/run /attx-sb-shared
+RUN chmod 777 /attx-sb-shared
 
 EXPOSE 4304
 

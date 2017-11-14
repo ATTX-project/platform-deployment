@@ -33,8 +33,12 @@ RUN chmod +x /app/rmlservice.jar
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
 
+RUN mkdir /attx-sb-shared \
+    && mkdir /attx-sb-shared/rmlservice
+
 ENV GOSU_USER nonroot:nonroot
-ENV GOSU_CHOWN /app /var/run /tmp
+ENV GOSU_CHOWN /app /var/run /tmp /attx-sb-shared
+RUN chmod 777 /attx-sb-shared
 
 EXPOSE 8090
 
