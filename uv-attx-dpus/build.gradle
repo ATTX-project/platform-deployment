@@ -7,11 +7,16 @@ ext.src = [
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-describeds&v=${describedsPlugin}&p=jar":"attx-t-describeds-${describedsPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-describeexternalds&v=${describeexternaldsPlugin}&p=jar":"attx-t-describeexternalds-${describeexternaldsPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-rmlservice&v=${rmlservicePlugin}&p=jar":"attx-t-rmlservice-${rmlservicePlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-e-oaipmhharvester&v=${attx-e-oaipmhharvesterPlugin}&p=jar":"attx-e-oaipmhharvester-${attx-e-oaipmhharvesterPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-e-selectds&v=${attx-e-selectdsPlugin}&p=jar":"attx-e-selectds-${attx-e-selectdsPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-l-publishtoapi&v=${attx-l-publishtoapiPlugin}&p=jar":"attx-l-publishtoapi-${attx-l-publishtoapiPlugin}.jar",
     "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-e-httpRequest/1.0.0/uv-e-httpRequest-1.0.0.jar":"uv-e-httpRequest-1.0.0.jar",
     "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-e-filesDownload/2.1.6/uv-e-filesDownload-2.1.6.jar":"uv-e-filesDownload-2.1.6.jar",
     "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-filesToRdf/2.2.1/uv-t-filesToRdf-2.2.1.jar":"uv-t-filesToRdf-2.2.1.jar",
     "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-rdfMerger/2.1.3/uv-t-rdfMerger-2.1.3.jar":"uv-t-rdfMerger-2.1.3.jar",
-    "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-sparqlConstruct/2.1.6/uv-t-sparqlConstruct-2.1.6.jar":"uv-t-sparqlConstruct-2.1.6.jar"
+    "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-sparqlConstruct/2.1.6/uv-t-sparqlConstruct-2.1.6.jar":"uv-t-sparqlConstruct-2.1.6.jar",
+    "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-filesFindAndReplace/2.1.3/uv-t-filesFindAndReplace-2.1.3.jar":"uv-t-filesFindAndReplace-2.1.3.jar",
+
 ]
 
 import de.undercouch.gradle.tasks.download.Download
