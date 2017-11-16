@@ -1,5 +1,5 @@
 ---
-version: 0.1.14
+version: 0.1.15
 stack: attxproject/attx
 expose: frontend
 services:
@@ -46,11 +46,11 @@ services:
     image: attxproject/unified-views-frontend:stable-1.2
     ports:
       - "8080:8080"
-    links:
-      - ingress-lb/lb
-    environment:
-      - KONTENA_LB_INTERNAL_PORT=8080
-      - KONTENA_LB_VIRTUAL_HOSTS=vm1057.kaj.pouta.csc.fi
+#    links:
+#      - ingress-lb/lb
+#    environment:
+#      - KONTENA_LB_INTERNAL_PORT=8080
+#      - KONTENA_LB_VIRTUAL_HOSTS=vm1057.kaj.pouta.csc.fi
     volumes:
       - uv-shared:/unified-views
       - sb-shared:/attx-shared
@@ -63,6 +63,8 @@ services:
 
   attxdpus:
    image: attxproject/uv-attx-dpus:dev
+   environment:
+     FRONTEND: "frontend-1.attx.demo-grid.kontena.local"
    depends_on:
      - mysql
      - backend
