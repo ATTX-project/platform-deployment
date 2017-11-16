@@ -47,6 +47,9 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
     ext.rmlservicePlugin          = "1.0-SNAPSHOT"
     ext.sirenAPIPlugin            = "1.0-SNAPSHOT"
+    ext.oaipmhharvesterPlugin     = "1.0-SNAPSHOT"
+    ext.selectdsPlugin            = "1.0-SNAPSHOT"
+    ext.publishtoapiPlugin        = "1.0-SNAPSHOT"
     ext.RMLService                = "0.0.1-SNAPSHOT"
 
     ext.imageBase           = "${imageRepo}:${imageRepoPort}"
@@ -73,6 +76,9 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
     ext.rmlservicePlugin          = "1.0-SNAPSHOT"
+    ext.oaipmhharvesterPlugin     = "1.0-SNAPSHOT"
+    ext.selectdsPlugin            = "1.0-SNAPSHOT"
+    ext.publishtoapiPlugin        = "1.0-SNAPSHOT"    
     ext.sirenAPIPlugin            = "1.0-SNAPSHOT"
     ext.RMLService                = "0.0.1-SNAPSHOT"
 
@@ -100,6 +106,9 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
     ext.rmlservicePlugin          = "1.0-SNAPSHOT"
+    ext.oaipmhharvesterPlugin     = "1.0-SNAPSHOT"
+    ext.selectdsPlugin            = "1.0-SNAPSHOT"
+    ext.publishtoapiPlugin        = "1.0-SNAPSHOT"
     ext.sirenAPIPlugin            = "1.0-SNAPSHOT"
     ext.RMLService                = "0.0.1-SNAPSHOT"
 
