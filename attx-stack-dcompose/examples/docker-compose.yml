@@ -80,10 +80,16 @@ services:
 
   uprov:
     image: attxproject/uv-prov:dev
+    depends_on:
+        - messagebroker
+    environment:
+      - MHOST=messagebroker
     ports:
       - 4301:4301
     depends_on:
       - mysql
+    links:
+      - messagebroker:messagebroker
 
   fuseki:
     image: attxproject/attx-fuseki:fuseki3.4.0
