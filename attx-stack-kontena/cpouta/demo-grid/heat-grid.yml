@@ -1,0 +1,250 @@
+heat_template_version: 2016-10-14
+
+description: >
+  Heat template to setup multi AZ grid
+
+parameters:
+  grid_name:
+    type: string
+    default: demo-grid
+  kontena_master_uri:
+    type: string
+  grid_token:
+    type: string
+  key_name:
+    type: string
+    default: Cpouta Test
+  kontena_version:
+    type: string
+    default: latest
+  image:
+    type: string
+    default: Container-Linux_1520.8.0
+  volume_size:
+    type: number
+    default: 10
+  volume_type:
+    type: string
+    default: standard
+
+resources:
+
+  grid_network:
+     type: OS::Neutron::Net
+     properties:
+       name: {get_param: grid_name}
+
+  grid_subnet:
+     type: OS::Neutron::Subnet
+     properties:
+       gateway_ip: ~
+       allocation_pools: [{"start": 192.168.210.10, "end": 192.168.210.253}]
+       network_id: { get_resource: grid_network }
+       cidr: "192.168.210.0/24"
+       ip_version: 4
+
+  grid_private_sg:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: "Security group for the grid"
+      name: {get_param: grid_name}
+      rules: [{"direction": "ingress","port_range_min": 6783,"port_range_max": 6784, "remote_mode": "remote_group_id", "protocol": "TCP", "ethertype": "IPv4", "port_range_min": 6783},{"direction": "ingress","port_range_max": 6784, "remote_mode": "remote_group_id", "protocol": "UDP", "ethertype": "IPv4", "port_range_min": 6783}]
+
+  grid_public_sg:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: "Security group for the grid"
+      name: {get_param: grid_name}
+      rules: [{"direction": "ingress","port_range_max": 443, "remote_mode": "remote_ip_prefix", "protocol": "TCP", "remote_ip_prefix": "0.0.0.0/0", "ethertype": "IPv4", "port_range_min": 443},{"direction": "ingress","port_range_max": 22, "remote_mode": "remote_ip_prefix", "protocol": "TCP", "remote_ip_prefix": "0.0.0.0/0", "ethertype": "IPv4", "port_range_min": 22},{"direction": "ingress","port_range_max": 80, "remote_mode": "remote_ip_prefix", "protocol": "TCP", "remote_ip_prefix": "0.0.0.0/0", "ethertype": "IPv4", "port_range_min": 80}, {"direction": "ingress","port_range_max": 1194, "remote_mode": "remote_ip_prefix" , "protocol": "UDP", "remote_ip_prefix": "0.0.0.0/0", "ethertype": "IPv4", "port_range_min": 1194}]
+
+  demo1_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: grid_network }
+      security_groups: [{ get_resource: grid_private_sg }]
+      fixed_ips:
+        - subnet: {get_resource: grid_subnet}
+
+  demo1_public_port:
+    type: OS::Neutron::Port
+    properties:
+      network: project_2000561
+      security_groups: [{ get_resource: grid_public_sg }]
+
+  demo1_volume:
+    type: OS::Cinder::Volume
+    properties:
+      name  : "Node 1 - Docker Disk"
+      size  : {get_param: volume_size}
+      availability_zone: nova
+      volume_type: {get_param: volume_type}
+
+
+  demo1_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: { get_resource: demo1_volume }
+      instance_uuid: { get_resource: demo1 }
+      mountpoint: "/dev/vdb"
+
+  demo1:
+    type: OS::Nova::Server
+    depends_on: [ grid_network, grid_subnet, demo1_volume ]
+    properties:
+      name:
+        list_join: ['-', [{ get_param: grid_name}, 'demo-1']]
+      image: {get_param: image}
+      flavor: standard.small
+      availability_zone: nova
+      key_name: {get_param: key_name}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __kontena_master_uri__: {get_param: kontena_master_uri}
+            __grid_token__: {get_param: grid_token}
+            __kontena_version__: {get_param: kontena_version}
+            __kontena_peer_interface__: eth0
+          template: {get_file: node-cloudinit.yml}
+      networks:
+        - port: {get_resource: demo1_public_port}
+        - port: {get_resource: demo1_port}
+
+  demo1_public_ip:
+    type: OS::Nova::FloatingIP
+    properties:
+      pool: public
+
+  demo1_association:
+   type: OS::Nova::FloatingIPAssociation
+   properties:
+     floating_ip: { get_resource: demo1_public_ip }
+     server_id: { get_resource: demo1 }
+
+  demo2_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: grid_network }
+      security_groups: [{ get_resource: grid_private_sg }]
+      fixed_ips:
+        - subnet: {get_resource: grid_subnet}
+
+  demo2_public_port:
+    type: OS::Neutron::Port
+    properties:
+      network: project_2000561
+      security_groups: [{ get_resource: grid_public_sg }]
+
+  demo2:
+    type: OS::Nova::Server
+    depends_on: [ grid_network, grid_subnet, demo2_volume ]
+    properties:
+      name:
+        list_join: ['-', [{ get_param: grid_name}, 'demo-2']]
+      image: {get_param: image}
+      flavor: standard.small
+      availability_zone: nova
+      key_name: {get_param: key_name}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __kontena_master_uri__: {get_param: kontena_master_uri}
+            __grid_token__: {get_param: grid_token}
+            __kontena_version__: {get_param: kontena_version}
+            __kontena_peer_interface__: eth0
+          template: {get_file: node-cloudinit.yml}
+      networks:
+        - port: {get_resource: demo2_public_port}
+        - port: {get_resource: demo2_port}
+
+  demo2_volume:
+    type: OS::Cinder::Volume
+    properties:
+      name  : "Node 2 - Docker Disk"
+      size  : {get_param: volume_size}
+      availability_zone: nova
+      volume_type: {get_param: volume_type}
+
+
+  demo2_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: { get_resource: demo2_volume }
+      instance_uuid: { get_resource: demo2 }
+      mountpoint: "/dev/vdb"
+
+  demo2_public_ip:
+    type: OS::Nova::FloatingIP
+    properties:
+      pool: public
+
+  demo2_association:
+   type: OS::Nova::FloatingIPAssociation
+   properties:
+     floating_ip: { get_resource: demo2_public_ip }
+     server_id: { get_resource: demo2 }
+
+  demo3_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: grid_network }
+      security_groups: [{ get_resource: grid_private_sg }]
+      fixed_ips:
+        - subnet: {get_resource: grid_subnet}
+
+  demo3_public_port:
+    type: OS::Neutron::Port
+    properties:
+      network: project_2000561
+      security_groups: [{ get_resource: grid_public_sg }]
+
+  demo3:
+    type: OS::Nova::Server
+    depends_on: [ grid_network, grid_subnet, demo3_volume ]
+    properties:
+      name:
+        list_join: ['-', [{ get_param: grid_name}, 'demo-3']]
+      image: {get_param: image}
+      flavor: standard.small
+      availability_zone: nova
+      key_name: {get_param: key_name}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __kontena_master_uri__: {get_param: kontena_master_uri}
+            __grid_token__: {get_param: grid_token}
+            __kontena_version__: {get_param: kontena_version}
+            __kontena_peer_interface__: eth0
+          template: {get_file: node-cloudinit.yml}
+      networks:
+        - port: {get_resource: demo3_public_port}
+        - port: {get_resource: demo3_port}
+
+  demo3_volume:
+    type: OS::Cinder::Volume
+    properties:
+      name  : "Node 3 - Docker Disk"
+      size  : {get_param: volume_size}
+      availability_zone: nova
+      volume_type: {get_param: volume_type}
+
+
+  demo3_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: { get_resource: demo3_volume }
+      instance_uuid: { get_resource: demo3 }
+      mountpoint: "/dev/vdb"
+
+  demo3_public_ip:
+    type: OS::Nova::FloatingIP
+    properties:
+      pool: public
+
+  demo3_association:
+   type: OS::Nova::FloatingIPAssociation
+   properties:
+     floating_ip: { get_resource: demo3_public_ip }
+     server_id: { get_resource: demo3 }

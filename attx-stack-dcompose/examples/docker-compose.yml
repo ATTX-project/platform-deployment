@@ -1,0 +1,148 @@
+version: '2'
+services:
+  messagebroker:
+    image: rabbitmq:3.6.12-management
+    ports:
+      - '4369:4369'
+      - '5671:5671'
+      - '5672:5672'
+      - '15671:15671'
+      - '15672:15672'
+      - '25672:25672'
+    environment:
+        - RABBITMQ_DEFAULT_USER=user
+        - RABBITMQ_DEFAULT_PASS=password
+  mysql:
+    image: attxproject/unified-views-mariadb:stable-1.2
+    # volumes:
+    #   - ./uv-data/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=iamroot!
+  shared:
+    image: attxproject/unified-views-shared:stable-1.2
+  backend:
+    image: attxproject/unified-views-backend:stable-1.2
+    environment:
+      - MUSER=user
+      - MPASS=password
+    links:
+      - mysql:mysql
+    volumes_from:
+      - mysql
+      - shared
+  frontend:
+    image: attxproject/unified-views-frontend:stable-1.2
+    volumes_from:
+      - backend
+      - shared
+    ports:
+      - 8080:8080
+    depends_on:
+      - shared
+      - mysql
+  attx-dpus:
+    image: attxproject/uv-attx-dpus:dev
+    depends_on:
+      - mysql
+      - backend
+  fuseki:
+    image: attxproject/attx-fuseki:fuseki3.4.0
+    volumes:
+      - ./attx-data/elasticsearch5:/usr/share/elasticsearch/data
+    environment:
+      - ADMIN_PASSWORD=pw123
+    ports:
+      - 3030:3030
+
+  graphmanager:
+    image: attxproject/gm-api:dev
+    ports:
+      - 4302:4302
+    depends_on:
+      - messagebroker
+    environment:
+      - MHOST=messagebroker
+      - GHOST=fuseki
+    links:
+      - messagebroker:messagebroker
+  ldframe:
+    image: attxproject/ldframe-service:dev
+    ports:
+      - 4303:4303
+    depends_on:
+      - messagebroker
+    environment:
+      - MHOST=messagebroker
+      - GMHOST=graphmanager
+    links:
+      - graphmanager:graphmanager
+      - messagebroker:messagebroker
+
+  uprov:
+    image: attxproject/uv-prov:dev
+    depends_on:
+        - messagebroker
+    environment:
+      - MHOST=messagebroker
+    ports:
+      - 4301:4301
+    depends_on:
+      - mysql
+    links:
+      - messagebroker:messagebroker
+
+  fuseki:
+    image: attxproject/attx-fuseki:fuseki3.4.0
+    environment:
+      - ADMIN_PASSWORD=pw123
+    ports:
+      - 3030:3030
+  es5:
+    image: attxproject/attx-es5:dev
+    # volumes:
+    #   - ./attx-data/elasticsearch5:/usr/share/elasticsearch/data
+    ports:
+      - 9210:9210
+      - 9310:9310
+  rmlservice:
+    image: attxproject/rml-service:dev
+    environment:
+      - MHOST=amqp://messagebroker
+      - MUSER=user
+      - MPASS=password
+      - MEXCHANGE=
+      - MQUEUE=rmlservice
+    ports:
+      - 8090:8090
+    depends_on:
+        - messagebroker
+    links:
+      - messagebroker:messagebroker
+  provservice:
+    image: attxproject/provenance-service:dev
+    depends_on:
+        - messagebroker
+        - fuseki
+    environment:
+        - MHOST=messagebroker
+        - GHOST=fuseki
+    ports:
+      - 7030:7030
+    links:
+      - messagebroker:messagebroker
+
+  indexservice:
+    image: attxproject/index-service:dev
+    depends_on:
+        - messagebroker
+    environment:
+        - MHOST=messagebroker
+        - ESHOST=es5
+    ports:
+      - 4304:4304
+    links:
+      - messagebroker:messagebroker
+  datatest:
+    image: attxproject/testdata:dev
+    ports:
+      - 8081:80

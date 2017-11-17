@@ -11,8 +11,16 @@ dcompose {
     // createComposeFile.useAWSCompat = true
     createComposeFile.useTags = true
     createComposeFile.version = '2'
-    registry ("http://attx-dev:5000") {
-        // Needs no user/pass
+    // We can also use the private repository
+    // registry ("http://attx-dev:5000") {
+    //     // Needs no user/pass
+    // }
+
+    messagebroker {
+        forceRemoveImage = true
+        image = "rabbitmq:3.6.12-management"
+        portBindings = ['4369:4369', '5671:5671', '5672:5672', '15671:15671', '15672:15672', '25672:25672']
+        env = ['RABBITMQ_DEFAULT_USER=user', 'RABBITMQ_DEFAULT_PASS=password']
     }
 
     shared {
@@ -44,55 +52,74 @@ dcompose {
 
     attxdpus {
         forceRemoveImage = true
-        image = 'attx-dev:5000/uv-attx-dpus:latest'
+        image = 'attxproject/uv-attx-dpus:dev'
         links = [frontend.link(), mysql.link(), backend.link()]
         dependsOn = [mysql, backend, frontend]
     }
 
     uvprov {
         forceRemoveImage = true
-        image = 'attx-dev:5000/uv-prov:latest'
+        image = 'attxproject/uv-prov:dev'
         portBindings = ['4301:4301']
+        links = [messagebroker.link()]
     }
 
-    essiren {
-        forceRemoveImage = true
-        image = 'attx-dev:5000/essiren:latest'
-        portBindings = ['9200:9200', '9300:9300']
-    }
+    // essiren {
+    //     forceRemoveImage = true
+    //     image = 'attx-dev:5000/essiren:latest'
+    //     portBindings = ['9200:9200', '9300:9300']
+    // }
 
-    elasticsearch5 {
+    es5 {
         forceRemoveImage = true
-        image = 'attx-dev:5000/attx-es5:latest'
+        image = 'attxproject/attx-es5:dev'
         portBindings = ['9210:9210', '9310:9310']
     }
 
     fuseki {
         forceRemoveImage = true
-        image = 'attx-dev:5000/attx-fuseki:latest'
+        image = 'attxproject/attx-fuseki:dev'
         portBindings = ['3030:3030']
         env = ['ADMIN_PASSWORD=pw123']
     }
 
     graphmanager {
         forceRemoveImage = true
-        image = "attx-dev:5000/gm-api:latest"
+        image = "attxproject/gm-api:dev"
         portBindings = ['4302:4302']
-        links = [fuseki.link(), elasticsearch5.link(), uvprov.link()]
+        env = ['RABBITMQ_DEFAULT_USER=user', 'RABBITMQ_DEFAULT_PASS=password']
+        links = [fuseki.link()]
     }
 
-    if (!project.hasProperty("mom") || project.mom == "rabbitmq") {
-        messagebroker {
-            forceRemoveImage = true
-            image = "rabbitmq:3.6.11-management"
-            portBindings = ['4369:4369', '5671:5671', '5672:5672', '15671:15671', '15672:15672', '25672:25672']
-            env = ['RABBITMQ_DEFAULT_USER=user', 'RABBITMQ_DEFAULT_PASS=password']
-        }
-    } else if (project.mom == "activemq"){
-        messagebroker {
-            forceRemoveImage = true
-            image = "attx-dev:5000/attx-activemq:latest"
-            portBindings = ['8161:8161', '61616:61616', '5672:5672', '61613:61613', '1883:1883', '61614:61614']
-        }
+    rmlservice {
+        forceRemoveImage = true
+        image = "attxproject/rml-service:dev"
+        env = ['MHOST=amqp://messagebroker', 'MUSER=user', 'MPASS=password', 'MEXCHANGE=', 'MQUEUE=rmlservice']
+        portBindings = ['8090:8090']
+        links = [messagebroker.link()]
+    }
+
+    provservice {
+        forceRemoveImage = true
+        image = "attxproject/provenance-service:dev"
+        portBindings = ['7030:7030']
+        env = ['MHOST=messagebroker', 'GHOST=fuseki']
+        links = [messagebroker.link(), fuseki.link()]
+    }
+
+    ldframe {
+        forceRemoveImage = true
+        image = "attxproject/ldframe-service:dev"
+        portBindings = ['4303:4303']
+        env = ['MHOST=messagebroker', 'GMHOST=graphmanager']
+        links = [messagebroker.link(), graphmanager.link()]
+    }
+
+    indexservice {
+        forceRemoveImage = true
+        image = "attxproject/index-service:dev"
+        portBindings = ['4304:4304']
+        env = ['MHOST=messagebroker', 'ESHOST=es5']
+        links = [messagebroker.link(), es5.link()]
     }
 }
