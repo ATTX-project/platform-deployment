@@ -1,5 +1,5 @@
 ---
-version: 0.1.16
+version: 0.1.20
 stack: attxproject/attx
 expose: frontend
 services:
@@ -8,7 +8,7 @@ services:
     image: attxproject/unified-views-mariadb:stable-1.2
     ports:
       - "3306:3306"
-    stateful: true
+#    stateful: true
     environment:
       MYSQL_ROOT_PASSWORD: "UV"
       MYSQL_PASSWORD: "UV"
@@ -66,9 +66,9 @@ services:
 
   attxdpus:
    image: attxproject/uv-attx-dpus:dev
-   # see your demo grid for this address
+# see your demo grid for this address
    environment:
-     FRONTEND: "frontend-1.attx.demo-grid.kontena.local"
+     FRONTEND: "frontend-1.attx.cpouta-grid.kontena.local"
    depends_on:
      - mysql
      - backend
@@ -78,6 +78,8 @@ services:
 
   uvprov:
     image: attxproject/uv-prov:dev
+    environment:
+      MHOST: "messagebroker"
     ports:
       - "4301:4301"
     depends_on:
@@ -103,24 +105,26 @@ services:
       - "3030:3030"
 #    volumes:
 #      - /attx-data/fuseki:/data/fuseki
-    stateful: true
+#    stateful: true
 #    links:
 #      - ingress-lb/lb
     environment:
-      - ADMIN_PASSWORD=pw123
+      ADMIN_PASSWORD: "pw123"
 
   graphmanager:
     image: attxproject/gm-api:dev
+    environment:
+      MHOST: "messagebroker"
+      GHOST: "fuseki"
     volumes:
 #      - /attx-data/gm-api:/app/data
       - sb-shared:/attx-shared
-    stateful: true
+#    stateful: true
     ports:
       - "4302:4302"
     depends_on:
       - fuseki
-      - es5
-      - uvprov
+      - messagebroker
     # deploy:
     #   placement:
     #     constraints: [node.hostname == attx-swarm-2]
@@ -128,8 +132,8 @@ services:
   messagebroker:
     image: rabbitmq:3.6.12-management
     environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASSWORD=password
+      RABBITMQ_DEFAULT_USER: "user"
+      RABBITMQ_DEFAULT_PASSWORD: "password"
     ports:
       - "4369:4369"
       - "5671:5671"
@@ -147,6 +151,8 @@ services:
     environment:
       MHOST: "messagebroker"
       GMHOST: "graphmanager"
+    volumes:
+      - sb-shared:/attx-shared
 
   rmlservice:
     image: attxproject/rml-service:dev
@@ -158,6 +164,9 @@ services:
       MQUEUE: "rmlservice"
     ports:
       - "8090:8090"
+    volumes:
+    #      - /attx-data/gm-api:/app/data
+      - sb-shared:/attx-shared
     depends_on:
         - messagebroker
 
@@ -181,6 +190,9 @@ services:
         ESHOST: "es5"
     ports:
       - "4304:4304"
+    volumes:
+      - sb-shared:/attx-shared
+
   testdata:
     image: attxproject/testdata:dev
 
