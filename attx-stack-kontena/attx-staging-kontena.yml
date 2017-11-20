@@ -1,5 +1,5 @@
 ---
-version: 0.1.20
+version: 0.1.22
 stack: attxproject/attx
 expose: frontend
 services:
@@ -49,11 +49,11 @@ services:
     image: attxproject/unified-views-frontend:stable-1.2
     ports:
       - "8080:8080"
-#    links:
-#      - ingress-lb/lb
-#    environment:
-#      - KONTENA_LB_INTERNAL_PORT=8080
-#      - KONTENA_LB_VIRTUAL_HOSTS=vm1057.kaj.pouta.csc.fi
+    links:
+      - ingress-lb/lb
+    environment:
+      - KONTENA_LB_INTERNAL_PORT=8080
+      - KONTENA_LB_VIRTUAL_HOSTS=52.30.75.49
     volumes:
       - uv-shared:/unified-views
       - sb-shared:/attx-shared
@@ -89,7 +89,7 @@ services:
     image: attxproject/attx-es5:dev
 #    volumes:
 #      - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
-    stateful: true
+#    stateful: true
     ports:
       - "9210:9210"
       - "9310:9310"
