@@ -1,0 +1,215 @@
+---
+version: 0.1.22
+stack: attxproject/attx
+#expose: es5
+services:
+
+  mysql:
+    image: attxproject/unified-views-mariadb:stable-1.2
+    ports:
+      - "3306:3306"
+#    stateful: true
+    environment:
+      MYSQL_ROOT_PASSWORD: "UV"
+      MYSQL_PASSWORD: "UV"
+#    volumes:
+#      - /mnt/volume-fra1-01:/var/lib/mysql
+    affinity:
+      - label==master
+
+  shared:
+    image: attxproject/unified-views-shared:stable-1.2
+    environment:
+      UV_DATABASE_SQL_PASSWORD: "UV"
+    volumes:
+      - uv-shared:/unified-views
+    depends_on:
+      - mysql
+    affinity:
+      - label==master
+
+  backend:
+    image: attxproject/unified-views-backend:stable-1.2
+    environment:
+      MUSER: "user"
+      MPASS: "password"
+    ports:
+      - "8066:8066"
+    volumes:
+      - uv-shared:/unified-views
+      - sb-shared:/attx-shared
+    depends_on:
+      - shared
+      - mysql
+      - mysql
+    affinity:
+      - label==master
+
+  frontend:
+    image: attxproject/unified-views-frontend:stable-1.2
+    ports:
+      - "8080:8080"
+#    links:
+#      - ingress-lb/lb
+#    environment:
+#      - KONTENA_LB_INTERNAL_PORT=8080
+#      - KONTENA_LB_VIRTUAL_HOSTS=52.30.75.49
+    volumes:
+      - uv-shared:/unified-views
+      - sb-shared:/attx-shared
+    depends_on:
+      - shared
+      - mysql
+      - backend
+    affinity:
+      - label==master
+
+  attxdpus:
+   image: attxproject/uv-attx-dpus:dev
+# see your demo grid for this address
+   environment:
+     FRONTEND: "frontend-1.attx.demo-grid.kontena.local"
+   depends_on:
+     - mysql
+     - backend
+     - frontend
+   affinity:
+     - label==master
+
+  uvprov:
+    image: attxproject/uv-prov:dev
+    environment:
+      MHOST: "messagebroker"
+    ports:
+      - "4301:4301"
+    depends_on:
+      - mysql
+
+  es5:
+    image: elasticsearch/elasticsearch:5.5.3
+#    volumes:
+#      - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
+#    stateful: true
+#    environment:
+#      - KONTENA_LB_INTERNAL_PORT=9210
+#      - KONTENA_LB_VIRTUAL_PATH=/es5
+#      - KONTENA_LB_VIRTUAL_HOSTS=http://vm1190.kaj.pouta.csc.fi
+   ports:
+      - "9210:9210"
+      - "9310:9310"
+#    links:
+#    - ingress-lb/lb
+#    secrets:
+#      - secret: BASIC_AUTH_FOR_ES5
+#        name: KONTENA_LB_BASIC_AUTH_SECRETS
+#        type: env
+
+  fuseki:
+    image: attxproject/attx-fuseki:dev
+    ports:
+      - "3030:3030"
+#    volumes:
+#      - /attx-data/fuseki:/data/fuseki
+#    stateful: true
+#    links:
+#      - ingress-lb/lb
+    environment:
+      ADMIN_PASSWORD: "pw123"
+
+  graphmanager:
+    image: attxproject/gm-api:dev
+    environment:
+      MHOST: "messagebroker"
+      GHOST: "fuseki"
+    volumes:
+#      - /attx-data/gm-api:/app/data
+      - sb-shared:/attx-shared
+#    stateful: true
+    ports:
+      - "4302:4302"
+    depends_on:
+      - fuseki
+      - messagebroker
+    # deploy:
+    #   placement:
+    #     constraints: [node.hostname == attx-swarm-2]
+
+  messagebroker:
+    image: rabbitmq:3.6.12-management
+    environment:
+      RABBITMQ_DEFAULT_USER: "user"
+      RABBITMQ_DEFAULT_PASSWORD: "password"
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "15671:15671"
+      - "15672:15672"
+      - "25672:25672"
+
+  ldframe:
+    image: attxproject/ldframe-service:dev
+    ports:
+      - "4303:4303"
+    depends_on:
+      - messagebroker
+    environment:
+      MHOST: "messagebroker"
+      GMHOST: "graphmanager"
+    volumes:
+      - sb-shared:/attx-shared
+
+  rmlservice:
+    image: attxproject/rml-service:dev
+    environment:
+      MHOST: "amqp://messagebroker"
+      MUSER: "user"
+      MPASS: "password"
+      MEXCHANGE: ""
+      MQUEUE: "rmlservice"
+    ports:
+      - "8090:8090"
+    volumes:
+    #      - /attx-data/gm-api:/app/data
+      - sb-shared:/attx-shared
+    depends_on:
+        - messagebroker
+
+  provservice:
+    image: attxproject/provenance-service:dev
+    depends_on:
+        - messagebroker
+        - fuseki
+    environment:
+        MHOST: "messagebroker"
+        GHOST: "fuseki"
+    ports:
+      - "7030:7030"
+
+  indexservice:
+    image: attxproject/index-service:dev
+    depends_on:
+        - messagebroker
+    environment:
+        MHOST: "messagebroker"
+        ESHOST: "es5"
+    ports:
+      - "4304:4304"
+    volumes:
+      - sb-shared:/attx-shared
+
+  testdata:
+    image: attxproject/testdata:dev
+
+
+
+volumes:
+#  uv-db:
+#    external:
+#      name: ${STACK}-uv-db
+  uv-shared:
+    external:
+      name: ${STACK}-uv-shared
+  sb-shared:
+    external:
+      name: ${STACK}-sb-shared
