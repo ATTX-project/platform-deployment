@@ -4,6 +4,11 @@ http.port: 9210
 
 transport.tcp.port: 9310
 
+# Enable HTTP CORS (Cross-origin resource sharing)
+http.cors.enabled: true
+
+http.cors.allow-origin: "*"
+
 # Uncomment the following lines for a production cluster deployment
 #transport.host: 0.0.0.0
 #discovery.zen.minimum_master_nodes: 1

@@ -68,7 +68,7 @@ services:
    image: attxproject/uv-attx-dpus:dev
 # see your demo grid for this address
    environment:
-     FRONTEND: "frontend-1.attx.cpouta-grid.kontena.local"
+     FRONTEND: "frontend-1.attx.jyu-test.kontena.local"
    depends_on:
      - mysql
      - backend
