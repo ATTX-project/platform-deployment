@@ -4,6 +4,7 @@ apply from: '../publishDocker.gradle'
 
 ext.src = [
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-l-replaceds&v=${replacedsPlugin}&p=jar":"attx-l-replaceds-${replacedsPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-retrieveds&v=${retrievedsPlugin}&p=jar":"attx-t-retrieveds-${retrievedsPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-describeds&v=${describedsPlugin}&p=jar":"attx-t-describeds-${describedsPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-describeexternalds&v=${describeexternaldsPlugin}&p=jar":"attx-t-describeexternalds-${describeexternaldsPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-rmlservice&v=${rmlservicePlugin}&p=jar":"attx-t-rmlservice-${rmlservicePlugin}.jar",
@@ -11,6 +12,7 @@ ext.src = [
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-e-selectds&v=${selectdsPlugin}&p=jar":"attx-e-selectds-${selectdsPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-l-publishtoapi&v=${publishtoapiPlugin}&p=jar":"attx-l-publishtoapi-${publishtoapiPlugin}.jar",
     "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-construct&v=${constructPlugin}&p=jar":"attx-t-construct-${constructPlugin}.jar",
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.wc.uv&a=attx-t-framingservice&v=${framingservicePlugin}&p=jar":"attx-t-framingservice-${framingservicePlugin}.jar",
     "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-e-httpRequest/1.0.0/uv-e-httpRequest-1.0.0.jar":"uv-e-httpRequest-1.0.0.jar",
     "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-e-filesDownload/2.1.6/uv-e-filesDownload-2.1.6.jar":"uv-e-filesDownload-2.1.6.jar",
     "${unifiedViewsRepoURL}/eu/unifiedviews/plugins/uv-t-filesToRdf/2.2.1/uv-t-filesToRdf-2.2.1.jar":"uv-t-filesToRdf-2.2.1.jar",
