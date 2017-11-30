@@ -45,7 +45,7 @@ services:
       - ingress-lb/lb
     environment:
       - KONTENA_LB_INTERNAL_PORT=8080
-      - KONTENA_LB_VIRTUAL_HOSTS=vm1196.kaj.pouta.csc.fi
+      - KONTENA_LB_VIRTUAL_HOSTS=52.30.75.49
     volumes:
       - uv-shared:/unified-views
       - sb-shared:/attx-sb-shared
@@ -60,7 +60,7 @@ services:
    image: attxproject/uv-attx-dpus:dev
 # see your demo grid for this address
    environment:
-     FRONTEND: "frontend-1.attx.demo-grid.kontena.local"
+     FRONTEND: "frontend-1.attx.jyu-test.kontena.local"
    depends_on:
      - mysql
      - backend
@@ -80,17 +80,21 @@ services:
     links:
       - ingress-lb/lb
     environment:
-#      KONTENA_LB_CUSTOM_SETTINGS: |
-#        reqiallow ^GET\s.*\/_search\?*.*HTTP\/1\.1$
-#        reqiallow ^POST\s.*\/_search\?*.*HTTP\/1\.1$
-#        reqideny ^.*HTTP\/1\.1$
+      KONTENA_LB_CUSTOM_SETTINGS: |
+        reqiallow ^GET\s.*\/_search\?*.*HTTP\/1\.1$
+        reqiallow ^POST\s.*\/_search\?*.*HTTP\/1\.1$
+        reqideny ^.*HTTP\/1\.1$
       KONTENA_LB_INTERNAL_PORT: 9210
-      KONTENA_LB_VIRTUAL_HOSTS: vm1190.kaj.pouta.csc.fi
+      KONTENA_LB_VIRTUAL_HOSTS: 34.240.191.96
 
   fuseki:
     image: attxproject/attx-fuseki:dev
+    links:
+      - ingress-lb/lb
     stateful: true
     environment:
+      KONTENA_LB_INTERNAL_PORT: 9210
+      KONTENA_LB_VIRTUAL_HOSTS: 52.213.66.207
       ADMIN_PASSWORD: "pw123"
 
   graphmanager:
@@ -107,9 +111,11 @@ services:
   messagebroker:
     image: rabbitmq:3.6.12-management
     stateful: true
-    ports:
-      - "15672:15672"
+    links:
+      - ingress-lb/lb
     environment:
+#      KONTENA_LB_INTERNAL_PORT: 15672
+#      KONTENA_LB_VIRTUAL_HOSTS: 34.240.191.96
       RABBITMQ_DEFAULT_USER: "user"
       RABBITMQ_DEFAULT_PASSWORD: "password"
 
