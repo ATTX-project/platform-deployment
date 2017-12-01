@@ -1,0 +1,30 @@
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply plugin: 'de.undercouch.download'
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=graphmanager-service&v=${gmAPI}&p=tar.gz":"graphmanager-service-${gmAPI}.tar.gz"
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadGMFiles
+
+for (s in src) {
+    task "downloadGMFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/build/distributions", s.value)
+    }
+    downloadGMFiles.dependsOn("downloadGMFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+    gmapi {
+        baseDir = file('docker')
+        repository = "${imageBase}/gm-api:${imageGM}"
+        portBindings = ['4302:4302']
+        buildArgs = ['GMS': "$gmAPI"]
+    }
+}
+
+buildGmapiImage.dependsOn downloadGMFiles
+pushGmapiImage.dependsOn downloadGMFiles

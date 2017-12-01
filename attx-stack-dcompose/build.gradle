@@ -1,0 +1,125 @@
+plugins {
+    id "com.chrisgahlert.gradle-dcompose-plugin" version "0.9.1"
+}
+
+repositories {
+    // need to have maven central or a mirror in order for the plugin to be functional
+    mavenCentral()
+}
+
+dcompose {
+    // createComposeFile.useAWSCompat = true
+    createComposeFile.useTags = true
+    createComposeFile.version = '2'
+    // We can also use the private repository
+    // registry ("http://attx-dev:5000") {
+    //     // Needs no user/pass
+    // }
+
+    messagebroker {
+        forceRemoveImage = true
+        image = "rabbitmq:3.6.12-management"
+        portBindings = ['4369:4369', '5671:5671', '5672:5672', '15671:15671', '15672:15672', '25672:25672']
+        env = ['RABBITMQ_DEFAULT_USER=user', 'RABBITMQ_DEFAULT_PASS=password']
+    }
+
+    shared {
+        forceRemoveImage = true
+        image = "attxproject/unified-views-shared:stable-1.2"
+    }
+
+    mysql {
+        forceRemoveImage = true
+        image = 'attxproject/unified-views-mariadb:stable-1.2'
+        env = ['MYSQL_ROOT_PASSWORD=iamroot!']
+    }
+
+    backend {
+        forceRemoveImage = true
+        image = 'attxproject/unified-views-backend:stable-1.2'
+        volumesFrom =  [shared]
+        links = [mysql.link()]
+        volumesFrom = [mysql, shared]
+        env = ['MUSER=user', 'MPASS=password']
+    }
+
+    frontend {
+        forceRemoveImage = true
+        image = 'attxproject/unified-views-frontend:stable-1.2'
+        portBindings = ['8080:8080']
+        volumesFrom = [backend, shared]
+    }
+
+    attxdpus {
+        forceRemoveImage = true
+        image = 'attxproject/uv-attx-dpus:dev'
+        links = [frontend.link(), mysql.link(), backend.link()]
+        dependsOn = [mysql, backend, frontend]
+    }
+
+    uvprov {
+        forceRemoveImage = true
+        image = 'attxproject/uv-prov:dev'
+        portBindings = ['4301:4301']
+        links = [messagebroker.link()]
+    }
+
+    // essiren {
+    //     forceRemoveImage = true
+    //     image = 'attx-dev:5000/essiren:latest'
+    //     portBindings = ['9200:9200', '9300:9300']
+    // }
+
+    es5 {
+        forceRemoveImage = true
+        image = 'attxproject/attx-es5:dev'
+        portBindings = ['9210:9210', '9310:9310']
+    }
+
+    fuseki {
+        forceRemoveImage = true
+        image = 'attxproject/attx-fuseki:dev'
+        portBindings = ['3030:3030']
+        env = ['ADMIN_PASSWORD=pw123']
+    }
+
+    graphmanager {
+        forceRemoveImage = true
+        image = "attxproject/gm-api:dev"
+        portBindings = ['4302:4302']
+        env = ['RABBITMQ_DEFAULT_USER=user', 'RABBITMQ_DEFAULT_PASS=password']
+        links = [fuseki.link()]
+    }
+
+    rmlservice {
+        forceRemoveImage = true
+        image = "attxproject/rml-service:dev"
+        env = ['MHOST=amqp://messagebroker', 'MUSER=user', 'MPASS=password', 'MEXCHANGE=', 'MQUEUE=rmlservice']
+        portBindings = ['8090:8090']
+        links = [messagebroker.link()]
+    }
+
+    provservice {
+        forceRemoveImage = true
+        image = "attxproject/provenance-service:dev"
+        portBindings = ['7030:7030']
+        env = ['MHOST=messagebroker', 'GHOST=fuseki']
+        links = [messagebroker.link(), fuseki.link()]
+    }
+
+    ldframe {
+        forceRemoveImage = true
+        image = "attxproject/ldframe-service:dev"
+        portBindings = ['4303:4303']
+        env = ['MHOST=messagebroker', 'GMHOST=graphmanager']
+        links = [messagebroker.link(), graphmanager.link()]
+    }
+
+    indexservice {
+        forceRemoveImage = true
+        image = "attxproject/index-service:dev"
+        portBindings = ['4304:4304']
+        env = ['MHOST=messagebroker', 'ESHOST=es5']
+        links = [messagebroker.link(), es5.link()]
+    }
+}

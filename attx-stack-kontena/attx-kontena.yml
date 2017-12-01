@@ -1,0 +1,171 @@
+---
+version: 0.1.13
+stack: attxproject/attx
+#expose: frontend
+
+variables:
+  mysql_root_password:
+    type: string
+    from:
+      vault: mysql-root-password
+      prompt: Enter a root password for MySQL or leave empty to auto generate
+      random_string: 16
+    to:
+      vault: mysql-root-password
+
+  mysql_password:
+    type: string
+    from:
+      vault: mysql-password
+      prompt: Enter a DB password for MySQL or leave empty to auto generate
+      random_string: 16
+    to:
+      vault: mysql-password
+
+  fuseki_password:
+    type: string
+    from:
+      vault: fuseki-password
+      prompt: Enter a Fuseki password or leave empty to auto generate
+      random_string: 16
+    to:
+      vault: fuseki-password
+
+services:
+
+  mysql:
+    image: attxproject/unified-views-mariadb:stable-1.2
+    ports:
+      - "3306:3306"
+    stateful: true
+    secrets:
+      - secret: mysql-root-password
+        name: MYSQL_ROOT_PASSWORD
+        type: env
+      - secret: mysql-password
+        name: MYSQL_PASSWORD
+        type: env
+    affinity:
+      - label==master
+
+  shared:
+    image: attxproject/unified-views-shared:stable-1.2
+    secrets:
+      - secret: mysql-password
+        name: UV_DATABASE_SQL_PASSWORD
+        type: env
+    volumes:
+      - uv-shared:/unified-views
+    depends_on:
+      - mysql
+    affinity:
+      - label==master
+
+  backend:
+    image: attxproject/unified-views-backend:stable-1.2
+    ports:
+      - "8066:8066"
+    volumes:
+      - uv-shared:/unified-views
+      - sb-shared:/attx-shared
+    depends_on:
+      - shared
+      - mysql
+      - mysql
+    affinity:
+      - label==master
+
+  frontend:
+    image: attxproject/unified-views-frontend:stable-1.2
+    ports:
+      - "8080:8080"
+#    links:
+#      - ingress-lb/lb
+#    environment:
+#      - KONTENA_LB_INTERNAL_PORT=8080
+#      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
+    volumes:
+      - uv-shared:/unified-views
+      - sb-shared:/attx-shared
+    depends_on:
+      - shared
+      - mysql
+      - backend
+    affinity:
+      - label==master
+
+  attxdpus:
+   image: attxproject/uv-attx-dpus:stable-1.2
+   depends_on:
+     - mysql
+     - backend
+     - frontend
+   affinity:
+     - label==master
+
+  uvprov:
+    image: attxproject/uv-prov:1.0
+    depends_on:
+      - mysql
+
+  es5:
+    image: attxproject/attx-es5:1.0
+#    volumes:
+#      - /attx-data/elasticsearch5:/usr/share/elasticsearch/data
+    stateful: true
+    ports:
+      - "9210:9210"
+      - "9310:9310"
+#    links:
+#      - ingress-lb/lb
+#    environment:
+#      - KONTENA_LB_INTERNAL_PORT=9210
+#      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
+
+  fuseki:
+    image: attxproject/attx-fuseki:fuseki3.4.0
+    ports:
+      - "3030:3030"
+#    volumes:
+#      - /attx-data/fuseki:/data/fuseki
+    stateful: true
+#    links:
+#      - ingress-lb/lb
+    secrets:
+      - secret: fuseki-password
+        name: MYSQL_ROOT_PASSWORD
+        type: env
+
+  gmapi:
+    image: attxproject/gm-api:1.2
+    volumes:
+#      - /attx-data/gm-api:/app/data
+      - sb-shared:/attx-shared
+    stateful: true
+    ports:
+      - "4302:4302"
+    depends_on:
+      - fuseki
+      - es5
+      - uvprov
+    # deploy:
+    #   placement:
+    #     constraints: [node.hostname == attx-swarm-2]
+
+  messagebroker:
+    image: attxproject/attx-activemq:0.1
+    ports:
+      - '8161:8161'
+      - '61616:61616'
+      - '5672:5672'
+      - '61613:61613'
+      - '1883:1883'
+      - '61614:61614'
+
+volumes:
+  uv-shared:
+    external:
+      name: ${STACK}-uv-shared
+  sb-shared:
+    external:
+      name: ${STACK}-sb-shared

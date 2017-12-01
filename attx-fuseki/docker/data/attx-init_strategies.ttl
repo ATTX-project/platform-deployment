@@ -22,4 +22,11 @@ attx:idstrategy2 a attxonto:LinkStrategy ;
     dcterms:title "IDs v2 based Linking Strategy" ;
     dcterms:description "Linking Strategy based on IDs clustering and specifying required datasets version 2."@en;
     attxonto:hasParameters "List of parameters";
-    schema:query "prefix skos: <http://www.w3.org/2004/02/skos/core#>\n prefix custom: <<http://data.hulib.helsinki.fi/attx/>\n prefix attx: <http://data.hulib.helsinki.fi/attx/>\n construct {\n  ?r1 attx:hasRelatedInfra ?r2\n}\n where {\n  ?r1 custom:relatedInfra ?infra .\n  ?r2 attx:id ?infra\n}".
+    schema:query "prefix skos: <http://www.w3.org/2004/02/skos/core#>\n prefix custom: <<http://data.hulib.helsinki.fi/attx/>\n prefix attx: <http://data.hulib.helsinki.fi/attx/>\n construct {\n  ?r1 attx:hasRelatedInfra ?r2\n}\n where {\n  ?r1 custom:relatedInfra ?infra .\n  ?r2 attx:id ?infra\n}" .
+
+attx:idstrategy3 a attxonto:LinkStrategy ;
+    attxonto:hasStrategyType "SPARQL" ;
+    dcterms:title "UC1 pubs links" ;
+    dcterms:description "UC1 related linking."@en;
+    attxonto:hasParameters "List of parameters";
+    schema:query "PREFIX dct: <http://purl.org/dc/terms/> prefix skos: <http://www.w3.org/2004/02/skos/core#> prefix attx: <http://data.hulib.helsinki.fi/attx/> construct { \t?infra dct:relation ?pub . ?infra attx:link ?link } where { graph <http://data.hulib.helsinki.fi/attx/work/1> {  ?hyinfra dct:relation ?pub . ?hyinfra attx:link ?link }graph <http://data.hulib.helsinki.fi/attx/work3> {  ?hyinfra skos:exactMatch ?infra}}" .

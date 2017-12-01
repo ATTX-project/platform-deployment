@@ -1,0 +1,30 @@
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply plugin: 'de.undercouch.download'
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=graphframing-service&v=${gmFrame}&p=tar.gz":"graphframing-service-${gmFrame}.tar.gz"
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadFrameFiles
+
+for (s in src) {
+    task "downloadFrameFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/build/distributions", s.value)
+    }
+    downloadFrameFiles.dependsOn("downloadFrameFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+    gmframe {
+        baseDir = file('docker')
+        repository = "${imageBase}/ldframe-service:${imageFraming}"
+        portBindings = ['4303:4303']
+        buildArgs = ['GMFrame': "$gmFrame"]
+    }
+}
+
+buildGmframeImage.dependsOn downloadFrameFiles
+pushGmframeImage.dependsOn downloadFrameFiles

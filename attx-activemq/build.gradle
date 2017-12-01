@@ -1,0 +1,10 @@
+apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
+apply from: '../publishDocker.gradle'
+
+dcompose {
+	activemq {
+		baseDir = file('docker')
+		dockerFilename = 'Dockerfile'
+    		repository = "${imageBase}/attx-activemq:${imageActivemq}"		
+	}
+}

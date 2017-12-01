@@ -1,0 +1,121 @@
+write_files:
+  - path: /etc/kontena-server.env
+    permissions: 600
+    owner: root
+    content: |
+      KONTENA_VERSION=__kontena_version__
+      SSL_CERT="/etc/kontena-server.pem"
+      VAULT_KEY=somerandomverylongstringthathasatleastsixtyfourchars
+      VAULT_IV=somerandomverylongstringthathasatleastsixtyfourchars
+
+  - path: /opt/bin/kontena-haproxy.sh
+    permissions: 755
+    owner: root
+    content: |
+      #!/bin/sh
+      if [ -n "$SSL_CERT" ]; then
+        SSL_CERT=$(awk 1 ORS='\\n' $SSL_CERT)
+      else
+        SSL_CERT="**None**"
+      fi
+      /usr/bin/docker run --name=kontena-server-haproxy \
+        --link kontena-server-api:kontena-server-api \
+        -e SSL_CERT="$SSL_CERT" -e BACKEND_PORT=9292 \
+        -p 8080:80 -p 8443:443 kontena/haproxy:latest
+coreos:
+  units:
+    - name: mkfs-vdb.service
+      command: start
+      content: |
+        [Unit]
+        Description=Create ext4 fs on /dev/vdb
+        Before=docker.service var-lib-docker.mount
+        ConditionPathExists=!/var/lib/docker
+        After=dev-vdb.device
+        Requires=dev-vdb.device
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/sbin/mkfs.ext4 /dev/vdb
+    - name: var-lib-docker.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Mount ephemeral to /var/lib/docker
+        Before=docker.service
+        Requires=mkfs-vdb.service
+        After=mkfs-vdb.service
+        [Mount]
+        What=/dev/vdb
+        Where=/var/lib/docker
+        Type=ext4
+    - name: kontena-server-mongo.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-server-mongo
+        After=network-online.target
+        After=docker.service
+        Description=Kontena Server MongoDB
+        Documentation=http://www.mongodb.org/
+        Requires=network-online.target
+        Requires=docker.service
+
+        [Service]
+        Restart=always
+        RestartSec=5
+        ExecStartPre=/usr/bin/docker pull mongo:3.0
+        ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data mongo:3.0
+        ExecStartPre=-/usr/bin/docker stop kontena-server-mongo
+        ExecStartPre=-/usr/bin/docker rm kontena-server-mongo
+        ExecStart=/usr/bin/docker run --name=kontena-server-mongo \
+            --volumes-from=kontena-server-mongo-data \
+            mongo:3.0 mongod --smallfiles
+
+    - name: kontena-server-api.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-server-api
+        After=network-online.target
+        After=docker.service
+        Description=Kontena Agent
+        Documentation=http://www.kontena.io/
+        Requires=network-online.target
+        Requires=docker.service
+
+        [Service]
+        Restart=always
+        RestartSec=5
+        EnvironmentFile=/etc/kontena-server.env
+        ExecStartPre=-/usr/bin/docker stop kontena-server-api
+        ExecStartPre=-/usr/bin/docker rm kontena-server-api
+        ExecStartPre=/usr/bin/docker pull kontena/server:${KONTENA_VERSION}
+        ExecStart=/usr/bin/docker run --name kontena-server-api \
+            --link kontena-server-mongo:mongodb \
+            -e MONGODB_URI=mongodb://mongodb:27017/kontena_server \
+            kontena/server:${KONTENA_VERSION}
+
+    - name: kontena-server-haproxy.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-server-haproxy
+        After=network-online.target
+        After=docker.service
+        Description=Kontena Server HAProxy
+        Documentation=http://www.kontena.io/
+        Requires=network-online.target
+        Requires=docker.service
+
+        [Service]
+        Restart=always
+        RestartSec=5
+        EnvironmentFile=/etc/kontena-server.env
+        ExecStartPre=-/usr/bin/docker stop kontena-server-haproxy
+        ExecStartPre=-/usr/bin/docker rm kontena-server-haproxy
+        ExecStartPre=/usr/bin/docker pull kontena/haproxy:latest
+        ExecStart=/opt/bin/kontena-haproxy.sh
