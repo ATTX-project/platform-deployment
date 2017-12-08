@@ -156,7 +156,9 @@ services:
     environment:
         MHOST: "messagebroker"
         GHOST: "fuseki"
-
+        FRAMEHOST: "ldframe" 
+        INDEXHOST: "indexservice"
+        
   indexservice:
     image: attxproject/index-service:dev
     depends_on:
