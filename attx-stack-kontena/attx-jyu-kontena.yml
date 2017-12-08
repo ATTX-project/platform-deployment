@@ -88,12 +88,12 @@ services:
       KONTENA_LB_VIRTUAL_HOSTS: 34.240.191.96
 
   fuseki:
-    image: attxproject/attx-fuseki:dev
+    image: attxproject/attx-fuseki:fuseki3.4.0
     links:
       - ingress-lb/lb
     stateful: true
     environment:
-      KONTENA_LB_INTERNAL_PORT: 9210
+      KONTENA_LB_INTERNAL_PORT: 3030
       KONTENA_LB_VIRTUAL_HOSTS: 52.213.66.207
       ADMIN_PASSWORD: "pw123"
 
