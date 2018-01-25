@@ -1,0 +1,30 @@
+apply plugin: 'de.undercouch.download'
+apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=rmlservice&v=${RMLService}&p=jar":"rmlservice.jar",
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadFiles
+
+for (s in src) {
+    task "downloadFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/jars", s.value)
+    }
+    downloadFiles.dependsOn("downloadFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+	rmlservice {
+		baseDir = file('docker')
+		dockerFilename = 'Dockerfile'
+    repository = "${imageBase}/rml-service:${imageRMLService}"
+    env=['MHOST=amqp://messagebroker', 'MQUEUE=rmlservice', 'MEXCHANGE=', 'MUSER=', 'MPASS=']
+	}
+}
+
+buildRmlserviceImage.dependsOn downloadFiles
+pushRmlserviceImage.dependsOn downloadFiles
