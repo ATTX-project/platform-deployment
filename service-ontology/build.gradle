@@ -3,28 +3,28 @@ apply plugin: 'de.undercouch.download'
 apply from: '../publishDocker.gradle'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=provenance-service&v=${provenanceS}&p=tar.gz":"provenance-service-${provenanceS}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=ontology-service&v=${ontologyS}&p=tar.gz":"ontology-service-${ontologyS}.tar.gz"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
-task downloadProvFiles
+task downloadOntoFiles
 
 for (s in src) {
-    task "downloadProvFiles_${s.key.hashCode()}"(type: Download) {
+    task "downloadOntoFiles_${s.key.hashCode()}"(type: Download) {
         src s.key
         dest new File("$projectDir/docker/build/distributions", s.value)
     }
-    downloadProvFiles.dependsOn("downloadProvFiles_${s.key.hashCode()}")
+    downloadProvFiles.dependsOn("downloadOntoFiles_${s.key.hashCode()}")
 }
 
 dcompose {
-    provenance {
+    ontology {
         baseDir = file('docker')
-        repository = "${imageBase}/provenance-service:${imageProvenance}"
-        portBindings = ['7030:7030']
-        buildArgs = ['PROVS': "$provenanceS"]
+        repository = "${imageBase}/ontology-service:${imageOntology}"
+        portBindings = ['4305:4305']
+        buildArgs = ['ONTOS': "$ontologyS"]
     }
 }
 
-buildProvenanceImage.dependsOn downloadProvFiles
-pushProvenanceImage.dependsOn downloadProvFiles
+buildOntologyImage.dependsOn downloadOntoFiles
+pushOntologyImage.dependsOn downloadOntoFiles
