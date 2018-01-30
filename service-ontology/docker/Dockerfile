@@ -27,11 +27,11 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps
 
-ARG PROVS
+ARG ONTOS
 WORKDIR /app
 
-COPY build/distributions/provenance-service-${PROVS}.tar.gz /app
-RUN tar -xf provenance-service-${PROVS}.tar.gz
+COPY build/distributions/ontology-service-${ONTOS}.tar.gz /app
+RUN tar -xf ontology-service-${ONTOS}.tar.gz
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
@@ -45,7 +45,7 @@ COPY entrypoint.sh /
 
 RUN mkdir logs \
     && mkdir /attx-sb-shared \
-    && mkdir /attx-sb-shared/provenance \
+    && mkdir /attx-sb-shared/ontology \
     && chmod +x /entrypoint.sh
 
 # setting environment variables for entrypoint script
@@ -54,6 +54,6 @@ ENV GOSU_USER nonroot:nonroot
 ENV GOSU_CHOWN /app /var/log /etc/supervisor /var/run /attx-sb-shared
 RUN chmod 777 /attx-sb-shared
 
-EXPOSE 7030
+EXPOSE 4305
 
 ENTRYPOINT ["/entrypoint.sh"]
