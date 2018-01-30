@@ -54,6 +54,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.constructPlugin           = "1.0-SNAPSHOT"
     ext.retrievedsPlugin          = "1.0-SNAPSHOT"
     ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.SHACLService              = "1.0.0-SNAPSHOT"
 
     ext.RMLService                = "0.0.1-SNAPSHOT"
 
@@ -70,6 +71,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageFuseki         = "${privateRepoTag}"
     ext.imageActivemq       = "${privateRepoTag}"
     ext.imageRMLService     = "${privateRepoTag}"
+    ext.imageSHACLService   = "${privateRepoTag}"
 
 } else if (project.env == "release"){
 
@@ -89,6 +91,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.constructPlugin           = "1.0-SNAPSHOT"
     ext.retrievedsPlugin          = "1.0-SNAPSHOT"
     ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.SHACLService              = "1.0.0-SNAPSHOT"
 
     ext.sirenAPIPlugin            = "1.0-SNAPSHOT" // TO DO: remove
     ext.RMLService                = "0.0.1-SNAPSHOT"
@@ -106,6 +109,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageFuseki         = "${releaseTag}"
     ext.imageActivemq       = "${releaseTag}"
     ext.imageRMLService     = "${releaseTag}"
+    ext.imageSHACLService   = "${releaseTag}"
 
 } else if (project.env == "test"){
 
@@ -125,6 +129,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.constructPlugin           = "1.0-SNAPSHOT"
     ext.retrievedsPlugin          = "1.0-SNAPSHOT"
     ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.SHACLService              = "1.0.0-SNAPSHOT"
 
     ext.sirenAPIPlugin            = "1.0-SNAPSHOT" // TO DO: remove
     ext.RMLService                = "0.0.1-SNAPSHOT"
@@ -142,6 +147,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageFuseki         = "${testTag}"
     ext.imageActivemq       = "${testTag}"
     ext.imageRMLService     = "${testTag}"
+    ext.imageSHACLService   = "${testTag}"
 
 } else {
     throw new GradleException("Build project environment option not recognised.")

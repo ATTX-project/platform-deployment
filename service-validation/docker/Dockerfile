@@ -4,6 +4,7 @@ RUN apk add --update \
     && apk add --no-cache build-base \
     && apk add --no-cache linux-headers \
     && apk add --no-cache bash \
+    && apk add --no-cache supervisor \
     && rm -rf /var/cache/apk/*
 
 ENV GOSU_VERSION 1.10
@@ -24,22 +25,30 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps
 
+ARG SHACL
 WORKDIR /app
-ADD jars/rmlservice.jar /app/rmlservice.jar
-COPY entrypoint.sh /
-RUN chmod +x /entrypoint.sh
-RUN chmod +x /app/rmlservice.jar
+
+COPY build/distributions/validation-service-${SHACL}.tar /app
+RUN tar -xf validation-service-${SHACL}.tar
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
 
-RUN mkdir /attx-sb-shared \
-    && mkdir /attx-sb-shared/rmlservice
+# COPY supervisord specific configurations
+# default.conf is needed to have access to port 8080 as port 80 is not allowed with
+# to be used by a user with lower privileges
+COPY entrypoint.sh /
 
+RUN mkdir /attx-sb-shared \
+    && chmod +x /entrypoint.sh \
+    && chmod +x /app
+
+# setting environment variables for entrypoint script
+# setting also directories to be owned by the nonroot user
 ENV GOSU_USER nonroot:nonroot
-ENV GOSU_CHOWN /app /var/run /tmp /attx-sb-shared
+ENV GOSU_CHOWN /app /var/log /var/run /attx-sb-shared /usr/lib/jvm
 RUN chmod 777 /attx-sb-shared
 
-EXPOSE 8090
+EXPOSE 4306
 
-ENTRYPOINT ["/entrypoint.sh", "--brokerURL=${MHOST}", "--queue=${MQUEUE}", "--exchange=${MEXCHANGE}", "--username=${MUSER}", "--password=${MPASS}"]
+ENTRYPOINT ["/entrypoint.sh"]

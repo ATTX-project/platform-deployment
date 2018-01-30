@@ -21,8 +21,9 @@ dcompose {
 	rmlservice {
 		baseDir = file('docker')
 		dockerFilename = 'Dockerfile'
-    repository = "${imageBase}/rml-service:${imageRMLService}"
-    env=['MHOST=amqp://messagebroker', 'MQUEUE=rmlservice', 'MEXCHANGE=', 'MUSER=', 'MPASS=']
+        repository = "${imageBase}/rml-service:${imageRMLService}"
+        env=['MHOST=amqp://messagebroker', 'MQUEUE=rmlservice', 'MEXCHANGE=', 'MUSER=', 'MPASS=']
+        portBindings = ['8090:8090']
 	}
 }
 
