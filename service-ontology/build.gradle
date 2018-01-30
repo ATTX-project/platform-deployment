@@ -14,7 +14,7 @@ for (s in src) {
         src s.key
         dest new File("$projectDir/docker/build/distributions", s.value)
     }
-    downloadProvFiles.dependsOn("downloadOntoFiles_${s.key.hashCode()}")
+    downloadOntoFiles.dependsOn("downloadOntoFiles_${s.key.hashCode()}")
 }
 
 dcompose {
