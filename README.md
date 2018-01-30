@@ -19,7 +19,7 @@ Content of the repository:
   * swarm-mode-cpouta
 
 
-More detailed information can be found in (https://attx-project.github.io/)
+More detailed information can be found in (https://attx-project.github.io/).
 
 ## ATTX componens
 
