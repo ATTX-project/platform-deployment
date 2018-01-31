@@ -22,7 +22,8 @@ dcompose {
 		baseDir = file('docker')
 		dockerFilename = 'Dockerfile'
         repository = "${imageBase}/shacl-service:${imageSHACLService}"
-        env=['']
+        env=[''] // TO ADD
+        buildArgs = ['SHACL': "$SHACLService"]
         portBindings = ['4306:4306']
 	}
 }
