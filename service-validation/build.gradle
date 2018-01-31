@@ -12,7 +12,7 @@ task downloadSHACLFiles
 for (s in src) {
     task "downloadSHACLFiles_${s.key.hashCode()}"(type: Download) {
         src s.key
-        dest new File("$projectDir/docker/jars", s.value)
+        dest new File("$projectDir/docker/build/distributions", s.value)
     }
     downloadSHACLFiles.dependsOn("downloadSHACLFiles_${s.key.hashCode()}")
 }
