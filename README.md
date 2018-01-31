@@ -27,13 +27,14 @@ Content of the repository:
 
 More detailed information can be found in (https://attx-project.github.io/)
 
-## ATTX componens
+## ATTX components
 
 Gradle configurations define two environments, dev (default) and release, which can be set with -Penv=[environment] parameter. common.gradle contains the main shared configuration for different environments, such as artifact and image tags and repository URLs.
 
 ## Running tests
 
-* [Containerized testing](https://attx-project.github.io/Containerized-testing.html)
+ATTX Platform tests available at: https://github.com/ATTX-project/platform-tests
+    * [Containerized testing](https://attx-project.github.io/Containerized-testing.html)
 
 ## Provisioning
 
