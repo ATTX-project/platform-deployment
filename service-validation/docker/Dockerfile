@@ -28,8 +28,8 @@ RUN set -x \
 ARG SHACL
 WORKDIR /app
 
-COPY build/distributions/validation-service-${SHACL}.tar /app
-RUN tar -xf validation-service-${SHACL}.tar
+COPY build/distributions/validation-service-${SHACL}.zip /app
+RUN unzip validation-service-${SHACL}.zip
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
