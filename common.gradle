@@ -42,6 +42,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.gmFrame                   = "2.0-SNAPSHOT"
     ext.indexing                  = "2.0-SNAPSHOT"
     ext.provenanceS               = "2.0-SNAPSHOT"
+    ext.ontologyS                 = "2.0-SNAPSHOT"
     ext.replacedsPlugin           = "1.0-SNAPSHOT"
     ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
@@ -53,12 +54,14 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.constructPlugin           = "1.0-SNAPSHOT"
     ext.retrievedsPlugin          = "1.0-SNAPSHOT"
     ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.SHACLService              = "1.0.0-SNAPSHOT"
 
     ext.RMLService                = "0.0.1-SNAPSHOT"
 
     ext.imageBase           = "${imageRepo}:${imageRepoPort}"
     ext.imageFraming        = "${privateRepoTag}"
     ext.imageIndexing       = "${privateRepoTag}"
+    ext.imageOntology       = "${privateRepoTag}"
     ext.imageES5            = "${privateRepoTag}"
     ext.imageUVProv         = "${privateRepoTag}"
     ext.imageProvenance     = "${privateRepoTag}"
@@ -68,6 +71,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageFuseki         = "${privateRepoTag}"
     ext.imageActivemq       = "${privateRepoTag}"
     ext.imageRMLService     = "${privateRepoTag}"
+    ext.imageSHACLService   = "${privateRepoTag}"
 
 } else if (project.env == "release"){
 
@@ -76,40 +80,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.gmFrame                   = "2.0-SNAPSHOT"
     ext.indexing                  = "2.0-SNAPSHOT"
     ext.provenanceS               = "2.0-SNAPSHOT"
-    ext.replacedsPlugin           = "1.0-SNAPSHOT"
-    ext.describedsPlugin          = "1.0-SNAPSHOT"
-    ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
-    ext.rmlservicePlugin          = "1.0-SNAPSHOT"
-    ext.oaipmhharvesterPlugin     = "1.0-SNAPSHOT"
-    ext.selectdsPlugin            = "1.0-SNAPSHOT"
-    ext.publishtoapiPlugin        = "1.0-SNAPSHOT"    
-    ext.constructPlugin           = "1.0-SNAPSHOT"
-    ext.retrievedsPlugin          = "1.0-SNAPSHOT"
-    ext.framingservicePlugin      = "1.0-SNAPSHOT"
-
-    ext.sirenAPIPlugin            = "1.0-SNAPSHOT"
-    ext.RMLService                = "0.0.1-SNAPSHOT"
-
-    ext.imageBase           = "attxproject"
-    ext.imageFraming        = "${releaseTag}"
-    ext.imageIndexing       = "${releaseTag}"
-    ext.imageES5            = "${releaseTag}"
-    ext.imageUVProv         = "${releaseTag}"
-    ext.imageProvenance     = "${releaseTag}"
-    ext.imageGM             = "${releaseTag}"
-    ext.imageSirenAPIPlugin = "${releaseTag}"
-    ext.imageATTXDPUs       = "${releaseTag}"
-    ext.imageFuseki         = "${releaseTag}"
-    ext.imageActivemq       = "${releaseTag}"
-    ext.imageRMLService     = "${releaseTag}"
-
-} else if (project.env == "test"){
-
-    ext.uvProv                    = "2.0-SNAPSHOT"
-    ext.gmAPI                     = "2.0-SNAPSHOT"
-    ext.gmFrame                   = "2.0-SNAPSHOT"
-    ext.indexing                  = "2.0-SNAPSHOT"
-    ext.provenanceS               = "2.0-SNAPSHOT"
+    ext.ontologyS                 = "2.0-SNAPSHOT"
     ext.replacedsPlugin           = "1.0-SNAPSHOT"
     ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
@@ -120,13 +91,53 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.constructPlugin           = "1.0-SNAPSHOT"
     ext.retrievedsPlugin          = "1.0-SNAPSHOT"
     ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.SHACLService              = "1.0.0-SNAPSHOT"
 
-    ext.sirenAPIPlugin            = "1.0-SNAPSHOT"
+    ext.sirenAPIPlugin            = "1.0-SNAPSHOT" // TO DO: remove
+    ext.RMLService                = "0.0.1-SNAPSHOT"
+
+    ext.imageBase           = "attxproject"
+    ext.imageFraming        = "${releaseTag}"
+    ext.imageIndexing       = "${releaseTag}"
+    ext.imageOntology       = "${releaseTag}"
+    ext.imageES5            = "${releaseTag}"
+    ext.imageUVProv         = "${releaseTag}"
+    ext.imageProvenance     = "${releaseTag}"
+    ext.imageGM             = "${releaseTag}"
+    ext.imageSirenAPIPlugin = "${releaseTag}"
+    ext.imageATTXDPUs       = "${releaseTag}"
+    ext.imageFuseki         = "${releaseTag}"
+    ext.imageActivemq       = "${releaseTag}"
+    ext.imageRMLService     = "${releaseTag}"
+    ext.imageSHACLService   = "${releaseTag}"
+
+} else if (project.env == "test"){
+
+    ext.uvProv                    = "2.0-SNAPSHOT"
+    ext.gmAPI                     = "2.0-SNAPSHOT"
+    ext.gmFrame                   = "2.0-SNAPSHOT"
+    ext.indexing                  = "2.0-SNAPSHOT"
+    ext.provenanceS               = "2.0-SNAPSHOT"
+    ext.ontologyS                 = "2.0-SNAPSHOT"
+    ext.replacedsPlugin           = "1.0-SNAPSHOT"
+    ext.describedsPlugin          = "1.0-SNAPSHOT"
+    ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
+    ext.rmlservicePlugin          = "1.0-SNAPSHOT"
+    ext.oaipmhharvesterPlugin     = "1.0-SNAPSHOT"
+    ext.selectdsPlugin            = "1.0-SNAPSHOT"
+    ext.publishtoapiPlugin        = "1.0-SNAPSHOT"
+    ext.constructPlugin           = "1.0-SNAPSHOT"
+    ext.retrievedsPlugin          = "1.0-SNAPSHOT"
+    ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.SHACLService              = "1.0.0-SNAPSHOT"
+
+    ext.sirenAPIPlugin            = "1.0-SNAPSHOT" // TO DO: remove
     ext.RMLService                = "0.0.1-SNAPSHOT"
 
     ext.imageBase           = "attxproject"
     ext.imageFraming        = "${testTag}"
     ext.imageIndexing       = "${testTag}"
+    ext.imageOntology       = "${testTag}"
     ext.imageES5            = "${testTag}"
     ext.imageUVProv         = "${testTag}"
     ext.imageProvenance     = "${testTag}"
@@ -136,6 +147,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.imageFuseki         = "${testTag}"
     ext.imageActivemq       = "${testTag}"
     ext.imageRMLService     = "${testTag}"
+    ext.imageSHACLService   = "${testTag}"
 
 } else {
     throw new GradleException("Build project environment option not recognised.")

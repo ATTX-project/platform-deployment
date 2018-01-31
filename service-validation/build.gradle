@@ -1,0 +1,31 @@
+apply plugin: 'de.undercouch.download'
+apply plugin: "com.chrisgahlert.gradle-dcompose-plugin"
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=rmlservice&v=${SHACLService}&p=jar":"rmlservice.jar",
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadSHACLFiles
+
+for (s in src) {
+    task "downloadSHACLFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/jars", s.value)
+    }
+    downloadSHACLFiles.dependsOn("downloadSHACLFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+	validation {
+		baseDir = file('docker')
+		dockerFilename = 'Dockerfile'
+        repository = "${imageBase}/shacl-service:${imageSHACLService}"
+        env=['']
+        portBindings = ['4306:4306']
+	}
+}
+
+buildValidationImage.dependsOn downloadSHACLFiles
+pushValidationImage.dependsOn downloadSHACLFiles

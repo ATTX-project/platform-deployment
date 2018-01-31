@@ -45,7 +45,7 @@ services:
       - ingress-lb/lb
     environment:
       - KONTENA_LB_INTERNAL_PORT=8080
-      - KONTENA_LB_VIRTUAL_HOSTS=vm1196.kaj.pouta.csc.fi
+      - KONTENA_LB_VIRTUAL_HOSTS=vm1190.kaj.pouta.csc.fi
     volumes:
       - uv-shared:/unified-views
       - sb-shared:/attx-sb-shared
@@ -85,16 +85,20 @@ services:
 #        reqiallow ^POST\s.*\/_search\?*.*HTTP\/1\.1$
 #        reqideny ^.*HTTP\/1\.1$
       KONTENA_LB_INTERNAL_PORT: 9210
-      KONTENA_LB_VIRTUAL_HOSTS: vm1190.kaj.pouta.csc.fi
+      KONTENA_LB_VIRTUAL_HOSTS: vm1136.kaj.pouta.csc.fi
+      KONTENA_LB_VIRTUAL_PATH: /elasticsearch
 
   fuseki:
     image: attxproject/attx-fuseki:dev
+    ports:
+      - "3030:3030"
     stateful: true
     environment:
       ADMIN_PASSWORD: "pw123"
 
   graphmanager:
     image: attxproject/gm-api:dev
+    stateful: true
     environment:
       MHOST: "messagebroker"
       GHOST: "fuseki"
@@ -103,6 +107,8 @@ services:
     depends_on:
       - fuseki
       - messagebroker
+    affinity:
+      - label==broker
 
   messagebroker:
     image: rabbitmq:3.6.12-management
@@ -115,6 +121,7 @@ services:
 
   ldframe:
     image: attxproject/ldframe-service:dev
+    stateful: true
     depends_on:
       - messagebroker
     environment:
@@ -122,9 +129,12 @@ services:
       GMHOST: "graphmanager"
     volumes:
       - sb-shared:/attx-sb-shared
+    affinity:
+      - label==broker
 
   rmlservice:
     image: attxproject/rml-service:dev
+    stateful: true
     environment:
       MHOST: "amqp://messagebroker"
       MUSER: "user"
@@ -135,6 +145,8 @@ services:
       - sb-shared:/attx-sb-shared
     depends_on:
       - messagebroker
+    affinity:
+      - label==broker
 
   provservice:
     image: attxproject/provenance-service:dev
@@ -144,7 +156,9 @@ services:
     environment:
         MHOST: "messagebroker"
         GHOST: "fuseki"
-
+        FRAMEHOST: "ldframe" 
+        INDEXHOST: "indexservice"
+        
   indexservice:
     image: attxproject/index-service:dev
     depends_on:
@@ -154,6 +168,8 @@ services:
       ESHOST: "es5"
     volumes:
       - sb-shared:/attx-sb-shared
+    affinity:
+      - label==broker
 
   testdata:
     image: attxproject/testdata:dev

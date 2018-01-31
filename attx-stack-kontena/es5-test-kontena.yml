@@ -1,0 +1,35 @@
+version: 0.1.1
+stack: attxproject/es5-test
+services:
+
+
+  lb:
+    image: kontena/lb:latest
+    ports:
+#      - "80:80"
+      - "9210:80"
+      - "15672:80"
+    deploy:
+      strategy: daemon
+
+  es5:
+    image: attxproject/attx-es5:dev
+    stateful: true
+    links:
+      - lb
+    environment:
+      - KONTENA_LB_INTERNAL_PORT=9210
+      - KONTENA_LB_VIRTUAL_HOSTS="vm1062.kaj.pouta.csc.fi:9210"
+#      - KONTENA_LB_VIRTUAL_PATH=/es5
+
+
+
+  messagebroker:
+    image: rabbitmq:3.6.12-management
+    stateful: true
+    links:
+      - lb
+    environment:
+      - KONTENA_LB_INTERNAL_PORT=15672
+      - KONTENA_LB_VIRTUAL_HOSTS="vm1187.kaj.pouta.csc.fi:15672"
+#      - KONTENA_LB_VIRTUAL_PATH=/rabbitmq/

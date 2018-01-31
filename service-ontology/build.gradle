@@ -1,0 +1,30 @@
+apply plugin: 'com.chrisgahlert.gradle-dcompose-plugin'
+apply plugin: 'de.undercouch.download'
+apply from: '../publishDocker.gradle'
+
+ext.src = [
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=ontology-service&v=${ontologyS}&p=tar.gz":"ontology-service-${ontologyS}.tar.gz"
+]
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadOntoFiles
+
+for (s in src) {
+    task "downloadOntoFiles_${s.key.hashCode()}"(type: Download) {
+        src s.key
+        dest new File("$projectDir/docker/build/distributions", s.value)
+    }
+    downloadOntoFiles.dependsOn("downloadOntoFiles_${s.key.hashCode()}")
+}
+
+dcompose {
+    ontology {
+        baseDir = file('docker')
+        repository = "${imageBase}/ontology-service:${imageOntology}"
+        portBindings = ['4305:4305']
+        buildArgs = ['ONTOS': "$ontologyS"]
+    }
+}
+
+buildOntologyImage.dependsOn downloadOntoFiles
+pushOntologyImage.dependsOn downloadOntoFiles

@@ -1,1 +1,1 @@
-include "uv-attx-dpus", "service-uvprov", "service-graphManager", "attx-elasticsearch-siren", "attx-es5", "attx-fuseki", "service-rml", "attx-activemq", "service-provenance", "service-graphFraming", "service-indexing"
+include "uv-attx-dpus", "service-uvprov", "service-graphManager", "attx-elasticsearch-siren", "attx-es5", "attx-fuseki", "service-rml", "attx-activemq", "service-provenance", "service-graphFraming", "service-indexing", "service-validation", "service-ontology"
