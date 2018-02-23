@@ -53,7 +53,7 @@ services:
 #      - ingress-lb/lb
 #    environment:
 #      - KONTENA_LB_INTERNAL_PORT=8080
-#      - KONTENA_LB_VIRTUAL_HOSTS=52.30.75.49
+#      - KONTENA_LB_VIRTUAL_HOSTS="ip/address"
     volumes:
       - uv-shared:/unified-views
       - sb-shared:/attx-shared
@@ -93,7 +93,7 @@ services:
 #    environment:
 #      - KONTENA_LB_INTERNAL_PORT=9210
 #      - KONTENA_LB_VIRTUAL_PATH=/es5
-#      - KONTENA_LB_VIRTUAL_HOSTS=http://vm1190.kaj.pouta.csc.fi
+#      - KONTENA_LB_VIRTUAL_HOSTS="ip/address"
    ports:
       - "9210:9210"
       - "9310:9310"

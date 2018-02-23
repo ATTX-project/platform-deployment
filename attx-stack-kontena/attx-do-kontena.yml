@@ -50,7 +50,7 @@ services:
 #      - ingress-lb/lb
 #    environment:
 #      - KONTENA_LB_INTERNAL_PORT=8080
-#      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
+#      - KONTENA_LB_VIRTUAL_HOSTS="ip/address"
     volumes:
       - uv-shared:/unified-views
       - sb-shared:/attx-shared
@@ -87,7 +87,7 @@ services:
 #      - ingress-lb/lb
 #    environment:
 #      - KONTENA_LB_INTERNAL_PORT=9210
-#      - KONTENA_LB_VIRTUAL_HOSTS=128.214.91.205
+#      - KONTENA_LB_VIRTUAL_HOSTS="ip/address"
 
   fuseki:
     image: attxproject/attx-fuseki:fuseki3.4.0
