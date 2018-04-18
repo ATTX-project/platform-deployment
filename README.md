@@ -42,4 +42,17 @@ ATTX Platform tests available at: https://github.com/ATTX-project/platform-tests
 
 ## Deployment
 
+### Local Deployment
+
+1. `cd attx-stack-dcompose` go to the d
+2. `gradle startContainers` to start ATTX broker microservices
+3. `gradle stopContainers` to stop ATTX broker mircoservices
+4. `gradle removeImages` to cleanup images
+5. `gradle createComposeFile` to create a docker-compose file in `build/docker-compose.yml` that can be started using:
+```
+docker-compose -f build/docker-compose.yml up -d
+```
+
+### Cloud Deployment
+
 * [SWARM in cloud](https://attx-project.github.io/Deploying-ATTX-Components-on-Docker-Swarm.html)
