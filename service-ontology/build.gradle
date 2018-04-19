@@ -3,7 +3,7 @@ apply plugin: 'de.undercouch.download'
 apply from: '../publishDocker.gradle'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=ontology-service&v=${ontologyS}&p=tar.gz":"ontology-service-${ontologyS}.tar.gz"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=ontology-service&v=${ontologyS}&p=zip":"ontology-service-${ontologyS}.zip",
 ]
 
 import de.undercouch.gradle.tasks.download.Download
@@ -22,6 +22,7 @@ dcompose {
         baseDir = file('docker')
         repository = "${imageBase}/ontology-service:${imageOntology}"
         portBindings = ['4305:4305']
+        env=[''] // TO ADD
         buildArgs = ['ONTOS': "$ontologyS"]
     }
 }
