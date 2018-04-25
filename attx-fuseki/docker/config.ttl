@@ -52,7 +52,7 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model .
 
 <#tdb_prod_dataset> rdf:type tdb:DatasetTDB ;
 
-    tdb:location "/tmp/" ;
+    tdb:location "/data/fuseki/fuseki_DB" ;
     ## Query timeout on this dataset (milliseconds)
     ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "30000" ] ;
     ## Default graph for query is the (read-only) union of all named graphs.
