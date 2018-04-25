@@ -36,28 +36,24 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model .
     fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
     # A separate read-only graph store endpoint:
     fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
-    fuseki:dataset                    <#dataset> ;
+    fuseki:dataset                    <#tdb_prod_dataset> ;
     .
 
   #  http://data.hulib.helsinki.fi/attx - to be used as a base for data
 
 
-<#dataset> rdf:type ja:RDFDataset ;
-    ja:defaultGraph <#default> ;
-    ja:namedGraph
-        [ ja:graphName      <http://data.hulib.helsinki.fi/attx/onto> ;
-          ja:graph          <#attx-ontodb>;
-        ] ;
-.
+
 
 <#tdb_prod_dataset> rdf:type tdb:DatasetTDB ;
-
+    ja:defaultGraph <#default> ;
     tdb:location "/data/fuseki/fuseki_DB" ;
     ## Query timeout on this dataset (milliseconds)
     ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "30000" ] ;
     ## Default graph for query is the (read-only) union of all named graphs.
     tdb:unionDefaultGraph true ;
-
+    ja:namedGraph
+        [ ja:graphName      <http://data.hulib.helsinki.fi/attx/onto> ;
+          ja:graph          <#attx-ontodb> ] ;
 .
 
 <#default> rdf:type tdb:GraphTDB ;
@@ -65,13 +61,12 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model .
     .
 
 <#attx-ontodb> rdf:type ja:OntModel ;
-    tdb:dataset <#tdb_prod_dataset> ;
     ja:initialContent <#attx-onto> ;
     .
 
 
 # Data
-<#attx-onto> ja:externalContent <file:data/attx-onto.ttl>  .
+<#attx-onto> ja:externalContent <file:data/attx-onto.ttl> .
 
 # # Something more complex where the UnionGraph would be materialized in the default graph
 # <#attx> rdf:type ja:UnionModel ;
