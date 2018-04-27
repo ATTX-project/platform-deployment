@@ -45,28 +45,13 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model .
 
 
 <#tdb_prod_dataset> rdf:type tdb:DatasetTDB ;
-    ja:defaultGraph <#default> ;
     tdb:location "/data/fuseki/fuseki_DB" ;
     ## Query timeout on this dataset (milliseconds)
     ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "30000" ] ;
     ## Default graph for query is the (read-only) union of all named graphs.
     tdb:unionDefaultGraph true ;
-    ja:namedGraph
-        [ ja:graphName      <http://data.hulib.helsinki.fi/attx/onto> ;
-          ja:graph          <#attx-ontodb> ] ;
 .
 
-<#default> rdf:type tdb:GraphTDB ;
-    tdb:dataset <#tdb_prod_dataset> ;
-    .
-
-<#attx-ontodb> rdf:type ja:OntModel ;
-    ja:initialContent <#attx-onto> ;
-    .
-
-
-# Data
-<#attx-onto> ja:externalContent <file:data/attx-onto.ttl> .
 
 # # Something more complex where the UnionGraph would be materialized in the default graph
 # <#attx> rdf:type ja:UnionModel ;
