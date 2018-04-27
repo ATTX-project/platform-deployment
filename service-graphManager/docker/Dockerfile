@@ -59,6 +59,6 @@ RUN chmod 777 /attx-sb-shared
 
 EXPOSE 4302
 
-VOLUME ["/attx-sb-shared"]
+#VOLUME ["/attx-sb-shared"]
 
 ENTRYPOINT ["/entrypoint.sh"]
