@@ -138,4 +138,13 @@ dcompose {
         links = [messagebroker.link(), es5.link()]
         networks = [attx]
     }
+
+    ontologyservice {
+        forceRemoveImage = true
+        image = "attxproject/ontology-service:dev"
+        portBindings = ['4305:4305']
+        env = ['MHOST=messagebroker']
+        links = [messagebroker.link()]
+        networks = [attx]
+    }
 }
