@@ -40,6 +40,7 @@ RUN addgroup -S nonroot \
 COPY entrypoint.sh /
 
 RUN mkdir /attx-sb-shared \
+    && mkdir /attx-sb-shared/ontologyservice \
     && chmod +x /entrypoint.sh \
     && chmod +x /app
 
