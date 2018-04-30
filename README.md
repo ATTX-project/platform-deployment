@@ -45,7 +45,7 @@ ATTX Platform tests available at: https://github.com/ATTX-project/platform-tests
 
 ### Local Deployment
 
-1. `cd attx-stack-dcompose` go to the d
+1. `cd attx-stack-dcompose` go to the attx-stack-dcompose folder
 2. `gradle startContainers` to start ATTX broker microservices
 3. `gradle stopContainers` to stop ATTX broker mircoservices
 4. `gradle removeImages` to cleanup images
