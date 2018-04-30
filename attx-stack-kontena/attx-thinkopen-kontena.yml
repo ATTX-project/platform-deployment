@@ -1,4 +1,4 @@
-version: 1.0.1
+version: 1.0.8
 stack: thinkopen/attx
 services:
 
@@ -44,7 +44,7 @@ services:
       - ingress-lb/lb
     environment:
       - KONTENA_LB_INTERNAL_PORT=8080
-      - KONTENA_LB_VIRTUAL_HOSTS="ip/address"
+      - KONTENA_LB_VIRTUAL_HOSTS=<ip address>
     volumes:
       - uv-shared:/unified-views
       - sb-shared:/attx-sb-shared
@@ -59,7 +59,7 @@ services:
    image: attxproject/uv-attx-dpus:dev
 # see your demo grid for this address
    environment:
-     FRONTEND: "frontend-1.attx.thinkopen.kontena.local"
+     FRONTEND: "frontend.attx.attx-deploy.kontena.local"
    depends_on:
      - mysql
      - backend
@@ -73,28 +73,37 @@ services:
       MHOST: "messagebroker"
     depends_on:
       - mysql
+    affinity:
+      - label==master
 
   es5:
     image: attxproject/attx-es5:dev
     links:
       - ingress-lb/lb
     environment:
+      KONTENA_LB_INTERNAL_PORT: 9210
+      KONTENA_LB_VIRTUAL_HOSTS: <ip address>
       KONTENA_LB_CUSTOM_SETTINGS: |
         reqiallow ^GET\s.*\/_search\?*.*HTTP\/1\.1$
         reqiallow ^POST\s.*\/_search\?*.*HTTP\/1\.1$
         reqideny ^.*HTTP\/1\.1$
-      KONTENA_LB_INTERNAL_PORT: 9210
-      KONTENA_LB_VIRTUAL_HOSTS: "ip/address"
+    affinity:
+      - label==api
 
   fuseki:
-    image: attxproject/attx-fuseki:fuseki3.4.0
+    image: attxproject/attx-fuseki:dev
     links:
       - ingress-lb/lb
     stateful: true
     environment:
-      # KONTENA_LB_INTERNAL_PORT: 3030
-      # KONTENA_LB_VIRTUAL_HOSTS: "ip/address"
+      KONTENA_LB_INTERNAL_PORT: 3030
+      KONTENA_LB_EXTERNAL_PORT: 3030
+      KONTENA_LB_VIRTUAL_HOSTS: <ip address>
       ADMIN_PASSWORD: "pw123"
+    volumes:
+      - fuseki-shared:/data/fuseki/fuseki_DB
+    affinity:
+      - label==services
 
   graphmanager:
     image: attxproject/gm-api:dev
@@ -106,6 +115,8 @@ services:
     depends_on:
       - fuseki
       - messagebroker
+    affinity:
+      - label==services
 
   messagebroker:
     image: rabbitmq:3.6.12-management
@@ -114,9 +125,10 @@ services:
       - ingress-lb/lb
     environment:
 #      KONTENA_LB_INTERNAL_PORT: 15672
-#      KONTENA_LB_VIRTUAL_HOSTS: "ip/address"
+#      KONTENA_LB_VIRTUAL_HOSTS: <ip address>
       RABBITMQ_DEFAULT_USER: "user"
       RABBITMQ_DEFAULT_PASS: "password"
+
 
   ldframe:
     image: attxproject/ldframe-service:dev
@@ -127,6 +139,8 @@ services:
       GMHOST: "graphmanager"
     volumes:
       - sb-shared:/attx-sb-shared
+    affinity:
+      - label==services
 
   rmlservice:
     image: attxproject/rml-service:dev
@@ -140,6 +154,8 @@ services:
       - sb-shared:/attx-sb-shared
     depends_on:
       - messagebroker
+    affinity:
+      - label==services
 
   provservice:
     image: attxproject/provenance-service:dev
@@ -149,6 +165,8 @@ services:
     environment:
         MHOST: "messagebroker"
         GHOST: "fuseki"
+    affinity:
+      - label==services
 
   indexservice:
     image: attxproject/index-service:dev
@@ -159,9 +177,8 @@ services:
       ESHOST: "es5"
     volumes:
       - sb-shared:/attx-sb-shared
-
-  testdata:
-    image: attxproject/testdata:dev
+    affinity:
+      - label==services
 
 
 
@@ -172,3 +189,6 @@ volumes:
   sb-shared:
     external:
       name: ${STACK}-sb-shared
+  fuseki-shared:
+    external:
+      name: ${STACK}-fuseki-shared

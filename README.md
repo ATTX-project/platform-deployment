@@ -7,7 +7,7 @@ Content of the repository:
   * attx-es5
   * attx-activemq
   * attx-fuseki
-  * uv-elastichsearch with Siren plugin (not in use)
+  * uv-elastichsearch with Siren plugin (deprecated)
 * ATTX services
   * graphManager https://github.com/ATTX-project/graphmanager-service
   * graphFraming (JSON-LD framing) https://github.com/ATTX-project/graphframing-service
@@ -34,7 +34,7 @@ Gradle configurations define two environments, dev (default) and release, which 
 ## Running tests
 
 ATTX Platform tests available at: https://github.com/ATTX-project/platform-tests
-    
+
 * [Containerized testing](https://attx-project.github.io/Containerized-testing.html)
 
 ## Provisioning
@@ -50,6 +50,7 @@ ATTX Platform tests available at: https://github.com/ATTX-project/platform-tests
 3. `gradle stopContainers` to stop ATTX broker mircoservices
 4. `gradle removeImages` to cleanup images
 5. `gradle createComposeFile` to create a docker-compose file in `build/docker-compose.yml` that can be started using:
+
 ```
 docker-compose -f build/docker-compose.yml up -d
 ```
