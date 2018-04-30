@@ -34,7 +34,8 @@ Gradle configurations define two environments, dev (default) and release, which 
 ## Running tests
 
 ATTX Platform tests available at: https://github.com/ATTX-project/platform-tests
-    * [Containerized testing](https://attx-project.github.io/Containerized-testing.html)
+    
+* [Containerized testing](https://attx-project.github.io/Containerized-testing.html)
 
 ## Provisioning
 
