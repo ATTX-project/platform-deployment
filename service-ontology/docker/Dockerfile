@@ -28,8 +28,7 @@ RUN set -x \
 ARG ONTOS
 WORKDIR /app
 
-COPY build/distributions/ontology-service-${ONTOS}.zip /app
-RUN unzip ontology-service-${ONTOS}.zip
+COPY build/distributions/ontology-service-${ONTOS}.jar /app
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
