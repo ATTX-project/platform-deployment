@@ -3,7 +3,7 @@ apply plugin: 'de.undercouch.download'
 apply from: '../publishDocker.gradle'
 
 ext.src = [
-    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=ontology-service&v=${ontologyS}&p=tar":"ontology-service-${ontologyS}.tar"
+    "${artifactRepoURL}/restServices/archivaServices/searchService/artifact?g=org.uh.hulib.attx.services&a=ontology-service&v=${ontologyS}&p=pom":"ontology-service-${ontologyS}.tar"
 ]
 
 import de.undercouch.gradle.tasks.download.Download
