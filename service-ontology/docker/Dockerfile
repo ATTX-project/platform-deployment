@@ -30,8 +30,8 @@ RUN set -x \
 ARG ONTOS
 WORKDIR /app
 
-COPY build/distributions/ontology-service-${ONTOS}.tar.gz /app
-RUN tar -xf ontology-service-${ONTOS}.tar.gz
+COPY build/distributions/ontology-service-${ONTOS}.tar /app
+RUN tar -xf ontology-service-${ONTOS}.tar
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
