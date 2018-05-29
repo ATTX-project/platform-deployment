@@ -142,6 +142,18 @@ services:
       - 4304:4304
     links:
       - messagebroker:messagebroker
+
+  ontologyservice:
+    image: attxproject/ontology-service:dev
+    depends_on:
+        - messagebroker
+    environment:
+        - MHOST=messagebroker
+    ports:
+      - 4305:4305
+    links:
+      - messagebroker:messagebroker
+
   datatest:
     image: attxproject/testdata:dev
     ports:
