@@ -37,6 +37,8 @@ RUN addgroup -S nonroot \
 # COPY supervisord specific configurations
 # default.conf is needed to have access to port 8080 as port 80 is not allowed with
 # to be used by a user with lower privileges
+COPY default.conf /etc/nginx/conf.d/default.conf
+COPY supervisor.conf /etc/supervisor/supervisord.conf
 COPY entrypoint.sh /
 
 RUN mkdir /attx-sb-shared \
