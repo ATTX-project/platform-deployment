@@ -30,7 +30,8 @@ WORKDIR /app
 
 COPY build/distributions/ontology-service-${ONTOS}.tar /app
 RUN tar -xf ontology-service-${ONTOS}.tar
-RUN mv /app/ontology-service-${ONTOS}/ /app/
+RUN mv /app/ontology-service-${ONTOS}/bin /app/
+RUN mv /app/ontology-service-${ONTOS}/lib /app/
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
