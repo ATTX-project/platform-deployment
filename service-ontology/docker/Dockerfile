@@ -1,12 +1,9 @@
-FROM python:2.7.12-alpine
-
-MAINTAINER Stefan Negru <stefan.negru@helsinki.fi>
+FROM openjdk:8-jdk-alpine
 
 RUN apk add --update \
     && apk add --no-cache build-base \
     && apk add --no-cache linux-headers \
     && apk add --no-cache bash \
-    && apk add --no-cache py-setuptools \
     && apk add --no-cache supervisor \
     && rm -rf /var/cache/apk/*
 
@@ -22,7 +19,8 @@ RUN set -x \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && rm -r /usr/local/bin/gosu.asc \
+    && rm -r -f "$GNUPGHOME" \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && apk del .gosu-deps
@@ -30,8 +28,8 @@ RUN set -x \
 ARG ONTOS
 WORKDIR /app
 
-COPY build/distributions/ontology-service-${ONTOS}.tar.gz /app
-RUN tar -xf ontology-service-${ONTOS}.tar.gz
+COPY build/distributions/ontology-service-${ONTOS}.tar /app
+RUN tar -xf ontology-service-${ONTOS}.tar
 
 RUN addgroup -S nonroot \
     && adduser -S -g nonroot nonroot
@@ -43,15 +41,15 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 COPY supervisor.conf /etc/supervisor/supervisord.conf
 COPY entrypoint.sh /
 
-RUN mkdir logs \
-    && mkdir /attx-sb-shared \
-    && mkdir /attx-sb-shared/ontology \
-    && chmod +x /entrypoint.sh
+RUN mkdir /attx-sb-shared \
+    && mkdir /attx-sb-shared/ontologyservice \
+    && chmod +x /entrypoint.sh \
+    && chmod +x /app
 
 # setting environment variables for entrypoint script
 # setting also directories to be owned by the nonroot user
 ENV GOSU_USER nonroot:nonroot
-ENV GOSU_CHOWN /app /var/log /etc/supervisor /var/run /attx-sb-shared
+ENV GOSU_CHOWN /app /var/log /var/run /attx-sb-shared /usr/lib/jvm
 RUN chmod 777 /attx-sb-shared
 
 EXPOSE 4305

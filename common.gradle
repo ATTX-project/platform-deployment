@@ -42,7 +42,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.gmFrame                   = "2.0-SNAPSHOT"
     ext.indexing                  = "2.0-SNAPSHOT"
     ext.provenanceS               = "2.0-SNAPSHOT"
-    ext.ontologyS                 = "2.0-SNAPSHOT"
+    ext.ontologyS                 = "1.0-SNAPSHOT"
     ext.replacedsPlugin           = "1.0-SNAPSHOT"
     ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
@@ -54,6 +54,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.constructPlugin           = "1.0-SNAPSHOT"
     ext.retrievedsPlugin          = "1.0-SNAPSHOT"
     ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.ontologyservicePlugin     = "1.0-SNAPSHOT"
     ext.SHACLService              = "1.0.0-SNAPSHOT"
 
     ext.RMLService                = "0.0.1-SNAPSHOT"
@@ -80,7 +81,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.gmFrame                   = "2.0-SNAPSHOT"
     ext.indexing                  = "2.0-SNAPSHOT"
     ext.provenanceS               = "2.0-SNAPSHOT"
-    ext.ontologyS                 = "2.0-SNAPSHOT"
+    ext.ontologyS                 = "1.0-SNAPSHOT"
     ext.replacedsPlugin           = "1.0-SNAPSHOT"
     ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
@@ -91,6 +92,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.constructPlugin           = "1.0-SNAPSHOT"
     ext.retrievedsPlugin          = "1.0-SNAPSHOT"
     ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.ontologyservicePlugin      = "1.0-SNAPSHOT"
     ext.SHACLService              = "1.0.0-SNAPSHOT"
 
     ext.sirenAPIPlugin            = "1.0-SNAPSHOT" // TO DO: remove
@@ -118,7 +120,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.gmFrame                   = "2.0-SNAPSHOT"
     ext.indexing                  = "2.0-SNAPSHOT"
     ext.provenanceS               = "2.0-SNAPSHOT"
-    ext.ontologyS                 = "2.0-SNAPSHOT"
+    ext.ontologyS                 = "1.0-SNAPSHOT"
     ext.replacedsPlugin           = "1.0-SNAPSHOT"
     ext.describedsPlugin          = "1.0-SNAPSHOT"
     ext.describeexternaldsPlugin  = "1.0-SNAPSHOT"
@@ -129,6 +131,7 @@ if (!project.hasProperty("env") || project.env == "dev") {
     ext.constructPlugin           = "1.0-SNAPSHOT"
     ext.retrievedsPlugin          = "1.0-SNAPSHOT"
     ext.framingservicePlugin      = "1.0-SNAPSHOT"
+    ext.ontologyservicePlugin     = "1.0-SNAPSHOT"
     ext.SHACLService              = "1.0.0-SNAPSHOT"
 
     ext.sirenAPIPlugin            = "1.0-SNAPSHOT" // TO DO: remove
