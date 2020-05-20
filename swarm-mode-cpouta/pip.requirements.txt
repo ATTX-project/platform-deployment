@@ -15,7 +15,7 @@ docopt==0.6.2
 enum34==1.1.6
 functools32==3.2.3.post2
 html5lib==0.999
-httplib2==0.8
+httplib2==0.18.0
 idna==2.4
 ipaddress==1.0.18
 Jinja2==2.7.2
