@@ -37,7 +37,7 @@ pyparsing==2.2.0
 pyserial==2.6
 python-apt===0.9.3.5ubuntu2
 python-debian===0.1.21-nmu2ubuntu2
-PyYAML==3.10
+PyYAML==5.4
 requests==2.11.1
 six==1.10.0
 ssh-import-id==3.21
