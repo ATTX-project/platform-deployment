@@ -27,7 +27,7 @@ MarkupSafe==0.18
 oauth==1.0.1
 packaging==16.8
 PAM==0.4.2
-paramiko==1.10.1
+paramiko==2.10.1
 prettytable==0.7.2
 pyasn1==0.2.3
 pycrypto==2.6.1
